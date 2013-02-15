@@ -1,8 +1,9 @@
 {
-    "name": "pk/pk-markdownify-bundle",
+    "name": "pk/markdownify-bundle",
     "type": "symfony-bundle",
-    "description": "Markdownify bundle for Symfony2",
-    "keywords": ["markdown"],
+    "description": "Symfony2 bundle that integrates the Markdownify class as a service",
+    "keywords": ["markdown", "markdownify"],
+    "license": "MIT",
     "homepage": "http://github.com/pkruithof/PKMarkdownifyBundle",
     "authors": [
         {
@@ -11,12 +12,12 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "symfony/framework-bundle": ">=2.1.0,<2.3-dev"
     },
     "autoload": {
         "psr-0": {
             "PK\\MarkdownifyBundle": ""
         }
-    },
-    "target-dir": "PK/MarkdownifyBundle"
+    }
 }
