@@ -4,7 +4,7 @@
     "description": "Symfony2 bundle that integrates the Markdownify class as a service",
     "keywords": ["markdown", "markdownify"],
     "license": "MIT",
-    "homepage": "http://github.com/pkruithof/PKMarkdownifyBundle",
+    "homepage": "http://github.com/pkruithof/MarkdownifyBundle",
     "authors": [
         {
             "name": "Peter Kruithof",
