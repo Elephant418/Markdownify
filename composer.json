@@ -19,5 +19,6 @@
         "psr-0": {
             "PK\\MarkdownifyBundle": ""
         }
-    }
+    },
+    "target-dir": "PK/MarkdownifyBundle",
 }
