@@ -30,16 +30,20 @@ php composer.phar update "pk/markdownify-bundle"
 ###  AppKernel.php
 
 Add to `app/AppKernel.php`:
-
-    new PK\MarkdownifyBundle\PKMarkdownifyBundle()
+```
+new PK\MarkdownifyBundle\PKMarkdownifyBundle()
+```
 
 ## Usage
 The bundle registers a `pk.markdownify` service. Use it as you would use the Markdownify class:
 
 ```php
 $markdownify = $container->get('pk.markdownify');
-$markdown = $markdownify->parseString($html);
+$markdown = @$markdownify->parseString($html);
 ```
+
+### NOTE: Warnings/notices
+The original Markdownify code can sometimes raise warnings and notices. Since Symfony doesn't like that, the most pragmatic way to fix this is by silencing the parseString call (ie: putting an `@` in front of it). It would be nice to fix the original code, but without proper unit tests I'm not touching it.
 
 ## Modifications
 The following modifications have been applied to the original Markdownify code.
