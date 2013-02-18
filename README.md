@@ -27,6 +27,12 @@ and update:
 php composer.phar update "pk/markdownify-bundle"
 ```
 
+###  AppKernel.php
+
+Add to `app/AppKernel.php`:
+
+    new PK\MarkdownifyBundle\PKMarkdownifyBundle()
+
 ## Usage
 The bundle registers a `pk.markdownify` service. Use it as you would use the Markdownify class:
 
