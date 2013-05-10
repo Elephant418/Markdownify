@@ -1,4 +1,0 @@
-services:
-    pk.markdownify:
-        class: PK\MarkdownifyBundle\Markdownify\MarkdownifyExtra
-        arguments: [false, false, false]
