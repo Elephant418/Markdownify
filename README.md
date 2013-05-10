@@ -1,52 +1,66 @@
-MarkdownifyBundle
+Markdownify
 ===================
 
-Provides Symfony2 integration for the Markdownify/Markdownify_Extra scripts.
+The HTML to Markdown converter for PHP.
 
-See http://milianw.de/projects/markdownify/
+See [http://milianw.de/projects/markdownify/](The official website)
 
-## Requirements
-The bundle is built for Symfony 2.1 and while version 2.0 should work with it, it is not officialy supported.
 
-## Installation
-Install the bundle using composer.
-
-### Automatically
-```
-php composer.phar require "pk/markdownify-bundle:2.1.*"
-```
-
-### Manually
-Add to `composer.json`:
-```
-"pk/markdownify-bundle": "2.1.*"
-```
-
-and update:
-```
-php composer.phar update "pk/markdownify-bundle"
-```
-
-###  AppKernel.php
-
-Add to `app/AppKernel.php`:
-```
-new PK\MarkdownifyBundle\PKMarkdownifyBundle()
-```
-
-## Usage
-The bundle registers a `pk.markdownify` service. Use it as you would use the Markdownify class:
+Code example
+--------
 
 ```php
-$markdownify = $container->get('pk.markdownify');
-$markdown = @$markdownify->parseString($html);
+$md = new Markdownify\Converter;
+echo $md->parseString($htmlInput);
 ```
 
-### NOTE: Warnings/notices
-The original Markdownify code can sometimes raise warnings and notices. Since Symfony doesn't like that, the most pragmatic way to fix this is by silencing the parseString call (ie: putting an `@` in front of it). It would be nice to fix the original code, but without proper unit tests I'm not touching it.
+[&uarr; top](#readme)
 
-## Modifications
-The following modifications have been applied to the original Markdownify code.
 
-* PSR 0 to 2 coding standards fix
-* Organised properties and methods (properties first, then methods)
+
+How to Install
+--------
+
+If you don't have composer, you have to [install it](http://getcomposer.org/doc/01-basic-usage.md#installation).
+
+Add or complete the composer.json file at the root of your repository, like this :
+
+```json
+{
+    "require": {
+        "tzi/markdownify": "2.1.*"
+    }
+}
+```
+
+Markdownify can now be [downloaded via composer](http://getcomposer.org/doc/01-basic-usage.md#installing-dependencies).
+
+[&uarr; top](#readme)
+
+
+
+How to Contribute
+--------
+
+1. Fork the Markdownify repository
+2. Create a new branch for each feature or improvement
+3. Send a pull request from each feature branch to the **develop** branch
+
+If you don't know much about pull request, you can read [the Github article](https://help.github.com/articles/using-pull-requests).
+
+[&uarr; top](#readme)
+
+
+
+Author & Community
+--------
+
+Markdownify is under [LGPL License](http://opensource.org/licenses/LGPL-2.1).
+
+It was created by [Milian Wolff](http://milianw.de).
+
+It was converted to a Symfony Bundle by [Peter Kruithof](https://github.com/pkruithof).
+
+It was converted made accessible by composer without Symfony by [Thomas ZILLIOX](http://zilliox.me).
+
+[&uarr; top](#readme)
