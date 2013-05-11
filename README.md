@@ -1,15 +1,30 @@
 Markdownify [![Build Status](https://travis-ci.org/Pixel418/Markdownify.png)](https://travis-ci.org/Pixel418/Markdownify)
 ===================
 
-The HTML to Markdown converter for PHP: [See the official website](http://milianw.de/projects/markdownify/)
+The HTML to Markdown converter for PHP. [See the official website](http://milianw.de/projects/markdownify/)
 
+1. [Code example](#code-example)
+2. [How to Install](#how-to-install)
+3. [How to Contribute](#how-to-contribute)
+4. [Author & Community](#author--community)
 
 Code example
 --------
 
+# Markdown
+
 ```php
-$md = new Markdownify\Converter;
-echo $md->parseString($htmlInput);
+$converter = new Markdownify\Converter;
+$converter->parseString('<h1>Heading</h1>');
+// Returns: # Heading
+```
+
+# Markdown Extra [Compatible with php-markdown](http://michelf.ca/projects/php-markdown/extra/)
+
+```php
+$converter = new Markdownify\ConverterExtra;
+$converter->parseString('<h1 id="md">Heading</h1>');
+// Returns: # Heading {#md}
 ```
 
 [&uarr; top](#readme)
