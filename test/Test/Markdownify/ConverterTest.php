@@ -159,26 +159,61 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     public function providerCodeConversion()
     {
         $data = array();
-        $data['classic']['html'] = '<p>This is a normal paragraph:</p><pre><code>This is a code block.</code></pre>';
-        $data['classic']['md'] = 'This is a normal paragraph:
+        $data['inline']['html'] = '<p>Use the <code>printf()</code> function.</p>';
+        $data['inline']['md'] = 'Use the `printf()` function.';
+        $data['backtick']['html'] = '<p>A single backtick in a code span: <code>`</code></p>';
+        $data['backtick']['md'] = 'A single backtick in a code span: `` ` ``';
+        $data['double-backtick']['html'] = '<p>A backtick-delimited string in a code span: <code>`foo`</code></p>';
+        $data['double-backtick']['md'] = 'A backtick-delimited string in a code span: `` `foo` ``';
+        $data['inline-html']['html'] = '<p>Please don\'t use any <code>&lt;blink&gt;</code> tags.</p>';
+        $data['inline-html']['md'] = 'Please don\'t use any `<blink>` tags.';
+        $data['pre']['html'] = '<p>This is a normal paragraph:</p><pre><code>This is a code block.</code></pre>';
+        $data['pre']['md'] = 'This is a normal paragraph:
 
     This is a code block.';
-        $data['indentation']['html'] = '<p>Here is an example of AppleScript:</p><pre><code>tell application "Foo"
+        $data['pre-indentation']['html'] = '<p>Here is an example of AppleScript:</p><pre><code>tell application "Foo"
     beep
 end tell
 </code></pre>';
-        $data['indentation']['md'] = 'Here is an example of AppleScript:
+        $data['pre-indentation']['md'] = 'Here is an example of AppleScript:
 
     tell application "Foo"
         beep
     end tell';
-        $data['html']['html'] = '<pre><code>&lt;div class="footer"&gt;
+        $data['pre-html']['html'] = '<pre><code>&lt;div class="footer"&gt;
     &amp;copy; 2004 Foo Corporation
 &lt;/div&gt;
 </code></pre>';
-        $data['html']['md'] = '    <div class="footer">
+        $data['pre-html']['md'] = '    <div class="footer">
         &copy; 2004 Foo Corporation
     </div>';
+
+        return $data;
+    }
+
+
+    /* LINK TEST METHODS
+     *************************************************************************/
+
+    /**
+     * @dataProvider providerLinkConversion
+     */
+    public function testLinkConversion($html, $md)
+    {
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function providerLinkConversion()
+    {
+        $data = array();
+        $data['classic']['html'] = '<p><a href="http://example.net/">This link</a> has no title attribute.</p>';
+        $data['classic']['md'] = '[This link][1] has no title attribute.
+
+ [1]: http://example.net/';
+        $data['title']['html'] = '<p>This is <a href="http://example.com/" title="Title">an example</a> inline link.</p>';
+        $data['title']['md'] = 'This is [an example][1] inline link.
+
+ [1]: http://example.com/ "Title"';
 
         return $data;
     }
