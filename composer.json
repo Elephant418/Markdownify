@@ -1,10 +1,10 @@
 {
-    "name": "tzi/markdownify",
+    "name": "pixel418/markdownify",
     "type": "lib",
     "description": "The HTML to Markdown converter for PHP ",
     "keywords": ["markdown", "markdownify"],
     "license": "MIT",
-    "homepage": "https://github.com/tzi/Markdownify",
+    "homepage": "https://github.com/pixel418/Markdownify",
     "authors": [
         {
             "name": "Milian Wolff",

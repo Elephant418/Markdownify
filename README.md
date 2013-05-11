@@ -25,7 +25,7 @@ Add or complete the composer.json file at the root of your repository, like this
 ```json
 {
     "require": {
-        "tzi/markdownify": "2.1.*"
+        "pixel418/markdownify": "2.1.*"
     }
 }
 ```
