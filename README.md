@@ -11,7 +11,7 @@ The HTML to Markdown converter for PHP. [See the official website](http://milian
 Code example
 --------
 
-# Markdown
+### Markdown
 
 ```php
 $converter = new Markdownify\Converter;
@@ -19,7 +19,7 @@ $converter->parseString('<h1>Heading</h1>');
 // Returns: # Heading
 ```
 
-# Markdown Extra [Compatible with php-markdown](http://michelf.ca/projects/php-markdown/extra/)
+### Markdown Extra [Compatible with php-markdown](http://michelf.ca/projects/php-markdown/extra/)
 
 ```php
 $converter = new Markdownify\ConverterExtra;
