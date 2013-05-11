@@ -19,7 +19,7 @@ $converter->parseString('<h1>Heading</h1>');
 // Returns: # Heading
 ```
 
-### Markdown Extra [Compatible with php-markdown](http://michelf.ca/projects/php-markdown/extra/)
+### Markdown Extra [as defined by @michelf](http://michelf.ca/projects/php-markdown/extra/)
 
 ```php
 $converter = new Markdownify\ConverterExtra;
