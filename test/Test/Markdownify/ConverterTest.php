@@ -136,6 +136,50 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $data['unordered']['md'] = '*   Red
 *   Green
 *   Blue';
+        $data['paragraph']['html'] = '<ul><li><p>Bird</p></li><li><p>Magic</p></li></ul>';
+        $data['paragraph']['md'] = '*   Bird
+
+*   Magic';
+
+        return $data;
+    }
+
+
+    /* CODE TEST METHODS
+     *************************************************************************/
+
+    /**
+     * @dataProvider providerCodeConversion
+     */
+    public function testCodeConversion($html, $md)
+    {
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function providerCodeConversion()
+    {
+        $data = array();
+        $data['classic']['html'] = '<p>This is a normal paragraph:</p><pre><code>This is a code block.</code></pre>';
+        $data['classic']['md'] = 'This is a normal paragraph:
+
+    This is a code block.';
+        $data['indentation']['html'] = '<p>Here is an example of AppleScript:</p><pre><code>tell application "Foo"
+    beep
+end tell
+</code></pre>';
+        $data['indentation']['md'] = 'Here is an example of AppleScript:
+
+    tell application "Foo"
+        beep
+    end tell';
+        $data['html']['html'] = '<pre><code>&lt;div class="footer"&gt;
+    &amp;copy; 2004 Foo Corporation
+&lt;/div&gt;
+</code></pre>';
+        $data['html']['md'] = '    <div class="footer">
+        &copy; 2004 Foo Corporation
+    </div>';
+
         return $data;
     }
 
