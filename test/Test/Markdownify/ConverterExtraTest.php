@@ -31,7 +31,7 @@ class ConverterExtraTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerHeadingConversion
      */
-    public function testHeadingConversionGeneric($level, $attributes=array())
+    public function testHeadingConversion($level, $attributes=array())
     {
         $innerHTML = 'Heading '.$level;
         $md = str_pad('', $level, '#').' '.$innerHTML;
@@ -42,7 +42,7 @@ class ConverterExtraTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerHeadingConversion
      */
-    public function testHeadingConversionGeneric_withIdAttribute($level)
+    public function testHeadingConversion_withIdAttribute($level)
     {
         $innerHTML = 'Heading '.$level;
         $md = str_pad('', $level, '#').' '.$innerHTML.' {#idAttribute}';
