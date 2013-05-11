@@ -245,10 +245,39 @@ end tell
         $data['strong']['md'] = '**double asterisks**';
         $data['strong-backslash']['html'] = '**double asterisks**';
         $data['strong-backslash']['md'] = '\*\*double asterisks\*\*';
+        $data['strong-backslash2']['html'] = '__double asterisks__';
+        $data['strong-backslash2']['md'] = '\_\_double asterisks\_\_';
         $data['em']['html'] = '<em>single asterisks</em>';
         $data['em']['md'] = '*single asterisks*';
         $data['em-backslash']['html'] = '*single asterisks*';
         $data['em-backslash']['md'] = '\*single asterisks\*';
+        $data['em-backslash2']['html'] = '_single asterisks_';
+        $data['em-backslash2']['md'] = '\_single asterisks\_';
+
+        return $data;
+    }
+
+
+    /* RULES TEST METHODS
+     *************************************************************************/
+
+    /**
+     * @dataProvider providerRulesConversion
+     */
+    public function testRulesConversion($html, $md)
+    {
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function providerRulesConversion()
+    {
+        $data = array();
+        $data['hr']['html'] = '<hr>';
+        $data['hr']['md'] = '* * *';
+        $data['escape-']['html'] = '-----------------------------------';
+        $data['escape-']['md'] = '\---\---\---\---\---\---\---\---\---\---\-----';
+        $data['escape-']['html'] = '*****************';
+        $data['escape-']['md'] = '\***\***\***\***\*****';
 
         return $data;
     }
