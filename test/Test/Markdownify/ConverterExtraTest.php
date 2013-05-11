@@ -31,18 +31,22 @@ class ConverterExtraTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerHeadingConversion
      */
-    public function testHeadingConversion($level, $attributes=array())
+    public function testHeadingConversionGeneric($level, $attributes=array())
     {
         $innerHTML = 'Heading '.$level;
-        $attributesHTML = '';
         $md = str_pad('', $level, '#').' '.$innerHTML;
+        $html = '<h'.$level.'>'.$innerHTML.'</h'.$level.'>';
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
 
-        // If there is an id, ConverterExtra will convert it
-        if (isset($attributes['id'])){
-            $md .= ' {#'.$attributes['id'].'}';
-            $attributesHTML .= ' id="'.$attributes['id'].'"';
-        }
-        $html = '<h'.$level.' '.$attributesHTML.'>'.$innerHTML.'</h'.$level.'>';
+    /**
+     * @dataProvider providerHeadingConversion
+     */
+    public function testHeadingConversionGeneric_withIdAttribute($level)
+    {
+        $innerHTML = 'Heading '.$level;
+        $md = str_pad('', $level, '#').' '.$innerHTML.' {#idAttribute}';
+        $html = '<h'.$level.' id="idAttribute">'.$innerHTML.'</h'.$level.'>';
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
@@ -50,17 +54,11 @@ class ConverterExtraTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(1),
-            array(1, array('id' => 'idAttribute')),
             array(2),
-            array(2, array('id' => 'idAttribute')),
             array(3),
-            array(3, array('id' => 'idAttribute')),
             array(4),
-            array(4, array('id' => 'idAttribute')),
             array(5),
-            array(5, array('id' => 'idAttribute')),
-            array(6),
-            array(6, array('id' => 'idAttribute'))
+            array(6)
         );
     }
 }
