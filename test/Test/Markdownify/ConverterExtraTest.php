@@ -28,77 +28,39 @@ class ConverterExtraTest extends \PHPUnit_Framework_TestCase
 
     /* HEADING TEST METHODS
      *************************************************************************/
-    public function testHeadingConversion_Level1()
-    {
-        echo get_class($this).PHP_EOL;
-        $this->_testHeadingConversionGeneric(1);
-    }
-
-    public function testHeadingConversion_Level1_withId()
-    {
-        $this->_testHeadingConversionGeneric(1, array('id' => 'idAttribute'));
-    }
-
-    public function testHeadingConversion_Level2()
-    {
-        $this->_testHeadingConversionGeneric(2);
-    }
-
-    public function testHeadingConversion_Level2_withId()
-    {
-        $this->_testHeadingConversionGeneric(2, array('id' => 'idAttribute'));
-    }
-
-    public function testHeadingConversion_Level3()
-    {
-        $this->_testHeadingConversionGeneric(3);
-    }
-
-    public function testHeadingConversion_Level3_withId()
-    {
-        $this->_testHeadingConversionGeneric(3, array('id' => 'idAttribute'));
-    }
-
-    public function testHeadingConversion_Level4()
-    {
-        $this->_testHeadingConversionGeneric(4);
-    }
-
-    public function testHeadingConversion_Level4_withId()
-    {
-        $this->_testHeadingConversionGeneric(4, array('id' => 'idAttribute'));
-    }
-
-    public function testHeadingConversion_Level5()
-    {
-        $this->_testHeadingConversionGeneric(5);
-    }
-
-    public function testHeadingConversion_Level5_withId()
-    {
-        $this->_testHeadingConversionGeneric(5, array('id' => 'idAttribute'));
-    }
-
-    public function testHeadingConversion_Level6()
-    {
-        $this->_testHeadingConversionGeneric(6);
-    }
-
-    public function testHeadingConversion_Level6_withId()
-    {
-        $this->_testHeadingConversionGeneric(6, array('id' => 'idAttribute'));
-    }
-
-    protected function _testHeadingConversionGeneric($level, $attributes=array())
+    /**
+     * @dataProvider providerHeadingConversion
+     */
+    public function testHeadingConversion($level, $attributes=array())
     {
         $innerHTML = 'Heading '.$level;
         $attributesHTML = '';
         $md = str_pad('', $level, '#').' '.$innerHTML;
+
+        // If there is an id, ConverterExtra will convert it
         if (isset($attributes['id'])){
             $md .= ' {#'.$attributes['id'].'}';
             $attributesHTML .= ' id="'.$attributes['id'].'"';
         }
         $html = '<h'.$level.' '.$attributesHTML.'>'.$innerHTML.'</h'.$level.'>';
         $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function providerHeadingConversion()
+    {
+        return array(
+            array(1),
+            array(1, array('id' => 'idAttribute')),
+            array(2),
+            array(2, array('id' => 'idAttribute')),
+            array(3),
+            array(3, array('id' => 'idAttribute')),
+            array(4),
+            array(4, array('id' => 'idAttribute')),
+            array(5),
+            array(5, array('id' => 'idAttribute')),
+            array(6),
+            array(6, array('id' => 'idAttribute'))
+        );
     }
 }
