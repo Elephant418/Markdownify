@@ -206,14 +206,49 @@ end tell
     public function providerLinkConversion()
     {
         $data = array();
-        $data['classic']['html'] = '<p><a href="http://example.net/">This link</a> has no title attribute.</p>';
-        $data['classic']['md'] = '[This link][1] has no title attribute.
+        $data['url']['html'] = '<p><a href="http://example.net/">This link</a> has no title attribute.</p>';
+        $data['url']['md'] = '[This link][1] has no title attribute.
 
  [1]: http://example.net/';
-        $data['title']['html'] = '<p>This is <a href="http://example.com/" title="Title">an example</a> inline link.</p>';
-        $data['title']['md'] = 'This is [an example][1] inline link.
+        $data['url-title']['html'] = '<p>This is <a href="http://example.com/" title="Title">an example</a> inline link.</p>';
+        $data['url-title']['md'] = 'This is [an example][1] inline link.
 
  [1]: http://example.com/ "Title"';
+        $data['image']['html'] = '<img src="/path/to/img.jpg" alt="Alt text" />';
+        $data['image']['md'] = '![Alt text][1]
+
+ [1]: /path/to/img.jpg';
+        $data['image-title']['html'] = '<img src="/path/to/img.jpg" alt="Alt text" title="Optional title attribute" />';
+        $data['image-title']['md'] = '![Alt text][1]
+
+ [1]: /path/to/img.jpg "Optional title attribute"';
+
+        return $data;
+    }
+
+
+    /* EMPHASIS TEST METHODS
+     *************************************************************************/
+
+    /**
+     * @dataProvider providerEmphasisConversion
+     */
+    public function testEmphasisConversion($html, $md)
+    {
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function providerEmphasisConversion()
+    {
+        $data = array();
+        $data['strong']['html'] = '<strong>double asterisks</strong>';
+        $data['strong']['md'] = '**double asterisks**';
+        $data['strong-backslash']['html'] = '**double asterisks**';
+        $data['strong-backslash']['md'] = '\*\*double asterisks\*\*';
+        $data['em']['html'] = '<em>single asterisks</em>';
+        $data['em']['md'] = '*single asterisks*';
+        $data['em-backslash']['html'] = '*single asterisks*';
+        $data['em-backslash']['md'] = '\*single asterisks\*';
 
         return $data;
     }
