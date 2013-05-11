@@ -171,9 +171,10 @@ class Converter
         '__(?! |_)(.+)(?!<_| )__' => '\_\_$1\_\_', # strong
         '_(?! |_)(.+)(?!<_| )_' => '\_$1\_', # em
         '([-*_])([ ]{0,2}\1){2,}' => '\\\\$0', # hr
-        '`(.+)`' => '\`$1\`', # code
+        '`' => '\`', # code
         '\[(.+)\](\s*\()' => '\[$1\]$2', # links: [text] (url) => [text\] (url)
         '\[(.+)\](\s*)\[(.*)\]' => '\[$1\]$2\[$3\]', # links: [text][id] => [text\][id\]
+        '^#(#{0,5}) ' => '\#$1 ', # header
     );
 
     /**
@@ -238,7 +239,7 @@ class Converter
         $search = array();
         $replace = array();
         foreach ($this->escapeInText as $s => $r) {
-            array_push($search, '#(?<!\\\)' . $s . '#U');
+            array_push($search, '@(?<!\\\)' . $s . '@U');
             array_push($replace, $r);
         }
         $this->escapeInText = array(

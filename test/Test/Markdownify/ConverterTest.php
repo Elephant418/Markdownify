@@ -64,6 +64,24 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @dataProvider providerHeadingConversionEscape
+     */
+    public function testHeadingConversionEscape($html, $md)
+    {
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function providerHeadingConversionEscape()
+    {
+        $data = array();
+        $data['level1']['html'] = '# Heading 1';
+        $data['level1']['md'] = '\# Heading 1';
+        $data['level2']['html'] = '## Heading 2';
+        $data['level2']['md'] = '\## Heading 2';
+        return $data;
+    }
+
 
     /* ESCAPE TEST METHODS
      *************************************************************************/
@@ -161,10 +179,17 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $data = array();
         $data['inline']['html'] = '<p>Use the <code>printf()</code> function.</p>';
         $data['inline']['md'] = 'Use the `printf()` function.';
-        $data['backtick']['html'] = '<p>A single backtick in a code span: <code>`</code></p>';
-        $data['backtick']['md'] = 'A single backtick in a code span: `` ` ``';
-        $data['double-backtick']['html'] = '<p>A backtick-delimited string in a code span: <code>`foo`</code></p>';
-        $data['double-backtick']['md'] = 'A backtick-delimited string in a code span: `` `foo` ``';
+        $data['inline-backtick']['html'] = '<p>A single backtick in a code span: <code>`</code></p>';
+        $data['inline-backtick']['md'] = 'A single backtick in a code span: `` ` ``';
+        $data['inline-doubleBacktick']['html'] = '<p>A backtick-delimited string in a code span: <code>`foo`</code></p>';
+        $data['inline-doubleBacktick']['md'] = 'A backtick-delimited string in a code span: `` `foo` ``';
+        $data['inline-escape']['html'] = 'Use the `printf()` function.';
+        $data['inline-escape']['md'] = 'Use the \`printf()\` function.';
+        $data['inline-backtick-escape']['html'] = 'A single backtick in a code span: `` ` ``';
+        $data['inline-backtick-escape']['md'] = 'A single backtick in a code span: \`\` \` \`\`';
+        $data['inline-doubleBacktick-escape']['html'] = 'A backtick-delimited string in a code span: `` `foo` ``';
+        $data['inline-doubleBacktick-escape']['md'] = 'A backtick-delimited string in a code span: \`\` \`foo\` \`\`';
+        $data['inline']['md'] = 'Use the `printf()` function.';
         $data['inline-html']['html'] = '<p>Please don\'t use any <code>&lt;blink&gt;</code> tags.</p>';
         $data['inline-html']['md'] = 'Please don\'t use any `<blink>` tags.';
         $data['pre']['html'] = '<p>This is a normal paragraph:</p><pre><code>This is a code block.</code></pre>';
@@ -214,6 +239,8 @@ end tell
         $data['url-title']['md'] = 'This is [an example][1] inline link.
 
  [1]: http://example.com/ "Title"';
+        $data['url-escape']['html'] = '[This link](/path)';
+        $data['url-escape']['md'] = '\[This link\](/path)';
         $data['image']['html'] = '<img src="/path/to/img.jpg" alt="Alt text" />';
         $data['image']['md'] = '![Alt text][1]
 
@@ -222,6 +249,8 @@ end tell
         $data['image-title']['md'] = '![Alt text][1]
 
  [1]: /path/to/img.jpg "Optional title attribute"';
+        $data['image-escape']['html'] = '![This link](/path)';
+        $data['image-escape']['md'] = '!\[This link\](/path)';
 
         return $data;
     }
@@ -243,16 +272,16 @@ end tell
         $data = array();
         $data['strong']['html'] = '<strong>double asterisks</strong>';
         $data['strong']['md'] = '**double asterisks**';
-        $data['strong-backslash']['html'] = '**double asterisks**';
-        $data['strong-backslash']['md'] = '\*\*double asterisks\*\*';
-        $data['strong-backslash2']['html'] = '__double asterisks__';
-        $data['strong-backslash2']['md'] = '\_\_double asterisks\_\_';
+        $data['strong-escape']['html'] = '**double asterisks**';
+        $data['strong-escape']['md'] = '\*\*double asterisks\*\*';
+        $data['strong-escape2']['html'] = '__double asterisks__';
+        $data['strong-escape2']['md'] = '\_\_double asterisks\_\_';
         $data['em']['html'] = '<em>single asterisks</em>';
         $data['em']['md'] = '*single asterisks*';
-        $data['em-backslash']['html'] = '*single asterisks*';
-        $data['em-backslash']['md'] = '\*single asterisks\*';
-        $data['em-backslash2']['html'] = '_single asterisks_';
-        $data['em-backslash2']['md'] = '\_single asterisks\_';
+        $data['em-escape']['html'] = '*single asterisks*';
+        $data['em-escape']['md'] = '\*single asterisks\*';
+        $data['em-escape2']['html'] = '_single asterisks_';
+        $data['em-escape2']['md'] = '\_single asterisks\_';
 
         return $data;
     }
