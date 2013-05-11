@@ -23,7 +23,8 @@
     },
     "autoload": {
         "psr-0": {
-            "Markdownify": "src"
+            "Markdownify": "src",
+            "Test\\Markdownify": "test"
         }
     }
 }
