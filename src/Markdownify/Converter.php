@@ -1140,24 +1140,7 @@ class Converter
      */
     protected function decode($text, $quote_style = ENT_QUOTES)
     {
-        if (version_compare(PHP_VERSION, '5', '>=')) {
-            # UTF-8 is only supported in PHP 5.x.x and above
-            $text = html_entity_decode($text, $quote_style, 'UTF-8');
-        } else {
-            if (function_exists('html_entity_decode')) {
-                $text = html_entity_decode($text, $quote_style, 'ISO-8859-1');
-            } else {
-                static $trans_tbl;
-                if (!isset($trans_tbl)) {
-                    $trans_tbl = array_flip(get_html_translation_table(HTML_ENTITIES, $quote_style));
-                }
-                $text = strtr($text, $trans_tbl);
-            }
-            $text = preg_replace_callback('~&#x([0-9a-f]+);~i', array(&$this, '_decode_hex'), $text);
-            $text = preg_replace_callback('~&#(\d{2,5});~', array(&$this, '_decode_numeric'), $text);
-        }
-
-        return $text;
+        return htmlspecialchars_decode($text, $quote_style);
     }
 
     /**

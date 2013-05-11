@@ -89,17 +89,17 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerAutoescapeConversion
      */
-    public function testAutoescapeConversion($html)
+    public function testAutoescapeConversion($html, $md)
     {
-        $this->assertEquals(html_entity_decode($html), $this->converter->parseString($html));
+        $this->assertEquals($md, $this->converter->parseString($html));
     }
 
     public function providerAutoescapeConversion()
     {
         return array(
-            array('AT&amp;T'),
-            array('4 &lt; 5'),
-            array('&copy;')
+            array('AT&amp;T', 'AT&T'),
+            array('4 &lt; 5', '4 < 5'),
+            array('&copy;', '&copy;')
         );
     }
 
