@@ -150,11 +150,11 @@ class Converter
      * @var array<string>
      */
     protected $wrappableIndents = array(
-        '\*   ', # ul
-        '\d.  ', # ol
-        '\d\d. ', # ol
-        '> ', # blockquote
-        '', # p
+        '\*   ', // ul
+        '\d.  ', // ol
+        '\d\d. ', // ol
+        '> ', // blockquote
+        '', // p
     );
 
     /**
@@ -166,15 +166,15 @@ class Converter
      * TODO: what's with block chars / sequences at the beginning of a block?
      */
     protected $escapeInText = array(
-        '\*\*([^*]+)\*\*' => '\*\*$1\*\*', # strong
-        '\*([^*]+)\*' => '\*$1\*', # em
-        '__(?! |_)(.+)(?!<_| )__' => '\_\_$1\_\_', # strong
-        '_(?! |_)(.+)(?!<_| )_' => '\_$1\_', # em
-        '([-*_])([ ]{0,2}\1){2,}' => '\\\\$0', # hr
-        '`' => '\`', # code
-        '\[(.+)\](\s*\()' => '\[$1\]$2', # links: [text] (url) => [text\] (url)
-        '\[(.+)\](\s*)\[(.*)\]' => '\[$1\]$2\[$3\]', # links: [text][id] => [text\][id\]
-        '^#(#{0,5}) ' => '\#$1 ', # header
+        '\*\*([^*]+)\*\*' => '\*\*$1\*\*', // strong
+        '\*([^*]+)\*' => '\*$1\*', // em
+        '__(?! |_)(.+)(?!<_| )__' => '\_\_$1\_\_', // strong
+        '_(?! |_)(.+)(?!<_| )_' => '\_$1\_', // em
+        '([-*_])([ ]{0,2}\1){2,}' => '\\\\$0', // hr
+        '`' => '\`', // code
+        '\[(.+)\](\s*\()' => '\[$1\]$2', // links: [text] (url) => [text\] (url)
+        '\[(.+)\](\s*)\[(.*)\]' => '\[$1\]$2\[$3\]', // links: [text][id] => [text\][id\]
+        '^#(#{0,5}) ' => '\#$1 ', // header
     );
 
     /**
@@ -235,7 +235,7 @@ class Converter
         $this->parser = new Parser;
         $this->parser->noTagsInCode = true;
 
-        # we don't have to do this every time
+        // We don't have to do this every time
         $search = array();
         $replace = array();
         foreach ($this->escapeInText as $s => $r) {
@@ -272,7 +272,7 @@ class Converter
     protected function parse()
     {
         $this->output = '';
-        # drop tags
+        // Drop tags
         $this->parser->html = preg_replace('#<(' . implode('|', $this->drop) . ')[^>]*>.*</\\1>#sU', '', $this->parser->html);
         while ($this->parser->nextNode()) {
             switch ($this->parser->nodeType) {
@@ -285,7 +285,7 @@ class Converter
                         $this->out($this->parser->node);
                         $this->setLineBreaks(2);
                     }
-                    # else drop
+                    // Else drop
                     break;
                 case 'text':
                     $this->handleText();
@@ -298,7 +298,7 @@ class Converter
                         $this->flushLinebreaks();
                     }
                     if ($this->skipConversion) {
-                        $this->isMarkdownable(); # update notConverted
+                        $this->isMarkdownable(); // Update notConverted
                         $this->handleTagToText();
                         continue;
                     }
@@ -341,9 +341,9 @@ class Converter
                 $this->out($this->unbuffer());
             }
         }
-        ### cleanup
-        $this->output = rtrim(str_replace('&amp;', '&', str_replace('&lt;', '<', str_replace('&gt;', '>', $this->output))));
-        # end parsing, flush stacked tags
+        // cleanup
+        $this->output = rtrim(str_replace(array('&amp;', '&lt;', '&gt;'), array('&', '<', '>'), $this->output));
+        // End parsing, flush stacked tags
         $this->flushStacked();
         $this->stack = array();
     }
@@ -357,7 +357,7 @@ class Converter
     protected function isMarkdownable()
     {
         if (!isset($this->isMarkdownable[$this->parser->tagName])) {
-            # simply not markdownable
+            // Simply not markdownable
 
             return false;
         }
@@ -366,14 +366,14 @@ class Converter
             if ($this->keepHTML) {
                 $diff = array_diff(array_keys($this->parser->tagAttributes), array_keys($this->isMarkdownable[$this->parser->tagName]));
                 if (!empty($diff)) {
-                    # non markdownable attributes given
+                    // Non markdownable attributes given
                     $return = false;
                 }
             }
             if ($return) {
                 foreach ($this->isMarkdownable[$this->parser->tagName] as $attr => $type) {
                     if ($type == 'required' && !isset($this->parser->tagAttributes[$attr])) {
-                        # required markdown attribute not given
+                        // Required markdown attribute not given
                         $return = false;
                         break;
                     }
@@ -403,7 +403,7 @@ class Converter
      */
     protected function flushStacked()
     {
-        # links
+        // Links
         foreach ($this->stack as $tag => $a) {
             if (!empty($a) && method_exists($this, 'flushStacked_' . $tag)) {
                 call_user_func(array(&$this, 'flushStacked_' . $tag));
@@ -462,7 +462,7 @@ class Converter
                 $this->setLineBreaks(2);
             }
         } else {
-            # dont convert to markdown inside this tag
+            // Dont convert to markdown inside this tag
             /** TODO: markdown extra **/
             if (!$this->parser->isEmptyTag) {
                 if ($this->parser->isStartTag) {
@@ -479,7 +479,7 @@ class Converter
             if ($this->parser->isBlockElement) {
                 if ($this->parser->isStartTag) {
                     if (in_array($this->parent(), array('ins', 'del'))) {
-                        # looks like ins or del are block elements now
+                        // Looks like ins or del are block elements now
                         $this->out("\n", true);
                         $this->indent('  ');
                     }
@@ -492,7 +492,7 @@ class Converter
                         }
                         $this->parser->html = ltrim($this->parser->html);
                     } else {
-                        # don't indent inside <pre> tags
+                        // Don't indent inside <pre> tags
                         $this->out($this->parser->node);
                         static $indent;
                         $indent = $this->indent;
@@ -506,14 +506,14 @@ class Converter
                         $this->indent('  ');
                         $this->out("\n" . $this->indent . $this->parser->node);
                     } else {
-                        # reset indentation
+                        // Reset indentation
                         $this->out($this->parser->node);
                         static $indent;
                         $this->indent = $indent;
                     }
 
                     if (in_array($this->parent(), array('ins', 'del'))) {
-                        # ins or del was block element
+                        // ins or del was block element
                         $this->out("\n");
                         $this->indent('  ');
                     }
@@ -530,8 +530,8 @@ class Converter
                 if ($this->parser->isStartTag) {
                     $this->buffer();
                 } else {
-                    # add stuff so cleanup just reverses this
-                    $this->out(str_replace('&lt;', '&amp;lt;', str_replace('&gt;', '&amp;gt;', $this->unbuffer())));
+                    // Add stuff so cleanup just reverses this
+                    $this->out(str_replace(array('&lt;', '&gt;'), array('&amp;lt;', '&amp;gt;'), $this->unbuffer()));
                 }
             }
         }
@@ -549,10 +549,10 @@ class Converter
             $this->parser->node = str_replace("\n", "\n" . $this->indent, $this->parser->node);
         }
         if (!$this->hasParent('code') && !$this->hasParent('pre')) {
-            # entity decode
+            // Entity decode
             $this->parser->node = $this->decode($this->parser->node);
             if (!$this->skipConversion) {
-                # escape some chars in normal Text
+                // Escape some chars in normal Text
                 $this->parser->node = preg_replace($this->escapeInText['search'], $this->escapeInText['replace'], $this->parser->node);
             }
         } else {
@@ -709,34 +709,29 @@ class Converter
             $tag = $this->unstack();
             $buffer = $this->unbuffer();
 
+            // Empty links... testcase mania, who would possibly do anything like that?!
             if (empty($tag['href']) && empty($tag['title'])) {
-                # empty links... testcase mania, who would possibly do anything like that?!
                 $this->out('[' . $buffer . ']()', true);
-
                 return;
             }
 
+            // Example: <http://example.com>
             if ($buffer == $tag['href'] && empty($tag['title'])) {
-                # <http://example.com>
                 $this->out('<' . $buffer . '>', true);
-
                 return;
             }
 
+            // Example: <mail@example.com>
             $bufferDecoded = $this->decode(trim($buffer));
             if (substr($tag['href'], 0, 7) == 'mailto:' && 'mailto:' . $bufferDecoded == $tag['href']) {
                 if (is_null($tag['title'])) {
-                    # <mail@example.com>
                     $this->out('<' . $bufferDecoded . '>', true);
-
                     return;
                 }
-                # [mail@example.com][1]
-                # ...
-                #  [1]: mailto:mail@example.com Title
                 $tag['href'] = 'mailto:' . $bufferDecoded;
             }
-            # [This link][id]
+
+            // Example: [This link][id]
             foreach ($this->stack['a'] as $tag2) {
                 if ($tag2['href'] == $tag['href'] && $tag2['title'] === $tag['title']) {
                     $tag['linkID'] = $tag2['linkID'];
@@ -761,7 +756,7 @@ class Converter
     protected function handleTag_img()
     {
         if (!$this->parser->isStartTag) {
-            return; # just to be sure this is really an empty tag...
+            return; // Just to be sure this is really an empty tag...
         }
 
         if (isset($this->parser->tagAttributes['title'])) {
@@ -776,8 +771,8 @@ class Converter
         }
 
         if (empty($this->parser->tagAttributes['src'])) {
-            # support for "empty" images... dunno if this is really needed
-            # but there are some testcases which do that...
+            // Support for "empty" images... dunno if this is really needed
+            // But there are some testcases which do that...
             if (!empty($this->parser->tagAttributes['title'])) {
                 $this->parser->tagAttributes['title'] = ' ' . $this->parser->tagAttributes['title'] . ' ';
             }
@@ -788,7 +783,7 @@ class Converter
             $this->parser->tagAttributes['src'] = $this->decode($this->parser->tagAttributes['src']);
         }
 
-        # [This link][id]
+        // Example: [This link][id]
         $link_id = false;
         if (!empty($this->stack['a'])) {
             foreach ($this->stack['a'] as $tag) {
@@ -823,16 +818,15 @@ class Converter
      */
     protected function handleTag_code()
     {
+        // Ignore code blocks inside <pre>
         if ($this->hasParent('pre')) {
-            # ignore code blocks inside <pre>
-
             return;
         }
         if ($this->parser->isStartTag) {
             $this->buffer();
         } else {
             $buffer = $this->unbuffer();
-            # use as many backticks as needed
+            // Use as many backticks as needed
             preg_match_all('#`+#', $buffer, $matches);
             if (!empty($matches[0])) {
                 rsort($matches[0]);
@@ -863,9 +857,9 @@ class Converter
     protected function handleTag_pre()
     {
         if ($this->keepHTML && $this->parser->isStartTag) {
-            # check if a simple <code> follows
+            // Check if a simple <code> follows
             if (!preg_match('#^\s*<code\s*>#Us', $this->parser->html)) {
-                # this is no standard markdown code block
+                // This is no standard markdown code block
                 $this->handleTagToText();
 
                 return;
@@ -906,7 +900,7 @@ class Converter
         } else {
             $this->unstack();
             if ($this->parent() != 'li' || preg_match('#^\s*(</li\s*>\s*<li\s*>\s*)?<(p|blockquote)\s*>#sU', $this->parser->html)) {
-                # dont make Markdown add unneeded paragraphs
+                // Dont make Markdown add unneeded paragraphs
                 $this->setLineBreaks(2);
             }
         }
@@ -920,7 +914,7 @@ class Converter
      */
     protected function handleTag_ol()
     {
-        # same as above
+        // Same as above
         $this->parser->tagAttributes['num'] = 0;
         $this->handleTag_ul();
     }
@@ -959,8 +953,9 @@ class Converter
      */
     protected function handleTag_hr()
     {
+        // Just to be sure this really is an empty tag
         if (!$this->parser->isStartTag) {
-            return; # just to be sure this really is an empty tag
+            return;
         }
         $this->out('* * *', true);
         $this->setLineBreaks(2);
@@ -1016,7 +1011,7 @@ class Converter
      */
     protected function &getStacked($tagName)
     {
-        // no end() so it can be referenced
+        // No end() so it can be referenced
         return $this->stack[$tagName][count($this->stack[$tagName]) - 1];
     }
 
@@ -1071,7 +1066,8 @@ class Converter
         if (!empty($this->buffer)) {
             $this->buffer[count($this->buffer) - 1] .= $put;
         } else {
-            if ($this->bodyWidth && !$this->parser->keepWhitespace) { # wrap lines
+            // Wrap lines
+            if ($this->bodyWidth && !$this->parser->keepWhitespace) {
                 // get last line
                 $pos = strrpos($this->output, "\n");
                 if ($pos === false) {
@@ -1089,7 +1085,8 @@ class Converter
 
                     return;
                 } else {
-                    $put .= "\n"; # make sure we get all lines in the while below
+                    // Make sure we get all lines in the while below
+                    $put .= "\n";
                     $lineLen = $this->strlen($line);
                     while ($pos = strpos($put, "\n")) {
                         $putLine = substr($put, 0, $pos + 1);
