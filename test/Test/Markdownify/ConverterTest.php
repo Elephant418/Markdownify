@@ -311,4 +311,6 @@ end tell
         return $data;
     }
 
+    /* TODO: Add test about keepHTML with unsupported tag & attributes */
+
 }
