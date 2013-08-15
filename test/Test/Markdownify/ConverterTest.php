@@ -35,7 +35,7 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $innerHTML = 'Heading '.$level;
         $md = str_pad('', $level, '#').' '.$innerHTML;
         $html = '<h'.$level.'>'.$innerHTML.'</h'.$level.'>';
-        $this->assertEquals($md, $this->converter->parseString($html));
+        $this->assertEquals($md, $this->converter->convert($html));
     }
 
     /**
@@ -49,7 +49,7 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
             .'  '.$innerHTML.PHP_EOL
             .'</h'.$level.'>';
         $html = '<h'.$level.' '.$attributesHTML.'>'.$innerHTML.'</h'.$level.'>';
-        $this->assertEquals($md, $this->converter->parseString($html));
+        $this->assertEquals($md, $this->converter->convert($html));
     }
 
     public function providerHeadingConversion()
@@ -69,7 +69,7 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
      */
     public function testHeadingConversionEscape($html, $md)
     {
-        $this->assertEquals($md, $this->converter->parseString($html));
+        $this->assertEquals($md, $this->converter->convert($html));
     }
 
     public function providerHeadingConversionEscape()
@@ -91,7 +91,7 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
      */
     public function testAutoescapeConversion($html, $md)
     {
-        $this->assertEquals($md, $this->converter->parseString($html));
+        $this->assertEquals($md, $this->converter->convert($html));
     }
 
     public function providerAutoescapeConversion()
@@ -112,7 +112,7 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
      */
     public function testBlockquoteConversion($html, $md)
     {
-        $this->assertEquals($md, $this->converter->parseString($html));
+        $this->assertEquals($md, $this->converter->convert($html));
     }
 
     public function providerBlockquoteConversion()
@@ -140,7 +140,7 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
      */
     public function testListConversion($html, $md)
     {
-        $this->assertEquals($md, $this->converter->parseString($html));
+        $this->assertEquals($md, $this->converter->convert($html));
     }
 
     public function providerListConversion()
@@ -171,7 +171,7 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
      */
     public function testCodeConversion($html, $md)
     {
-        $this->assertEquals($md, $this->converter->parseString($html));
+        $this->assertEquals($md, $this->converter->convert($html));
     }
 
     public function providerCodeConversion()
@@ -225,7 +225,7 @@ end tell
      */
     public function testLinkConversion($html, $md)
     {
-        $this->assertEquals($md, $this->converter->parseString($html));
+        $this->assertEquals($md, $this->converter->convert($html));
     }
 
     public function providerLinkConversion()
@@ -264,7 +264,7 @@ end tell
      */
     public function testEmphasisConversion($html, $md)
     {
-        $this->assertEquals($md, $this->converter->parseString($html));
+        $this->assertEquals($md, $this->converter->convert($html));
     }
 
     public function providerEmphasisConversion()
@@ -295,7 +295,7 @@ end tell
      */
     public function testRulesConversion($html, $md)
     {
-        $this->assertEquals($md, $this->converter->parseString($html));
+        $this->assertEquals($md, $this->converter->convert($html));
     }
 
     public function providerRulesConversion()

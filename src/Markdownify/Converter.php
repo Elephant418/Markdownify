@@ -14,79 +14,15 @@ define('MDFY_KEEPHTML', true);
 /**
  * HTML to Markdown converter class
  */
-class Converter
+class Converter extends AbstractConverter
 {
-    /**
-     * html parser object
-     *
-     * @var parseHTML
-     */
-    protected $parser;
-
-    /**
-     * markdown output
-     *
-     * @var string
-     */
-    protected $output;
-
-    /**
-     * stack with tags which where not converted to html
-     *
-     * @var array<string>
-     */
-    protected $notConverted = array();
-
-    /**
-     * skip conversion to markdown
-     *
-     * @var bool
-     */
-    protected $skipConversion = false;
-
-    /* options */
-
-    /**
-     * keep html tags which cannot be converted to markdown
-     *
-     * @var bool
-     */
-    protected $keepHTML = false;
-
-    /**
-     * wrap output, set to 0 to skip wrapping
-     *
-     * @var int
-     */
-    protected $bodyWidth = 0;
-
-    /**
-     * minimum body width
-     *
-     * @var int
-     */
-    protected $minBodyWidth = 25;
-
-    /**
-     * display links after each paragraph
-     *
-     * @var bool
-     */
-    protected $linksAfterEachParagraph = false;
-
-    /**
-     * stores current buffers
-     *
-     * @var array<string>
-     */
-    protected $buffer = array();
 
     /**
      * tags with elements which can be handled by markdown
      *
      * @var array<string>
      */
-    protected $isMarkdownable = array(
+    protected $tagAttributeType = array(
         'p' => array(),
         'ul' => array(),
         'ol' => array(),
@@ -115,32 +51,6 @@ class Converter
         'h5' => array(),
         'h6' => array(),
         'hr' => array(),
-    );
-
-    /**
-     * html tags to be ignored (contents will be parsed)
-     *
-     * @var array<string>
-     */
-    protected $ignore = array(
-        'html',
-        'body',
-    );
-
-    /**
-     * html tags to be dropped (contents will not be parsed!)
-     *
-     * @var array<string>
-     */
-    protected $drop = array(
-        'script',
-        'head',
-        'style',
-        'form',
-        'area',
-        'object',
-        'param',
-        'iframe',
     );
 
     /**
@@ -177,515 +87,95 @@ class Converter
         '^#(#{0,5}) ' => '\#$1 ', // header
     );
 
-    /**
-     * wether last processed node was a block tag or not
-     *
-     * @var bool
-     */
-    protected $lastWasBlockTag = false;
 
-    /**
-     * name of last closed tag
-     *
-     * @var string
-     */
-    protected $lastClosedTag = '';
 
-    /**
-     * number of line breaks before next inline output
-     */
-    protected $lineBreaks = 0;
-
-    /**
-     * node stack, e.g. for <a> and <abbr> tags
-     *
-     * @var array<array>
-     */
-    protected $stack = array();
-
-    /**
-     * current indentation
-     *
-     * @var string
-     */
-    protected $indent = '';
-
-    /**
-     * constructor, set options, setup parser
-     *
-     * @param bool $linksAfterEachParagraph wether or not to flush stacked links after each paragraph
-     *             defaults to false
-     * @param int $bodyWidth wether or not to wrap the output to the given width
-     *             defaults to false
-     * @param bool $keepHTML wether to keep non markdownable HTML or to discard it
-     *             defaults to true (HTML will be kept)
-     * @return void
-     */
-    public function __construct($linksAfterEachParagraph = MDFY_LINKS_EACH_PARAGRAPH, $bodyWidth = MDFY_BODYWIDTH, $keepHTML = MDFY_KEEPHTML)
-    {
-        $this->linksAfterEachParagraph = $linksAfterEachParagraph;
-        $this->keepHTML = $keepHTML;
-
-        if ($bodyWidth > $this->minBodyWidth) {
-            $this->bodyWidth = intval($bodyWidth);
-        } else {
-            $this->bodyWidth = false;
-        }
-
-        $this->parser = new Parser;
-        $this->parser->noTagsInCode = true;
-
-        // We don't have to do this every time
-        $search = array();
-        $replace = array();
-        foreach ($this->escapeInText as $s => $r) {
-            array_push($search, '@(?<!\\\)' . $s . '@U');
-            array_push($replace, $r);
-        }
-        $this->escapeInText = array(
-            'search' => $search,
-            'replace' => $replace
-        );
+    /* PUBLIC METHODS
+     *************************************************************************/
+    public function convert($html) {
+        $compiledText = parent::convert($html);
+        $compiledText = preg_replace("/\n\n+/", "\n\n", $compiledText);
+        $compiledText = rtrim($compiledText);
+        return $compiledText;
     }
 
-    /**
-     * parse a HTML string
-     *
-     * @param string $html
-     * @return string markdown formatted
-     */
-    public function parseString($html)
-    {
-        $this->parser->html = $html;
-        $this->parse();
 
-        return $this->output;
+
+    /* PROTECTED METHODS
+     *************************************************************************/
+
+    // TODO: escapeText & remove space + eol in text
+
+    // <em> and <i> tags
+    protected function convertElement_em($node, &$convertedNode)
+    {
+        $convertedNode->startingText = '*';
+        $convertedNode->endingText = '*';
+    }
+    protected function convertElement_i($node, $convertedNode)
+    {
+        $this->convertElement_em($node, $convertedNode);
     }
 
-    /**
-     * iterate through the nodes and decide what we
-     * shall do with the current node
-     *
-     * @param void
-     * @return void
-     */
-    protected function parse()
+    // <strong> and <b> tags
+    protected function convertElement_strong($node, &$convertedNode)
     {
-        $this->output = '';
-        // Drop tags
-        $this->parser->html = preg_replace('#<(' . implode('|', $this->drop) . ')[^>]*>.*</\\1>#sU', '', $this->parser->html);
-        while ($this->parser->nextNode()) {
-            switch ($this->parser->nodeType) {
-                case 'doctype':
-                    break;
-                case 'pi':
-                case 'comment':
-                    if ($this->keepHTML) {
-                        $this->flushLinebreaks();
-                        $this->out($this->parser->node);
-                        $this->setLineBreaks(2);
-                    }
-                    // Else drop
-                    break;
-                case 'text':
-                    $this->handleText();
-                    break;
-                case 'tag':
-                    if (in_array($this->parser->tagName, $this->ignore)) {
-                        break;
-                    }
-                    if ($this->parser->isStartTag) {
-                        $this->flushLinebreaks();
-                    }
-                    if ($this->skipConversion) {
-                        $this->isMarkdownable(); // Update notConverted
-                        $this->handleTagToText();
-                        continue;
-                    }
-                    if (!$this->parser->keepWhitespace && $this->parser->isBlockElement && $this->parser->isStartTag) {
-                        $this->parser->html = ltrim($this->parser->html);
-                    }
-                    if ($this->isMarkdownable()) {
-                        if ($this->parser->isBlockElement && $this->parser->isStartTag && !$this->lastWasBlockTag && !empty($this->output)) {
-                            if (!empty($this->buffer)) {
-                                $str =& $this->buffer[count($this->buffer) - 1];
-                            } else {
-                                $str =& $this->output;
-                            }
-                            if (substr($str, -strlen($this->indent) - 1) != "\n" . $this->indent) {
-                                $str .= "\n" . $this->indent;
-                            }
-                        }
-                        $func = 'handleTag_' . $this->parser->tagName;
-                        $this->$func();
-                        if ($this->linksAfterEachParagraph && $this->parser->isBlockElement && !$this->parser->isStartTag && empty($this->parser->openTags)) {
-                            $this->flushStacked();
-                        }
-                        if (!$this->parser->isStartTag) {
-                            $this->lastClosedTag = $this->parser->tagName;
-                        }
-                    } else {
-                        $this->handleTagToText();
-                        $this->lastClosedTag = '';
-                    }
-                    break;
-                default:
-                    trigger_error('invalid node type', E_USER_ERROR);
-                    break;
-            }
-            $this->lastWasBlockTag = $this->parser->nodeType == 'tag' && $this->parser->isStartTag && $this->parser->isBlockElement;
-        }
-        if (!empty($this->buffer)) {
-            // trigger_error('buffer was not flushed, this is a bug. please report!', E_USER_WARNING);
-            while (!empty($this->buffer)) {
-                $this->out($this->unbuffer());
-            }
-        }
-        // cleanup
-        $this->output = rtrim(str_replace(array('&amp;', '&lt;', '&gt;'), array('&', '<', '>'), $this->output));
-        // End parsing, flush stacked tags
-        $this->flushStacked();
-        $this->stack = array();
+        $convertedNode->startingText = '**';
+        $convertedNode->endingText = '**';
     }
 
-    /**
-     * check if current tag can be converted to Markdown
-     *
-     * @param void
-     * @return bool
-     */
-    protected function isMarkdownable()
+    protected function convertElement_b($node, &$convertedNode)
     {
-        if (!isset($this->isMarkdownable[$this->parser->tagName])) {
-            // Simply not markdownable
-
-            return false;
-        }
-        if ($this->parser->isStartTag) {
-            $return = true;
-            if ($this->keepHTML) {
-                $diff = array_diff(array_keys($this->parser->tagAttributes), array_keys($this->isMarkdownable[$this->parser->tagName]));
-                if (!empty($diff)) {
-                    // Non markdownable attributes given
-                    $return = false;
-                }
-            }
-            if ($return) {
-                foreach ($this->isMarkdownable[$this->parser->tagName] as $attr => $type) {
-                    if ($type == 'required' && !isset($this->parser->tagAttributes[$attr])) {
-                        // Required markdown attribute not given
-                        $return = false;
-                        break;
-                    }
-                }
-            }
-            if (!$return) {
-                array_push($this->notConverted, $this->parser->tagName . '::' . implode('/', $this->parser->openTags));
-            }
-
-            return $return;
-        } else {
-            if (!empty($this->notConverted) && end($this->notConverted) === $this->parser->tagName . '::' . implode('/', $this->parser->openTags)) {
-                array_pop($this->notConverted);
-
-                return false;
-            }
-
-            return true;
-        }
+        $this->convertElement_strong($node, $convertedNode);
     }
 
-    /**
-     * output all stacked tags
-     *
-     * @param void
-     * @return void
-     */
-    protected function flushStacked()
+    // <h1> to <h6> tags
+    protected function convertElement_h1($node, &$convertedNode)
     {
-        // Links
-        foreach ($this->stack as $tag => $a) {
-            if (!empty($a) && method_exists($this, 'flushStacked_' . $tag)) {
-                call_user_func(array(&$this, 'flushStacked_' . $tag));
-            }
-        }
+        $this->convertElement_h($node, $convertedNode, 1);
     }
 
-    /**
-     * output link references (e.g. [1]: http://example.com "title");
-     *
-     * @param void
-     * @return void
-     */
-    protected function flushStacked_a()
+    protected function convertElement_h2($node, &$convertedNode)
     {
-        $out = false;
-        foreach ($this->stack['a'] as $k => $tag) {
-            if (!isset($tag['unstacked'])) {
-                if (!$out) {
-                    $out = true;
-                    $this->out("\n\n", true);
-                } else {
-                    $this->out("\n", true);
-                }
-                $this->out(' [' . $tag['linkID'] . ']: ' . $tag['href'] . (isset($tag['title']) ? ' "' . $tag['title'] . '"' : ''), true);
-                $tag['unstacked'] = true;
-                $this->stack['a'][$k] = $tag;
-            }
-        }
+        $this->convertElement_h($node, $convertedNode, 2);
     }
 
-    /**
-     * flush enqued linebreaks
-     *
-     * @param void
-     * @return void
-     */
-    protected function flushLinebreaks()
+    protected function convertElement_h3($node, &$convertedNode)
     {
-        if ($this->lineBreaks && !empty($this->output)) {
-            $this->out(str_repeat("\n" . $this->indent, $this->lineBreaks), true);
-        }
-        $this->lineBreaks = 0;
+        $this->convertElement_h($node, $convertedNode, 3);
     }
 
-    /**
-     * handle non Markdownable tags
-     *
-     * @param void
-     * @return void
-     */
-    protected function handleTagToText()
+    protected function convertElement_h4($node, &$convertedNode)
     {
-        if (!$this->keepHTML) {
-            if (!$this->parser->isStartTag && $this->parser->isBlockElement) {
-                $this->setLineBreaks(2);
-            }
-        } else {
-            // Dont convert to markdown inside this tag
-            /** TODO: markdown extra **/
-            if (!$this->parser->isEmptyTag) {
-                if ($this->parser->isStartTag) {
-                    if (!$this->skipConversion) {
-                        $this->skipConversion = $this->parser->tagName . '::' . implode('/', $this->parser->openTags);
-                    }
-                } else {
-                    if ($this->skipConversion == $this->parser->tagName . '::' . implode('/', $this->parser->openTags)) {
-                        $this->skipConversion = false;
-                    }
-                }
-            }
-
-            if ($this->parser->isBlockElement) {
-                if ($this->parser->isStartTag) {
-                    if (in_array($this->parent(), array('ins', 'del'))) {
-                        // Looks like ins or del are block elements now
-                        $this->out("\n", true);
-                        $this->indent('  ');
-                    }
-                    if ($this->parser->tagName != 'pre') {
-                        $this->out($this->parser->node . "\n" . $this->indent);
-                        if (!$this->parser->isEmptyTag) {
-                            $this->indent('  ');
-                        } else {
-                            $this->setLineBreaks(1);
-                        }
-                        $this->parser->html = ltrim($this->parser->html);
-                    } else {
-                        // Don't indent inside <pre> tags
-                        $this->out($this->parser->node);
-                        static $indent;
-                        $indent = $this->indent;
-                        $this->indent = '';
-                    }
-                } else {
-                    if (!$this->parser->keepWhitespace) {
-                        $this->output = rtrim($this->output);
-                    }
-                    if ($this->parser->tagName != 'pre') {
-                        $this->indent('  ');
-                        $this->out("\n" . $this->indent . $this->parser->node);
-                    } else {
-                        // Reset indentation
-                        $this->out($this->parser->node);
-                        static $indent;
-                        $this->indent = $indent;
-                    }
-
-                    if (in_array($this->parent(), array('ins', 'del'))) {
-                        // ins or del was block element
-                        $this->out("\n");
-                        $this->indent('  ');
-                    }
-                    if ($this->parser->tagName == 'li') {
-                        $this->setLineBreaks(1);
-                    } else {
-                        $this->setLineBreaks(2);
-                    }
-                }
-            } else {
-                $this->out($this->parser->node);
-            }
-            if (in_array($this->parser->tagName, array('code', 'pre'))) {
-                if ($this->parser->isStartTag) {
-                    $this->buffer();
-                } else {
-                    // Add stuff so cleanup just reverses this
-                    $this->out(str_replace(array('&lt;', '&gt;'), array('&amp;lt;', '&amp;gt;'), $this->unbuffer()));
-                }
-            }
-        }
+        $this->convertElement_h($node, $convertedNode, 4);
     }
 
-    /**
-     * handle plain text
-     *
-     * @param void
-     * @return void
-     */
-    protected function handleText()
+    protected function convertElement_h5($node, &$convertedNode)
     {
-        if ($this->hasParent('pre') && strpos($this->parser->node, "\n") !== false) {
-            $this->parser->node = str_replace("\n", "\n" . $this->indent, $this->parser->node);
-        }
-        if (!$this->hasParent('code') && !$this->hasParent('pre')) {
-            // Entity decode
-            $this->parser->node = $this->decode($this->parser->node);
-            if (!$this->skipConversion) {
-                // Escape some chars in normal Text
-                $this->parser->node = preg_replace($this->escapeInText['search'], $this->escapeInText['replace'], $this->parser->node);
-            }
-        } else {
-            $this->parser->node = str_replace(array('&quot;', '&apos'), array('"', '\''), $this->parser->node);
-        }
-        $this->out($this->parser->node);
-        $this->lastClosedTag = '';
+        $this->convertElement_h($node, $convertedNode, 5);
     }
 
-    /**
-     * handle <em> and <i> tags
-     *
-     * @param void
-     * @return void
-     */
-    protected function handleTag_em()
+    protected function convertElement_h6($node, &$convertedNode)
     {
-        $this->out('*', true);
+        $this->convertElement_h($node, $convertedNode, 6);
     }
 
-    protected function handleTag_i()
+    protected function convertElement_h($node, &$convertedNode, $level)
     {
-        $this->handleTag_em();
+        $convertedNode->startingText = str_repeat('#', $level).' ';
+        $convertedNode->endingText = PHP_EOL . PHP_EOL;
     }
 
-    /**
-     * handle <strong> and <b> tags
-     *
-     * @param void
-     * @return void
-     */
-    protected function handleTag_strong()
+    // <p> tags
+    protected function convertElement_p($node, &$convertedNode)
     {
-        $this->out('**', true);
+        $convertedNode->endingText = PHP_EOL . PHP_EOL;
     }
 
-    protected function handleTag_b()
+    // <blockquote> tags
+    protected function convertElement_blockquote($node, &$convertedNode)
     {
-        $this->handleTag_strong();
-    }
-
-    /**
-     * handle <h1> tags
-     *
-     * @param void
-     * @return void
-     */
-    protected function handleTag_h1()
-    {
-        $this->handleHeader(1);
-    }
-
-    /**
-     * handle <h2> tags
-     *
-     * @param void
-     * @return void
-     */
-    protected function handleTag_h2()
-    {
-        $this->handleHeader(2);
-    }
-
-    /**
-     * handle <h3> tags
-     *
-     * @param void
-     * @return void
-     */
-    protected function handleTag_h3()
-    {
-        $this->handleHeader(3);
-    }
-
-    /**
-     * handle <h4> tags
-     *
-     * @param void
-     * @return void
-     */
-    protected function handleTag_h4()
-    {
-        $this->handleHeader(4);
-    }
-
-    /**
-     * handle <h5> tags
-     *
-     * @param void
-     * @return void
-     */
-    protected function handleTag_h5()
-    {
-        $this->handleHeader(5);
-    }
-
-    /**
-     * handle <h6> tags
-     *
-     * @param void
-     * @return void
-     */
-    protected function handleTag_h6()
-    {
-        $this->handleHeader(6);
-    }
-
-    /**
-     * handle header tags (<h1> - <h6>)
-     *
-     * @param int $level 1-6
-     * @return void
-     */
-    protected function handleHeader($level)
-    {
-        if ($this->parser->isStartTag) {
-            $this->out(str_repeat('#', $level) . ' ', true);
-        } else {
-            $this->setLineBreaks(2);
-        }
-    }
-
-    /**
-     * handle <p> tags
-     *
-     * @param void
-     * @return void
-     */
-    protected function handleTag_p()
-    {
-        if (!$this->parser->isStartTag) {
-            $this->setLineBreaks(2);
-        }
+        $convertedNode->startingText = '> ';
+        $convertedNode->endingText = PHP_EOL . PHP_EOL;
     }
 
     /**
@@ -874,17 +364,6 @@ class Converter
     }
 
     /**
-     * handle <blockquote> tags
-     *
-     * @param void
-     * @return void
-     */
-    protected function handleTag_blockquote()
-    {
-        $this->indent('> ');
-    }
-
-    /**
      * handle <ul> tags
      *
      * @param void
@@ -971,286 +450,5 @@ class Converter
     {
         $this->out("  \n" . $this->indent, true);
         $this->parser->html = ltrim($this->parser->html);
-    }
-
-    /**
-     * add current node to the stack
-     * this only stores the attributes
-     *
-     * @param void
-     * @return void
-     */
-    protected function stack()
-    {
-        if (!isset($this->stack[$this->parser->tagName])) {
-            $this->stack[$this->parser->tagName] = array();
-        }
-        array_push($this->stack[$this->parser->tagName], $this->parser->tagAttributes);
-    }
-
-    /**
-     * remove current tag from stack
-     *
-     * @param void
-     * @return array
-     */
-    protected function unstack()
-    {
-        if (!isset($this->stack[$this->parser->tagName]) || !is_array($this->stack[$this->parser->tagName])) {
-            trigger_error('Trying to unstack from empty stack. This must not happen.', E_USER_ERROR);
-        }
-
-        return array_pop($this->stack[$this->parser->tagName]);
-    }
-
-    /**
-     * get last stacked element of type $tagName
-     *
-     * @param string $tagName
-     * @return array
-     */
-    protected function &getStacked($tagName)
-    {
-        // No end() so it can be referenced
-        return $this->stack[$tagName][count($this->stack[$tagName]) - 1];
-    }
-
-    /**
-     * set number of line breaks before next start tag
-     *
-     * @param int $number
-     * @return void
-     */
-    protected function setLineBreaks($number)
-    {
-        if ($this->lineBreaks < $number) {
-            $this->lineBreaks = $number;
-        }
-    }
-
-    /**
-     * buffer next parser output until unbuffer() is called
-     *
-     * @param void
-     * @return void
-     */
-    protected function buffer()
-    {
-        array_push($this->buffer, '');
-    }
-
-    /**
-     * end current buffer and return buffered output
-     *
-     * @param void
-     * @return string
-     */
-    protected function unbuffer()
-    {
-        return array_pop($this->buffer);
-    }
-
-    /**
-     * append string to the correct var, either
-     * directly to $this->output or to the current
-     * buffers
-     *
-     * @param string $put
-     * @return void
-     */
-    protected function out($put, $nowrap = false)
-    {
-        if (empty($put)) {
-            return;
-        }
-        if (!empty($this->buffer)) {
-            $this->buffer[count($this->buffer) - 1] .= $put;
-        } else {
-            // Wrap lines
-            if ($this->bodyWidth && !$this->parser->keepWhitespace) {
-                // get last line
-                $pos = strrpos($this->output, "\n");
-                if ($pos === false) {
-                    $line = $this->output;
-                } else {
-                    $line = substr($this->output, $pos);
-                }
-
-                if ($nowrap) {
-                    if ($put[0] != "\n" && $this->strlen($line) + $this->strlen($put) > $this->bodyWidth) {
-                        $this->output .= "\n" . $this->indent . $put;
-                    } else {
-                        $this->output .= $put;
-                    }
-
-                    return;
-                } else {
-                    // Make sure we get all lines in the while below
-                    $put .= "\n";
-                    $lineLen = $this->strlen($line);
-                    while ($pos = strpos($put, "\n")) {
-                        $putLine = substr($put, 0, $pos + 1);
-                        $put = substr($put, $pos + 1);
-                        $putLen = $this->strlen($putLine);
-                        if ($lineLen + $putLen < $this->bodyWidth) {
-                            $this->output .= $putLine;
-                            $lineLen = $putLen;
-                        } else {
-                            $split = preg_split('#^(.{0,' . ($this->bodyWidth - $lineLen) . '})\b#', $putLine, 2, PREG_SPLIT_OFFSET_CAPTURE | PREG_SPLIT_DELIM_CAPTURE);
-                            $this->output .= rtrim($split[1][0]) . "\n" . $this->indent . $this->wordwrap(ltrim($split[2][0]), $this->bodyWidth, "\n" . $this->indent, false);
-                        }
-                    }
-                    $this->output = substr($this->output, 0, -1);
-
-                    return;
-                }
-            } else {
-                $this->output .= $put;
-            }
-        }
-    }
-
-    /**
-     * indent next output (start tag) or unindent (end tag)
-     *
-     * @param string $str indentation
-     * @param bool $output add indendation to output
-     * @return void
-     */
-    protected function indent($str, $output = true)
-    {
-        if ($this->parser->isStartTag) {
-            $this->indent .= $str;
-            if ($output) {
-                $this->out($str, true);
-            }
-        } else {
-            $this->indent = substr($this->indent, 0, -strlen($str));
-        }
-    }
-
-    /**
-     * decode email addresses
-     *
-     * @author derernst@gmx.ch <http://www.php.net/manual/en/function.html-entity-decode.php#68536>
-     * @author Milian Wolff <http://milianw.de>
-     */
-    protected function decode($text, $quote_style = ENT_QUOTES)
-    {
-        return htmlspecialchars_decode($text, $quote_style);
-    }
-
-    /**
-     * callback for decode() which converts a hexadecimal entity to UTF-8
-     *
-     * @param array $matches
-     * @return string UTF-8 encoded
-     */
-    protected function _decode_hex($matches)
-    {
-        return $this->unichr(hexdec($matches[1]));
-    }
-
-    /**
-     * callback for decode() which converts a numerical entity to UTF-8
-     *
-     * @param array $matches
-     * @return string UTF-8 encoded
-     */
-    protected function _decode_numeric($matches)
-    {
-        return $this->unichr($matches[1]);
-    }
-
-    /**
-     * UTF-8 chr() which supports numeric entities
-     *
-     * @author grey - greywyvern - com <http://www.php.net/manual/en/function.chr.php#55978>
-     * @param array $matches
-     * @return string UTF-8 encoded
-     */
-    protected function unichr($dec)
-    {
-        if ($dec < 128) {
-            $utf = chr($dec);
-        } elseif ($dec < 2048) {
-            $utf = chr(192 + (($dec - ($dec % 64)) / 64));
-            $utf .= chr(128 + ($dec % 64));
-        } else {
-            $utf = chr(224 + (($dec - ($dec % 4096)) / 4096));
-            $utf .= chr(128 + ((($dec % 4096) - ($dec % 64)) / 64));
-            $utf .= chr(128 + ($dec % 64));
-        }
-
-        return $utf;
-    }
-
-    /**
-     * UTF-8 strlen()
-     *
-     * @param string $str
-     * @return int
-     *
-     * @author dtorop 932 at hotmail dot com <http://www.php.net/manual/en/function.strlen.php#37975>
-     * @author Milian Wolff <http://milianw.de>
-     */
-    protected function strlen($str)
-    {
-        if (function_exists('mb_strlen')) {
-            return mb_strlen($str, 'UTF-8');
-        } else {
-            return preg_match_all('/[\x00-\x7F\xC0-\xFD]/', $str, $var_empty);
-        }
-    }
-
-    /**
-     * wordwrap for utf8 encoded strings
-     *
-     * @param string $str
-     * @param integer $len
-     * @param string $what
-     * @return string
-     */
-    protected function wordwrap($str, $width, $break, $cut = false)
-    {
-        if (!$cut) {
-            $regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){1,' . $width . '}\b#';
-        } else {
-            $regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){' . $width . '}#';
-        }
-        $return = '';
-        while (preg_match($regexp, $str, $matches)) {
-            $string = $matches[0];
-            $str = ltrim(substr($str, strlen($string)));
-            if (!$cut && isset($str[0]) && in_array($str[0], array('.', '!', ';', ':', '?', ','))) {
-                $string .= $str[0];
-                $str = ltrim(substr($str, 1));
-            }
-            $return .= $string . $break;
-        }
-
-        return $return . ltrim($str);
-    }
-
-    /**
-     * check if current node has a $tagName as parent (somewhere, not only the direct parent)
-     *
-     * @param string $tagName
-     * @return bool
-     */
-    protected function hasParent($tagName)
-    {
-        return in_array($tagName, $this->parser->openTags);
-    }
-
-    /**
-     * get tagName of direct parent tag
-     *
-     * @param void
-     * @return string $tagName
-     */
-    protected function parent()
-    {
-        return end($this->parser->openTags);
     }
 }
