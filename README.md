@@ -1,4 +1,4 @@
-Markdownify [![Build Status](https://travis-ci.org/Pixel418/Markdownify.png)](https://travis-ci.org/Pixel418/Markdownify)
+Markdownify [![Build Status](https://travis-ci.org/Pixel418/Markdownify.png?branch=master)](https://travis-ci.org/Pixel418/Markdownify)
 ===================
 
 The HTML to Markdown converter for PHP. [See the official website](http://milianw.de/projects/markdownify/)
