@@ -70,6 +70,6 @@ Author & Community
 Markdownify is under [LGPL License](http://opensource.org/licenses/LGPL-2.1).<br>
 It was created by [Milian Wolff](http://milianw.de).<br>
 It was converted to a Symfony Bundle by [Peter Kruithof](https://github.com/pkruithof).<br>
-It was made accessible by composer without Symfony by [Thomas ZILLIOX](http://zilliox.me).
+It was made accessible by composer without Symfony by [Thomas ZILLIOX](http://tzi.fr).
 
 [&uarr; top](#readme)
