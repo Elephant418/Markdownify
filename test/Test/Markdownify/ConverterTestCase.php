@@ -22,38 +22,31 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerHeadingConversion
      */
-    public function testHeadingConversion($level, $attributes=array())
+    public function testHeadingConversion_withAttribute($level, $attributesHTML)
     {
         $innerHTML = 'Heading '.$level;
-        $md = str_pad('', $level, '#').' '.$innerHTML;
-        $html = '<h'.$level.'>'.$innerHTML.'</h'.$level.'>';
-        $this->assertEquals($md, $this->converter->parseString($html));
-    }
-
-    /**
-     * @dataProvider providerHeadingConversion
-     */
-    public function testHeadingConversion_withIdAttribute($level)
-    {
-        $innerHTML = 'Heading '.$level;
-        $attributesHTML = ' id="idAttribute"';
-        $md = '<h'.$level.' '.$attributesHTML.'>'.PHP_EOL
-            .'  '.$innerHTML.PHP_EOL
-            .'</h'.$level.'>';
-        $html = '<h'.$level.' '.$attributesHTML.'>'.$innerHTML.'</h'.$level.'>';
+        if (empty($attributesHTML)) {
+            $md = str_pad('', $level, '#').' '.$innerHTML;
+        } else {
+            $md = '<h'.$level.$attributesHTML.'>'.PHP_EOL
+                .'  '.$innerHTML.PHP_EOL
+                .'</h'.$level.'>';
+        }
+        $html = '<h'.$level.$attributesHTML.'>'.$innerHTML.'</h'.$level.'>';
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
     public function providerHeadingConversion()
     {
-        return array(
-            array(1),
-            array(2),
-            array(3),
-            array(4),
-            array(5),
-            array(6)
-        );
+        $attributes = array(' id="idAttribute"', ' class=" class1  class2 "');
+        $data = array();
+        for ($i=1; $i<=6; $i++) {
+            $data[] = array($i, '');
+            $data[] = array($i, $attributes[0]);
+            $data[] = array($i, $attributes[1]);
+            $data[] = array($i, $attributes[0].$attributes[1]);
+        } 
+        return $data;
     }
 
     /**

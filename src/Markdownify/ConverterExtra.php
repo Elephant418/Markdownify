@@ -6,8 +6,6 @@ namespace Markdownify;
 
 class ConverterExtra extends Converter
 {
-    protected static $id = null;
-    protected static $class = null;
 
     /**
      * table data, including rows with content and the maximum width of each col
@@ -40,11 +38,17 @@ class ConverterExtra extends Converter
         ### new markdownable tags & attributes
         # header ids: # foo {bar}
         $this->isMarkdownable['h1']['id'] = 'optional';
+        $this->isMarkdownable['h1']['class'] = 'optional';
         $this->isMarkdownable['h2']['id'] = 'optional';
+        $this->isMarkdownable['h2']['class'] = 'optional';
         $this->isMarkdownable['h3']['id'] = 'optional';
+        $this->isMarkdownable['h3']['class'] = 'optional';
         $this->isMarkdownable['h4']['id'] = 'optional';
+        $this->isMarkdownable['h4']['class'] = 'optional';
         $this->isMarkdownable['h5']['id'] = 'optional';
+        $this->isMarkdownable['h5']['class'] = 'optional';
         $this->isMarkdownable['h6']['id'] = 'optional';
+        $this->isMarkdownable['h6']['class'] = 'optional';
         # tables
         $this->isMarkdownable['table'] = array();
         $this->isMarkdownable['th'] = array(
@@ -112,13 +116,13 @@ class ConverterExtra extends Converter
     protected function handleHeader($level)
     {
         if ($this->parser->isStartTag) {
-            if (isset($this->parser->tagAttributes['id'])) {
-                static::$id = $this->parser->tagAttributes['id'];
-            }
+            $this->parser->tagAttributes['cssSelector'] = $this->getCurrentCssSelector();
+            $this->stack();
         } else {
-            if (!is_null(static::$id)) {
-                $this->out(' {#' . static::$id . '}');
-                static::$id = null;
+            $tag = $this->unstack();
+            if (!empty($tag['cssSelector'])) {
+                # {#id.class}
+                $this->out(' {'.$tag['cssSelector'].'}');
             }
         }
         parent::handleHeader($level);

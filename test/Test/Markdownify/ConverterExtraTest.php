@@ -25,12 +25,25 @@ class ConverterExtraTest extends ConverterTestCase
     /**
      * @dataProvider providerHeadingConversion
      */
-    public function testHeadingConversion_withIdAttribute($level)
+    public function testHeadingConversion_withAttribute($level, $attributesHTML, $attributesMD)
     {
         $innerHTML = 'Heading '.$level;
-        $md = str_pad('', $level, '#').' '.$innerHTML.' {#idAttribute}';
-        $html = '<h'.$level.' id="idAttribute">'.$innerHTML.'</h'.$level.'>';
+        $md = str_pad('', $level, '#').' '.$innerHTML.$attributesMD;
+        $html = '<h'.$level.$attributesHTML.'>'.$innerHTML.'</h'.$level.'>';
         $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function providerHeadingConversion()
+    {
+        $attributes = array(' id="idAttribute"', ' class=" class1  class2 "');
+        $data = array();
+        for ($i=1; $i<=6; $i++) {
+            $data[] = array($i, '', '');
+            $data[] = array($i, $attributes[0], ' {#idAttribute}');
+            $data[] = array($i, $attributes[1], ' {.class1.class2}');
+            $data[] = array($i, $attributes[0].$attributes[1], ' {#idAttribute.class1.class2}');
+        }
+        return $data;
     }
 
 
