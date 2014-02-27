@@ -40,8 +40,23 @@ class ConverterExtraTest extends ConverterTestCase
     {
         $data = parent::providerLinkConversion();
 
+        // Link with href + title + id attributes
+        $data['url-title-id']['md'] = 'This is [an example][1]{#myLink} inline link.
+
+ [1]: http://example.com/ "Title"';
+
         // Link with href + title + class attributes
         $data['url-title-class']['md'] = 'This is [an example][1]{.external} inline link.
+
+ [1]: http://example.com/ "Title"';
+
+        // Link with href + title + multiple classes attributes
+        $data['url-title-multiple-class']['md'] = 'This is [an example][1]{.class1.class2} inline link.
+
+ [1]: http://example.com/ "Title"';
+
+        // Link with href + title + multiple classes attributes
+        $data['url-title-multiple-class-id']['md'] = 'This is [an example][1]{#myLink.class1.class2} inline link.
 
  [1]: http://example.com/ "Title"';
 

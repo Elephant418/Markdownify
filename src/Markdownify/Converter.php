@@ -698,58 +698,75 @@ class Converter
     {
         if ($this->parser->isStartTag) {
             $this->buffer();
-            if (isset($this->parser->tagAttributes['title'])) {
-                $this->parser->tagAttributes['title'] = $this->decode($this->parser->tagAttributes['title']);
-            } else {
-                $this->parser->tagAttributes['title'] = null;
-            }
-            $this->parser->tagAttributes['href'] = $this->decode(trim($this->parser->tagAttributes['href']));
+            $this->handleTag_a_parser();
             $this->stack();
         } else {
             $tag = $this->unstack();
             $buffer = $this->unbuffer();
-
-            if (empty($tag['href']) && empty($tag['title'])) {
-                # empty links... testcase mania, who would possibly do anything like that?!
-                $this->out('[' . $buffer . ']()', true);
-
-                return;
-            }
-
-            if ($buffer == $tag['href'] && empty($tag['title'])) {
-                # <http://example.com>
-                $this->out('<' . $buffer . '>', true);
-
-                return;
-            }
-
-            $bufferDecoded = $this->decode(trim($buffer));
-            if (substr($tag['href'], 0, 7) == 'mailto:' && 'mailto:' . $bufferDecoded == $tag['href']) {
-                if (is_null($tag['title'])) {
-                    # <mail@example.com>
-                    $this->out('<' . $bufferDecoded . '>', true);
-
-                    return;
-                }
-                # [mail@example.com][1]
-                # ...
-                #  [1]: mailto:mail@example.com Title
-                $tag['href'] = 'mailto:' . $bufferDecoded;
-            }
-            # [This link][id]
-            foreach ($this->stack['a'] as $tag2) {
-                if ($tag2['href'] == $tag['href'] && $tag2['title'] === $tag['title']) {
-                    $tag['linkID'] = $tag2['linkID'];
-                    break;
-                }
-            }
-            if (!isset($tag['linkID'])) {
-                $tag['linkID'] = count($this->stack['a']) + 1;
-                array_push($this->stack['a'], $tag);
-            }
-
-            $this->out('[' . $buffer . '][' . $tag['linkID'] . ']', true);
+            $this->handleTag_a_converter($tag, $buffer);
+            $this->out($this->handleTag_a_converter($tag, $buffer), true);
         }
+    }
+
+    /**
+     * handle <a> tags parsing
+     *
+     * @param void
+     * @return void
+     */
+    protected function handleTag_a_parser()
+    {
+        if (isset($this->parser->tagAttributes['title'])) {
+            $this->parser->tagAttributes['title'] = $this->decode($this->parser->tagAttributes['title']);
+        } else {
+            $this->parser->tagAttributes['title'] = null;
+        }
+        $this->parser->tagAttributes['href'] = $this->decode(trim($this->parser->tagAttributes['href']));
+    }
+
+    /**
+     * handle <a> tags conversion
+     *
+     * @param array $tag
+     * @param string $buffer
+     * @return string The markdownified link
+     */
+    protected function handleTag_a_converter($tag, $buffer)
+    {
+        if (empty($tag['href']) && empty($tag['title'])) {
+            # empty links... testcase mania, who would possibly do anything like that?!
+            return '[' . $buffer . ']()';
+        }
+
+        if ($buffer == $tag['href'] && empty($tag['title'])) {
+            # <http://example.com>
+            return '<' . $buffer . '>';
+        }
+
+        $bufferDecoded = $this->decode(trim($buffer));
+        if (substr($tag['href'], 0, 7) == 'mailto:' && 'mailto:' . $bufferDecoded == $tag['href']) {
+            if (is_null($tag['title'])) {
+                # <mail@example.com>
+                return '<' . $bufferDecoded . '>';
+            }
+            # [mail@example.com][1]
+            # ...
+            #  [1]: mailto:mail@example.com Title
+            $tag['href'] = 'mailto:' . $bufferDecoded;
+        }
+        # [This link][id]
+        foreach ($this->stack['a'] as $tag2) {
+            if ($tag2['href'] == $tag['href'] && $tag2['title'] === $tag['title']) {
+                $tag['linkID'] = $tag2['linkID'];
+                break;
+            }
+        }
+        if (!isset($tag['linkID'])) {
+            $tag['linkID'] = count($this->stack['a']) + 1;
+            array_push($this->stack['a'], $tag);
+        }
+
+        return '[' . $buffer . '][' . $tag['linkID'] . ']';
     }
 
     /**
@@ -1061,6 +1078,7 @@ class Converter
      * buffers
      *
      * @param string $put
+     * @param boolean $nowrap 
      * @return void
      */
     protected function out($put, $nowrap = false)

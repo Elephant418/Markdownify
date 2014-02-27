@@ -7,6 +7,7 @@ namespace Markdownify;
 class ConverterExtra extends Converter
 {
     protected static $id = null;
+    protected static $class = null;
 
     /**
      * table data, including rows with content and the maximum width of each col
@@ -60,6 +61,9 @@ class ConverterExtra extends Converter
         $this->isMarkdownable['dl'] = array();
         $this->isMarkdownable['dd'] = array();
         $this->isMarkdownable['dt'] = array();
+        # link class
+        $this->isMarkdownable['a']['id'] = 'optional';
+        $this->isMarkdownable['a']['class'] = 'optional';
         # footnotes
         $this->isMarkdownable['fnref'] = array(
             'target' => 'required',
@@ -118,6 +122,36 @@ class ConverterExtra extends Converter
             }
         }
         parent::handleHeader($level);
+    }
+
+    /**
+     * handle <a> tags parsing
+     *
+     * @param void
+     * @return void
+     */
+    protected function handleTag_a_parser()
+    {
+        parent::handleTag_a_parser();
+        $this->parser->tagAttributes['cssSelector'] = $this->getCurrentCssSelector();
+    }
+
+    /**
+     * handle <a> tags conversion
+     *
+     * @param array $tag
+     * @param string $buffer
+     * @return string The markdownified link
+     */
+    protected function handleTag_a_converter($tag, $buffer)
+    {
+        $output = parent::handleTag_a_converter($tag, $buffer);
+        if (!empty($tag['cssSelector'])) {
+            # [This link][id]{#id.class}
+            $output .= '{'.$tag['cssSelector'].'}';
+        }
+
+        return $output;
     }
 
     /**
@@ -502,5 +536,25 @@ class ConverterExtra extends Converter
         $fns = '<footnotes>' . $fns . '</footnotes>';
 
         return preg_replace('#</li>\s*(?=(?:<fn|</footnotes>))#s', '</fn>$1', $fns);
+    }
+
+    /**
+     * handle <a> tags parsing
+     *
+     * @param void
+     * @return void
+     */
+    protected function getCurrentCssSelector()
+    {
+        $cssSelector = '';
+        if (isset($this->parser->tagAttributes['id'])) {
+            $cssSelector .= '#'.$this->decode($this->parser->tagAttributes['id']);
+        }
+        if (isset($this->parser->tagAttributes['class'])) {
+            $classes = explode(' ', $this->decode($this->parser->tagAttributes['class']));
+            $classes = array_filter($classes);
+            $cssSelector .= '.'.join('.', $classes);
+        }
+        return $cssSelector;
     }
 }

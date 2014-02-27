@@ -236,9 +236,21 @@ end tell
 
  [1]: http://example.com/ "Title"';
 
+        // Link with href + title + id attributes
+        $data['url-title-id']['html'] = '<p>This is <a href="http://example.com/" title="Title" id="myLink">an example</a> inline link.</p>';
+        $data['url-title-id']['md'] = 'This is <a href="http://example.com/" title="Title" id="myLink">an example</a> inline link.';
+
         // Link with href + title + class attributes
         $data['url-title-class']['html'] = '<p>This is <a href="http://example.com/" title="Title" class="external">an example</a> inline link.</p>';
         $data['url-title-class']['md'] = 'This is <a href="http://example.com/" title="Title" class="external">an example</a> inline link.';
+
+        // Link with href + title + multiple classes attributes
+        $data['url-title-multiple-class']['html'] = '<p>This is <a href="http://example.com/" title="Title" class=" class1  class2 ">an example</a> inline link.</p>';
+        $data['url-title-multiple-class']['md'] = 'This is <a href="http://example.com/" title="Title" class=" class1  class2 ">an example</a> inline link.';
+
+        // Link with href + title + multiple classes + id attributes
+        $data['url-title-multiple-class-id']['html'] = '<p>This is <a href="http://example.com/" title="Title" class=" class1  class2 " id="myLink">an example</a> inline link.</p>';
+        $data['url-title-multiple-class-id']['md'] = 'This is <a href="http://example.com/" title="Title" class=" class1  class2 " id="myLink">an example</a> inline link.';
         
         // Escaped link 
         $data['url-escape']['html'] = '[This link](/path)';
