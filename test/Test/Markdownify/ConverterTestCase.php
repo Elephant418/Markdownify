@@ -233,12 +233,12 @@ end tell
         // Link with href + title attributes
         $data['url-title']['html'] = '<p>This is <a href="http://example.com/" title="Title">an example</a> inline link.</p>';
         $data['url-title']['md'] = 'This is [an example][1] inline link.
-attribute
+
  [1]: http://example.com/ "Title"';
 
         // Link with href + title + class attributes
-        $data['url-title']['html'] = '<p>This is <a href="http://example.com/" title="Title" class="external">an example</a> inline link.</p>';
-        $data['url-title']['md'] = 'This is <a href="http://example.com/" title="Title" class="external">an example</a> inline link.';
+        $data['url-title-class']['html'] = '<p>This is <a href="http://example.com/" title="Title" class="external">an example</a> inline link.</p>';
+        $data['url-title-class']['md'] = 'This is <a href="http://example.com/" title="Title" class="external">an example</a> inline link.';
         
         // Escaped link 
         $data['url-escape']['html'] = '[This link](/path)';
