@@ -8,14 +8,8 @@ use Markdownify\ConverterExtra;
 
 require_once(__DIR__ . '/../../../vendor/autoload.php');
 
-class ConverterExtraTest extends \PHPUnit_Framework_TestCase
+class ConverterExtraTest extends ConverterTestCase
 {
-
-
-    /* ATTRIBUTES
-     *************************************************************************/
-    protected $converter;
-
 
 
     /* UTILS
@@ -31,17 +25,6 @@ class ConverterExtraTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerHeadingConversion
      */
-    public function testHeadingConversion($level, $attributes=array())
-    {
-        $innerHTML = 'Heading '.$level;
-        $md = str_pad('', $level, '#').' '.$innerHTML;
-        $html = '<h'.$level.'>'.$innerHTML.'</h'.$level.'>';
-        $this->assertEquals($md, $this->converter->parseString($html));
-    }
-
-    /**
-     * @dataProvider providerHeadingConversion
-     */
     public function testHeadingConversion_withIdAttribute($level)
     {
         $innerHTML = 'Heading '.$level;
@@ -50,15 +33,18 @@ class ConverterExtraTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
-    public function providerHeadingConversion()
+
+    /* LINK TEST METHODS
+     *************************************************************************/
+    public function providerLinkConversion()
     {
-        return array(
-            array(1),
-            array(2),
-            array(3),
-            array(4),
-            array(5),
-            array(6)
-        );
+        $data = parent::providerLinkConversion();
+
+        // Link with href + title + class attributes
+        $data['url-title']['md'] = 'This is [an example][1]{.external} inline link.
+attribute
+ [1]: http://example.com/ "Title"';
+
+        return $data;
     }
 }
