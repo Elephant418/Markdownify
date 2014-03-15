@@ -222,6 +222,14 @@ end tell
         $data['url']['md'] = '[This link][1] has no title attribute.
 
  [1]: http://example.net/';
+
+        // Empty link
+        $data['url-empty']['html'] = '<p><a href="">This link</a>.</p>';
+        $data['url-empty']['md'] = '[This link]().';
+
+        // Direct link
+        $data['url-direct']['html'] = '<p><a href="http://example.com">http://example.com</a>.</p>';
+        $data['url-direct']['md'] = '<http://example.com>.';
         
         // Link with href + title attributes
         $data['url-title']['html'] = '<p>This is <a href="http://example.com/" title="Title">an example</a> inline link.</p>';
@@ -264,6 +272,13 @@ end tell
         // Escaped image
         $data['image-escape']['html'] = '![This link](/path)';
         $data['image-escape']['md'] = '!\[This link\](/path)';
+
+        // Image & Link
+        $data['image-url']['html'] = '<p><a href="http://google.com"><img src="http://www.fillmurray.com/g/200/300"></a></p>';
+        $data['image-url']['md'] = '[![][1]][2]
+
+ [1]: http://www.fillmurray.com/g/200/300
+ [2]: http://google.com';
 
         return $data;
     }
