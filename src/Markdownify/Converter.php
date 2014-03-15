@@ -82,6 +82,13 @@ class Converter
     protected $buffer = array();
 
     /**
+     * stores current buffers
+     *
+     * @var array<string>
+     */
+    protected $footnotes = array();
+
+    /**
      * tags with elements which can be handled by markdown
      *
      * @var array<string>
@@ -319,7 +326,7 @@ class Converter
                         $func = 'handleTag_' . $this->parser->tagName;
                         $this->$func();
                         if ($this->linksAfterEachParagraph && $this->parser->isBlockElement && !$this->parser->isStartTag && empty($this->parser->openTags)) {
-                            $this->flushStacked();
+                            $this->flushFootnotes();
                         }
                         if (!$this->parser->isStartTag) {
                             $this->lastClosedTag = $this->parser->tagName;
@@ -344,7 +351,7 @@ class Converter
         ### cleanup
         $this->output = rtrim(str_replace('&amp;', '&', str_replace('&lt;', '<', str_replace('&gt;', '>', $this->output))));
         # end parsing, flush stacked tags
-        $this->flushStacked();
+        $this->flushFootnotes();
         $this->stack = array();
     }
 
@@ -396,31 +403,15 @@ class Converter
     }
 
     /**
-     * output all stacked tags
+     * output footnotes
      *
      * @param void
      * @return void
      */
-    protected function flushStacked()
-    {
-        # links
-        foreach ($this->stack as $tag => $a) {
-            if (!empty($a) && method_exists($this, 'flushStacked_' . $tag)) {
-                call_user_func(array(&$this, 'flushStacked_' . $tag));
-            }
-        }
-    }
-
-    /**
-     * output link references (e.g. [1]: http://example.com "title");
-     *
-     * @param void
-     * @return void
-     */
-    protected function flushStacked_a()
+    protected function flushFootnotes()
     {
         $out = false;
-        foreach ($this->stack['a'] as $k => $tag) {
+        foreach ($this->footnotes as $k => $tag) {
             if (!isset($tag['unstacked'])) {
                 if (!$out) {
                     $out = true;
@@ -430,7 +421,7 @@ class Converter
                 }
                 $this->out(' [' . $tag['linkID'] . ']: ' . $tag['href'] . (isset($tag['title']) ? ' "' . $tag['title'] . '"' : ''), true);
                 $tag['unstacked'] = true;
-                $this->stack['a'][$k] = $tag;
+                $this->footnotes[$k] = $tag;
             }
         }
     }
@@ -755,16 +746,17 @@ class Converter
             $tag['href'] = 'mailto:' . $bufferDecoded;
         }
         # [This link][id]
-        foreach ($this->stack['a'] as $tag2) {
+        foreach ($this->footnotes as $tag2) {
             if ($tag2['href'] == $tag['href'] && $tag2['title'] === $tag['title']) {
                 $tag['linkID'] = $tag2['linkID'];
                 break;
             }
         }
         if (!isset($tag['linkID'])) {
-            $tag['linkID'] = count($this->stack['a']) + 1;
-            array_push($this->stack['a'], $tag);
+            $tag['linkID'] = count($this->footnotes) + 1;
+            array_push($this->footnotes, $tag);
         }
+        //var_dump($tag);
 
         return '[' . $buffer . '][' . $tag['linkID'] . ']';
     }
@@ -807,8 +799,8 @@ class Converter
 
         # [This link][id]
         $link_id = false;
-        if (!empty($this->stack['a'])) {
-            foreach ($this->stack['a'] as $tag) {
+        if (!empty($this->footnotes)) {
+            foreach ($this->footnotes as $tag) {
                 if ($tag['href'] == $this->parser->tagAttributes['src']
                     && $tag['title'] === $this->parser->tagAttributes['title']
                 ) {
@@ -816,17 +808,15 @@ class Converter
                     break;
                 }
             }
-        } else {
-            $this->stack['a'] = array();
         }
         if (!$link_id) {
-            $link_id = count($this->stack['a']) + 1;
+            $link_id = count($this->footnotes) + 1;
             $tag = array(
                 'href' => $this->parser->tagAttributes['src'],
                 'linkID' => $link_id,
                 'title' => $this->parser->tagAttributes['title']
             );
-            array_push($this->stack['a'], $tag);
+            array_push($this->footnotes, $tag);
         }
 
         $this->out('![' . $this->parser->tagAttributes['alt'] . '][' . $link_id . ']', true);
