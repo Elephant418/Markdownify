@@ -255,6 +255,15 @@ This is [another example][2] inline link.
  [2]: http://example2.com/ "Title"';
         $data['url-multiple-2']['linkPosition'] = Converter::LINK_AFTER_PARAGRAPH;
 
+        // Multiple paragraph link
+        $data['url-multiple-2']['html'] =
+            '<p>This is <a href="http://example1.com/" title="Title">an example</a> inline link.</p>
+            <p>This is <a href="http://example2.com/" title="Title">another example</a> inline link.</p>';
+        $data['url-multiple-2']['md'] = 'This is [an example](http://example1.com/ "Title") inline link.
+
+This is [another example](http://example2.com/ "Title") inline link.';
+        $data['url-multiple-2']['linkPosition'] = Converter::LINK_IN_PARAGRAPH;
+
         // Direct link
         $data['url-direct']['html'] = '<p><a href="http://example.com">http://example.com</a>.</p>';
         $data['url-direct']['md'] = '<http://example.com>.';
@@ -290,12 +299,22 @@ This is [another example][2] inline link.
         $data['image']['md'] = '![Alt text][1]
 
  [1]: /path/to/img.jpg';
+
+        // Image with src + alt attributes in content
+        $data['image--in']['html'] = '<img src="/path/to/img.jpg" alt="Alt text" />';
+        $data['image--in']['md'] = '![Alt text](/path/to/img.jpg)';
+        $data['image--in']['linkPosition'] = Converter::LINK_IN_PARAGRAPH;
         
         // Image with src + alt + title attributes
         $data['image-title']['html'] = '<img src="/path/to/img.jpg" alt="Alt text" title="Optional title attribute" />';
         $data['image-title']['md'] = '![Alt text][1]
 
  [1]: /path/to/img.jpg "Optional title attribute"';
+
+        // Image with src + alt + title attributes in content
+        $data['image-title--in']['html'] = '<img src="/path/to/img.jpg" alt="Alt text" title="Optional title attribute" />';
+        $data['image-title--in']['md'] = '![Alt text](/path/to/img.jpg "Optional title attribute")';
+        $data['image-title--in']['linkPosition'] = Converter::LINK_IN_PARAGRAPH;
         
         // Escaped image
         $data['image-escape']['html'] = '![This link](/path)';

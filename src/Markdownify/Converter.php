@@ -443,11 +443,22 @@ class Converter
                 } else {
                     $this->out("\n", true);
                 }
-                $this->out(' [' . $tag['linkID'] . ']: ' . $tag['href'] . (isset($tag['title']) ? ' "' . $tag['title'] . '"' : ''), true);
+                $this->out(' [' . $tag['linkID'] . ']: ' . $this->getLinkReference($tag), true);
                 $tag['unstacked'] = true;
                 $this->footnotes[$k] = $tag;
             }
         }
+    }
+
+    /**
+     * return formated link reference
+     *
+     * @param array $tag
+     * @return string link reference
+     */
+    protected function getLinkReference($tag)
+    {
+        return $tag['href'] . (isset($tag['title']) ? ' "' . $tag['title'] . '"' : '');
     }
 
     /**
@@ -769,6 +780,11 @@ class Converter
             #  [1]: mailto:mail@example.com Title
             $tag['href'] = 'mailto:' . $bufferDecoded;
         }
+        
+        if ($this->linkPosition == self::LINK_IN_PARAGRAPH) {
+            return '[' . $buffer . '](' . $this->getLinkReference($tag) . ')';
+        }
+
         # [This link][id]
         foreach ($this->footnotes as $tag2) {
             if ($tag2['href'] == $tag['href'] && $tag2['title'] === $tag['title']) {
@@ -780,7 +796,6 @@ class Converter
             $tag['linkID'] = count($this->footnotes) + 1;
             array_push($this->footnotes, $tag);
         }
-        //var_dump($tag);
 
         return '[' . $buffer . '][' . $tag['linkID'] . ']';
     }
@@ -810,7 +825,7 @@ class Converter
 
         if (empty($this->parser->tagAttributes['src'])) {
             # support for "empty" images... dunno if this is really needed
-            # but there are some testcases which do that...
+            # but there are some test cases which do that...
             if (!empty($this->parser->tagAttributes['title'])) {
                 $this->parser->tagAttributes['title'] = ' ' . $this->parser->tagAttributes['title'] . ' ';
             }
@@ -821,7 +836,18 @@ class Converter
             $this->parser->tagAttributes['src'] = $this->decode($this->parser->tagAttributes['src']);
         }
 
-        # [This link][id]
+        $out = '![' . $this->parser->tagAttributes['alt'] . ']';
+        if ($this->linkPosition == self::LINK_IN_PARAGRAPH) {
+            $out .= '(' . $this->parser->tagAttributes['src'];
+            if ($this->parser->tagAttributes['title']) {
+                $out .= ' "' . $this->parser->tagAttributes['title'] . '"';
+            }
+            $out .= ')';
+            $this->out($out, true);
+            return ;
+        }
+        
+        # ![This image][id]
         $link_id = false;
         if (!empty($this->footnotes)) {
             foreach ($this->footnotes as $tag) {
@@ -842,8 +868,9 @@ class Converter
             );
             array_push($this->footnotes, $tag);
         }
-
-        $this->out('![' . $this->parser->tagAttributes['alt'] . '][' . $link_id . ']', true);
+        $out .= '[' . $link_id . ']';
+        
+        $this->out($out, true);
     }
 
     /**
