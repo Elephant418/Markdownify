@@ -208,8 +208,11 @@ end tell
     /**
      * @dataProvider providerLinkConversion
      */
-    public function testLinkConversion($html, $md)
+    public function testLinkConversion($html, $md, $linkPosition = null)
     {
+        if ($linkPosition !== null) {
+            $this->converter->setLinkPosition($linkPosition);
+        }
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
@@ -226,6 +229,31 @@ end tell
         // Empty link
         $data['url-empty']['html'] = '<p><a href="">This link</a>.</p>';
         $data['url-empty']['md'] = '[This link]().';
+
+        // Multiple paragraph link
+        $data['url-multiple-1']['html'] = 
+            '<p>This is <a href="http://example1.com/" title="Title">an example</a> inline link.</p>
+            <p>This is <a href="http://example2.com/" title="Title">another example</a> inline link.</p>';
+        $data['url-multiple-1']['md'] = 'This is [an example][1] inline link.
+
+This is [another example][2] inline link.
+
+ [1]: http://example1.com/ "Title"
+ [2]: http://example2.com/ "Title"';
+        $data['url-multiple-1']['linkPosition'] = Converter::LINK_AFTER_CONTENT;
+
+        // Multiple paragraph link
+        $data['url-multiple-2']['html'] =
+            '<p>This is <a href="http://example1.com/" title="Title">an example</a> inline link.</p>
+            <p>This is <a href="http://example2.com/" title="Title">another example</a> inline link.</p>';
+        $data['url-multiple-2']['md'] = 'This is [an example][1] inline link.
+
+ [1]: http://example1.com/ "Title"
+
+This is [another example][2] inline link.
+
+ [2]: http://example2.com/ "Title"';
+        $data['url-multiple-2']['linkPosition'] = Converter::LINK_AFTER_PARAGRAPH;
 
         // Direct link
         $data['url-direct']['html'] = '<p><a href="http://example.com">http://example.com</a>.</p>';

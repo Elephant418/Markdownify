@@ -7,7 +7,6 @@ namespace Markdownify;
 /**
  * default configuration
  */
-define('MDFY_LINKS_EACH_PARAGRAPH', false);
 define('MDFY_BODYWIDTH', false);
 define('MDFY_KEEPHTML', true);
 
@@ -68,11 +67,15 @@ class Converter
     protected $minBodyWidth = 25;
 
     /**
-     * display links after each paragraph
+     * position where the link reference will be displayed
+     * 
      *
-     * @var bool
+     * @var int
      */
-    protected $linksAfterEachParagraph = false;
+    protected $linkPosition;
+    const LINK_AFTER_CONTENT = 0;
+    const LINK_AFTER_PARAGRAPH = 1;
+    const LINK_IN_PARAGRAPH = 2;
 
     /**
      * stores current buffers
@@ -220,17 +223,16 @@ class Converter
     /**
      * constructor, set options, setup parser
      *
-     * @param bool $linksAfterEachParagraph wether or not to flush stacked links after each paragraph
-     *             defaults to false
+     * @param int $linkPosition define the position of links
      * @param int $bodyWidth wether or not to wrap the output to the given width
      *             defaults to false
      * @param bool $keepHTML wether to keep non markdownable HTML or to discard it
      *             defaults to true (HTML will be kept)
      * @return void
      */
-    public function __construct($linksAfterEachParagraph = MDFY_LINKS_EACH_PARAGRAPH, $bodyWidth = MDFY_BODYWIDTH, $keepHTML = MDFY_KEEPHTML)
+    public function __construct($linkPosition = self::LINK_AFTER_CONTENT, $bodyWidth = MDFY_BODYWIDTH, $keepHTML = MDFY_KEEPHTML)
     {
-        $this->linksAfterEachParagraph = $linksAfterEachParagraph;
+        $this->linkPosition = $linkPosition;
         $this->keepHTML = $keepHTML;
 
         if ($bodyWidth > $this->minBodyWidth) {
@@ -267,6 +269,28 @@ class Converter
         $this->parse();
 
         return $this->output;
+    }
+
+    /**
+     * set the position where the link reference will be displayed
+     * 
+     * @param int $linkPosition
+     * @return void
+     */
+    public function setLinkPosition($linkPosition)
+    {
+        $this->linkPosition = $linkPosition;
+    }
+
+    /**
+     * set keep HTML tags which cannot be converted to markdown
+     *
+     * @param bool $linkPosition
+     * @return void
+     */
+    public function setKeepHTML($keepHTML)
+    {
+        $this->keepHTML = $keepHTMLl;
     }
 
     /**
@@ -325,7 +349,7 @@ class Converter
                         }
                         $func = 'handleTag_' . $this->parser->tagName;
                         $this->$func();
-                        if ($this->linksAfterEachParagraph && $this->parser->isBlockElement && !$this->parser->isStartTag && empty($this->parser->openTags)) {
+                        if ($this->linkPosition == self::LINK_AFTER_PARAGRAPH && $this->parser->isBlockElement && !$this->parser->isStartTag && empty($this->parser->openTags)) {
                             $this->flushFootnotes();
                         }
                         if (!$this->parser->isStartTag) {

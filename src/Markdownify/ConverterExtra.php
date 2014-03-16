@@ -31,7 +31,7 @@ class ConverterExtra extends Converter
     /**
      * constructor, see Markdownify::Markdownify() for more information
      */
-    public function __construct($linksAfterEachParagraph = MDFY_LINKS_EACH_PARAGRAPH, $bodyWidth = MDFY_BODYWIDTH, $keepHTML = MDFY_KEEPHTML)
+    public function __construct($linksAfterEachParagraph = self::LINK_AFTER_CONTENT, $bodyWidth = MDFY_BODYWIDTH, $keepHTML = MDFY_KEEPHTML)
     {
         parent::__construct($linksAfterEachParagraph, $bodyWidth, $keepHTML);
 
