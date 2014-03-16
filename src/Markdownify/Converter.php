@@ -290,7 +290,7 @@ class Converter
      */
     public function setKeepHTML($keepHTML)
     {
-        $this->keepHTML = $keepHTMLl;
+        $this->keepHTML = $keepHTML;
     }
 
     /**
