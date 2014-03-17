@@ -16,6 +16,9 @@ define('MDFY_KEEPHTML', true);
  */
 class Converter
 {
+    const LINK_STYLE_REFERENCE = 1;
+    const LINK_STYLE_INLINE    = 2;
+
     /**
      * html parser object
      *
@@ -45,6 +48,13 @@ class Converter
     protected $skipConversion = false;
 
     /* options */
+
+    /**
+     * style of link tags which could be inline [Link](htt://link) or reference [Link][id] ... [id] http://link
+     *
+     * @var int
+     */
+    protected $linkStyle = self::LINK_STYLE_REFERENCE;
 
     /**
      * keep html tags which cannot be converted to markdown
@@ -249,6 +259,18 @@ class Converter
     }
 
     /**
+     * change the linkStyle option
+     * 
+     * @param int $linkStyle the new linkStyle option value
+     * @return self
+     */
+    public function setLinkStyle($linkStyle)
+    {
+        $this->linkStyle = $linkStyle;
+        return $this;
+    }
+
+    /**
      * parse a HTML string
      *
      * @param string $html
@@ -318,7 +340,7 @@ class Converter
                         }
                         $func = 'handleTag_' . $this->parser->tagName;
                         $this->$func();
-                        if ($this->linksAfterEachParagraph && $this->parser->isBlockElement && !$this->parser->isStartTag && empty($this->parser->openTags)) {
+                        if ($this->linksAfterEachParagraph && $this->parser->isBlockElement && !$this->parser->isStartTag && empty($this->parser->openTags) && $this->linkStyle == self::LINK_STYLE_REFERENCE) {
                             $this->flushStacked();
                         }
                         if (!$this->parser->isStartTag) {
@@ -419,18 +441,20 @@ class Converter
      */
     protected function flushStacked_a()
     {
-        $out = false;
-        foreach ($this->stack['a'] as $k => $tag) {
-            if (!isset($tag['unstacked'])) {
-                if (!$out) {
-                    $out = true;
-                    $this->out("\n\n", true);
-                } else {
-                    $this->out("\n", true);
+        if ($this->linkStyle == self::LINK_STYLE_REFERENCE) {
+            $out = false;
+            foreach ($this->stack['a'] as $k => $tag) {
+                if (!isset($tag['unstacked'])) {
+                    if (!$out) {
+                        $out = true;
+                        $this->out("\n\n", true);
+                    } else {
+                        $this->out("\n", true);
+                    }
+                    $this->out(' [' . $tag['linkID'] . ']: ' . $tag['href'] . (isset($tag['title']) ? ' "' . $tag['title'] . '"' : ''), true);
+                    $tag['unstacked'] = true;
+                    $this->stack['a'][$k] = $tag;
                 }
-                $this->out(' [' . $tag['linkID'] . ']: ' . $tag['href'] . (isset($tag['title']) ? ' "' . $tag['title'] . '"' : ''), true);
-                $tag['unstacked'] = true;
-                $this->stack['a'][$k] = $tag;
             }
         }
     }
@@ -754,19 +778,24 @@ class Converter
             #  [1]: mailto:mail@example.com Title
             $tag['href'] = 'mailto:' . $bufferDecoded;
         }
-        # [This link][id]
-        foreach ($this->stack['a'] as $tag2) {
-            if ($tag2['href'] == $tag['href'] && $tag2['title'] === $tag['title']) {
-                $tag['linkID'] = $tag2['linkID'];
-                break;
-            }
-        }
-        if (!isset($tag['linkID'])) {
-            $tag['linkID'] = count($this->stack['a']) + 1;
-            array_push($this->stack['a'], $tag);
-        }
 
-        return '[' . $buffer . '][' . $tag['linkID'] . ']';
+        if ($this->linkStyle == self::LINK_STYLE_INLINE) {
+            return '[' . $buffer . '](' . $tag['href'] . (!empty($tag['title']) ? ' "' . $tag['title'] . '"' : '') . ')';
+        } else {
+            # [This link][id]
+            foreach ($this->stack['a'] as $tag2) {
+                if ($tag2['href'] == $tag['href'] && $tag2['title'] === $tag['title']) {
+                    $tag['linkID'] = $tag2['linkID'];
+                    break;
+                }
+            }
+            if (!isset($tag['linkID'])) {
+                $tag['linkID'] = count($this->stack['a']) + 1;
+                array_push($this->stack['a'], $tag);
+            }
+
+            return '[' . $buffer . '][' . $tag['linkID'] . ']';
+        }
     }
 
     /**
