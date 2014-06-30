@@ -18,7 +18,7 @@ class Converter
     /**
      * html parser object
      *
-     * @var parseHTML
+     * @var Parser
      */
     protected $parser;
 
@@ -68,7 +68,6 @@ class Converter
 
     /**
      * position where the link reference will be displayed
-     * 
      *
      * @var int
      */
@@ -224,11 +223,11 @@ class Converter
      * constructor, set options, setup parser
      *
      * @param int $linkPosition define the position of links
-     * @param int $bodyWidth wether or not to wrap the output to the given width
+     * @param bool|int $bodyWidth wether or not to wrap the output to the given width
      *             defaults to false
      * @param bool $keepHTML wether to keep non markdownable HTML or to discard it
      *             defaults to true (HTML will be kept)
-     * @return void
+     * @return \Markdownify\Converter
      */
     public function __construct($linkPosition = self::LINK_AFTER_CONTENT, $bodyWidth = MDFY_BODYWIDTH, $keepHTML = MDFY_KEEPHTML)
     {
@@ -273,7 +272,7 @@ class Converter
 
     /**
      * set the position where the link reference will be displayed
-     * 
+     *
      * @param int $linkPosition
      * @return void
      */
@@ -285,7 +284,7 @@ class Converter
     /**
      * set keep HTML tags which cannot be converted to markdown
      *
-     * @param bool $linkPosition
+     * @param $keepHTML
      * @return void
      */
     public function setKeepHTML($keepHTML)
@@ -780,7 +779,7 @@ class Converter
             #  [1]: mailto:mail@example.com Title
             $tag['href'] = 'mailto:' . $bufferDecoded;
         }
-        
+
         if ($this->linkPosition == self::LINK_IN_PARAGRAPH) {
             return '[' . $buffer . '](' . $this->getLinkReference($tag) . ')';
         }
@@ -846,7 +845,7 @@ class Converter
             $this->out($out, true);
             return ;
         }
-        
+
         # ![This image][id]
         $link_id = false;
         if (!empty($this->footnotes)) {
@@ -869,7 +868,7 @@ class Converter
             array_push($this->footnotes, $tag);
         }
         $out .= '[' . $link_id . ']';
-        
+
         $this->out($out, true);
     }
 
@@ -957,6 +956,9 @@ class Converter
     protected function handleTag_ul()
     {
         if ($this->parser->isStartTag) {
+            if (!isset($this->stack['ul']) || empty($this->stack['ul'])) {
+                $this->out("\n");
+            }
             $this->stack();
             if (!$this->keepHTML && $this->lastClosedTag == $this->parser->tagName) {
                 $this->out("\n" . $this->indent . '<!-- -->' . "\n" . $this->indent . "\n" . $this->indent);
@@ -1000,7 +1002,7 @@ class Converter
             $this->indent('    ', false);
         } else {
             if ($this->parser->isStartTag) {
-                $this->out('*   ', true);
+                $this->out('  * ', true);
             }
             $this->indent('    ', false);
         }
@@ -1119,7 +1121,7 @@ class Converter
      * buffers
      *
      * @param string $put
-     * @param boolean $nowrap 
+     * @param boolean $nowrap
      * @return void
      */
     protected function out($put, $nowrap = false)
@@ -1228,7 +1230,7 @@ class Converter
      * UTF-8 chr() which supports numeric entities
      *
      * @author grey - greywyvern - com <http://www.php.net/manual/en/function.chr.php#55978>
-     * @param array $matches
+     * @param $dec
      * @return string UTF-8 encoded
      */
     protected function unichr($dec)
@@ -1269,8 +1271,9 @@ class Converter
      * wordwrap for utf8 encoded strings
      *
      * @param string $str
-     * @param integer $len
-     * @param string $what
+     * @param int $width
+     * @param string $break
+     * @param bool $cut
      * @return string
      */
     protected function wordwrap($str, $width, $break, $cut = false)
