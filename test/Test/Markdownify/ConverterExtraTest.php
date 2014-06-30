@@ -25,7 +25,7 @@ class ConverterExtraTest extends ConverterTestCase
     /**
      * @dataProvider providerHeadingConversion
      */
-    public function testHeadingConversion_withAttribute($level, $attributesHTML, $attributesMD)
+    public function testHeadingConversion_withAttribute($level, $attributesHTML, $attributesMD = null)
     {
         $innerHTML = 'Heading '.$level;
         $md = str_pad('', $level, '#').' '.$innerHTML.$attributesMD;

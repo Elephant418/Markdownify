@@ -22,14 +22,14 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerHeadingConversion
      */
-    public function testHeadingConversion_withAttribute($level, $attributesHTML)
+    public function testHeadingConversion_withAttribute($level, $attributesHTML, $attributesMD = null)
     {
         $innerHTML = 'Heading '.$level;
         if (empty($attributesHTML)) {
             $md = str_pad('', $level, '#').' '.$innerHTML;
         } else {
-            $md = '<h'.$level.$attributesHTML.'>'.PHP_EOL
-                .'  '.$innerHTML.PHP_EOL
+            $md = '<h'.$level.$attributesHTML.'>'."\n"
+                .'  '.$innerHTML."\n"
                 .'</h'.$level.'>';
         }
         $html = '<h'.$level.$attributesHTML.'>'.$innerHTML.'</h'.$level.'>';
