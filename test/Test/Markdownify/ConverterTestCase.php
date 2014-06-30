@@ -132,17 +132,20 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
     {
         $data = array();
         $data['ordered']['html'] = '<ol><li>Bird</li><li>McHale</li><li>Parish</li></ol>';
-        $data['ordered']['md'] = '1.  Bird
-2.  McHale
-3.  Parish';
+        $data['ordered']['md'] = '
+  1. Bird
+  2. McHale
+  3. Parish';
         $data['unordered']['html'] = '<ul><li>Red</li><li>Green</li><li>Blue</li></ul>';
-        $data['unordered']['md'] = '*   Red
-*   Green
-*   Blue';
+        $data['unordered']['md'] = '
+  * Red
+  * Green
+  * Blue';
         $data['paragraph']['html'] = '<ul><li><p>Bird</p></li><li><p>Magic</p></li></ul>';
-        $data['paragraph']['md'] = '*   Bird
+        $data['paragraph']['md'] = '
+  * Bird
 
-*   Magic';
+  * Magic';
 
         return $data;
     }
