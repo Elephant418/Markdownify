@@ -35,8 +35,8 @@ class ConverterExtra extends Converter
     {
         parent::__construct($linksAfterEachParagraph, $bodyWidth, $keepHTML);
 
-        ### new markdownable tags & attributes
-        # header ids: # foo {bar}
+        // new markdownable tags & attributes
+        // header ids: # foo {bar}
         $this->isMarkdownable['h1']['id'] = 'optional';
         $this->isMarkdownable['h1']['class'] = 'optional';
         $this->isMarkdownable['h2']['id'] = 'optional';
@@ -49,7 +49,7 @@ class ConverterExtra extends Converter
         $this->isMarkdownable['h5']['class'] = 'optional';
         $this->isMarkdownable['h6']['id'] = 'optional';
         $this->isMarkdownable['h6']['class'] = 'optional';
-        # tables
+        // tables
         $this->isMarkdownable['table'] = array();
         $this->isMarkdownable['th'] = array(
             'align' => 'optional',
@@ -61,14 +61,14 @@ class ConverterExtra extends Converter
         array_push($this->ignore, 'thead');
         array_push($this->ignore, 'tbody');
         array_push($this->ignore, 'tfoot');
-        # definition lists
+        // definition lists
         $this->isMarkdownable['dl'] = array();
         $this->isMarkdownable['dd'] = array();
         $this->isMarkdownable['dt'] = array();
-        # link class
+        // link class
         $this->isMarkdownable['a']['id'] = 'optional';
         $this->isMarkdownable['a']['class'] = 'optional';
-        # footnotes
+        // footnotes
         $this->isMarkdownable['fnref'] = array(
             'target' => 'required',
         );
@@ -79,11 +79,11 @@ class ConverterExtra extends Converter
         $this->parser->blockElements['fnref'] = false;
         $this->parser->blockElements['fn'] = true;
         $this->parser->blockElements['footnotes'] = true;
-        # abbr
+        // abbr
         $this->isMarkdownable['abbr'] = array(
             'title' => 'required',
         );
-        # build RegEx lookahead to decide wether table can pe parsed or not
+        // build RegEx lookahead to decide wether table can pe parsed or not
         $inlineTags = array_keys($this->parser->blockElements, false);
         $colContents = '(?:[^<]|<(?:' . implode('|', $inlineTags) . '|[^a-z]))+';
         $this->tableLookaheadHeader = '{
@@ -121,7 +121,7 @@ class ConverterExtra extends Converter
         } else {
             $tag = $this->unstack();
             if (!empty($tag['cssSelector'])) {
-                # {#id.class}
+                // {#id.class}
                 $this->out(' {'.$tag['cssSelector'].'}');
             }
         }
@@ -151,7 +151,7 @@ class ConverterExtra extends Converter
     {
         $output = parent::handleTag_a_converter($tag, $buffer);
         if (!empty($tag['cssSelector'])) {
-            # [This link][id]{#id.class}
+            // [This link][id]{#id.class}
             $output .= '{'.$tag['cssSelector'].'}';
         }
 
@@ -217,11 +217,11 @@ class ConverterExtra extends Converter
     protected function handleTag_table()
     {
         if ($this->parser->isStartTag) {
-            # check if upcoming table can be converted
+            // check if upcoming table can be converted
             if ($this->keepHTML) {
                 if (preg_match($this->tableLookaheadHeader, $this->parser->html, $matches)) {
-                    # header seems good, now check body
-                    # get align & number of cols
+                    // header seems good, now check body
+                    // get align & number of cols
                     preg_match_all('#<th(?:\s+align=("|\')(left|right|center)\1)?\s*>#si', $matches[0], $cols);
                     $regEx = '';
                     $i = 1;
@@ -230,12 +230,12 @@ class ConverterExtra extends Converter
                         $align = strtolower($align);
                         array_push($aligns, $align);
                         if (empty($align)) {
-                            $align = 'left'; # default value
+                            $align = 'left'; // default value
                         }
                         $td = '\s+align=("|\')' . $align . '\\' . $i;
                         $i++;
                         if ($align == 'left') {
-                            # look for empty align or left
+                            // look for empty align or left
                             $td = '(?:' . $td . ')?';
                         }
                         $td = '<td' . $td . '\s*>';
@@ -243,7 +243,7 @@ class ConverterExtra extends Converter
                     }
                     $regEx = sprintf($this->tableLookaheadBody, $regEx);
                     if (preg_match($regEx, $this->parser->html, $matches, null, strlen($matches[0]))) {
-                        # this is a markdownable table tag!
+                        // this is a markdownable table tag!
                         $this->table = array(
                             'rows' => array(),
                             'col_widths' => array(),
@@ -251,11 +251,11 @@ class ConverterExtra extends Converter
                         );
                         $this->row = 0;
                     } else {
-                        # non markdownable table
+                        // non markdownable table
                         $this->handleTagToText();
                     }
                 } else {
-                    # non markdownable table
+                    // non markdownable table
                     $this->handleTagToText();
                 }
             } else {
@@ -267,9 +267,9 @@ class ConverterExtra extends Converter
                 $this->row = 0;
             }
         } else {
-            # finally build the table in Markdown Extra syntax
+            // finally build the table in Markdown Extra syntax
             $separator = array();
-            # seperator with correct align identifikators
+            // seperator with correct align identifikators
             foreach ($this->table['aligns'] as $col => $align) {
                 if (!$this->keepHTML && !isset($this->table['col_widths'][$col])) {
                     break;
@@ -292,7 +292,7 @@ class ConverterExtra extends Converter
             $separator = '|' . implode('|', $separator) . '|';
 
             $rows = array();
-            # add padding
+            // add padding
             array_walk_recursive($this->table['rows'], array(&$this, 'alignTdContent'));
             $header = array_shift($this->table['rows']);
             array_push($rows, '| ' . implode(' | ', $header) . ' |');
@@ -423,7 +423,7 @@ class ConverterExtra extends Converter
     {
         if ($this->parser->isStartTag) {
             if (substr(ltrim($this->parser->html), 0, 3) == '<p>') {
-                # next comes a paragraph, so we'll need an extra line
+                // next comes a paragraph, so we'll need an extra line
                 $this->out("\n" . $this->indent);
             } elseif (substr($this->output, -2) == "\n\n") {
                 $this->output = substr($this->output, 0, -1);
@@ -431,7 +431,7 @@ class ConverterExtra extends Converter
             $this->out(':   ');
             $this->indent('    ', false);
         } else {
-            # lookahead for next dt
+            // lookahead for next dt
             if (substr(ltrim($this->parser->html), 0, 4) == '<dt>') {
                 $this->setLineBreaks(2);
             } else {
@@ -493,23 +493,23 @@ class ConverterExtra extends Converter
     public function parseString($html)
     {
         /** TODO: custom markdown-extra options, e.g. titles & classes **/
-        # <sup id="fnref:..."><a href"#fn..." rel="footnote">...</a></sup>
-        # => <fnref target="..." />
+        // <sup id="fnref:..."><a href"#fn..." rel="footnote">...</a></sup>
+        // => <fnref target="..." />
         $html = preg_replace('@<sup id="fnref:([^"]+)">\s*<a href="#fn:\1" rel="footnote">\s*\d+\s*</a>\s*</sup>@Us', '<fnref target="$1" />', $html);
-        # <div class="footnotes">
-        # <hr />
-        # <ol>
-        #
-        # <li id="fn:...">...</li>
-        # ...
-        #
-        # </ol>
-        # </div>
-        # =>
-        # <footnotes>
-        #   <fn name="...">...</fn>
-        #   ...
-        # </footnotes>
+        // <div class="footnotes">
+        // <hr />
+        // <ol>
+        //
+        // <li id="fn:...">...</li>
+        // ...
+        //
+        // </ol>
+        // </div>
+        // =>
+        // <footnotes>
+        //   <fn name="...">...</fn>
+        //   ...
+        // </footnotes>
         $html = preg_replace_callback('#<div class="footnotes">\s*<hr />\s*<ol>\s*(.+)\s*</ol>\s*</div>#Us', array(&$this, '_makeFootnotes'), $html);
 
         return parent::parseString($html);
@@ -525,16 +525,16 @@ class ConverterExtra extends Converter
      */
     protected function _makeFootnotes($matches)
     {
-        # <li id="fn:1">
-        #   ...
-        #   <a href="#fnref:block" rev="footnote">&#8617;</a></p>
-        # </li>
-        # => <fn name="1">...</fn>
-        # remove footnote link
+        // <li id="fn:1">
+        //   ...
+        //   <a href="#fnref:block" rev="footnote">&#8617;</a></p>
+        // </li>
+        // => <fn name="1">...</fn>
+        // remove footnote link
         $fns = preg_replace('@\s*(&#160;\s*)?<a href="#fnref:[^"]+" rev="footnote"[^>]*>&#8617;</a>\s*@s', '', $matches[1]);
-        # remove empty paragraph
+        // remove empty paragraph
         $fns = preg_replace('@<p>\s*</p>@s', '', $fns);
-        # <li id="fn:1">...</li> -> <footnote nr="1">...</footnote>
+        // <li id="fn:1">...</li> -> <footnote nr="1">...</footnote>
         $fns = str_replace('<li id="fn:', '<fn name="', $fns);
 
         $fns = '<footnotes>' . $fns . '</footnotes>';
