@@ -957,9 +957,6 @@ class Converter
     protected function handleTag_ul()
     {
         if ($this->parser->isStartTag) {
-            if (!isset($this->stack['ul']) || empty($this->stack['ul'])) {
-                $this->out("\n");
-            }
             $this->stack();
             if (!$this->keepHTML && $this->lastClosedTag == $this->parser->tagName) {
                 $this->out("\n" . $this->indent . '<!-- -->' . "\n" . $this->indent . "\n" . $this->indent);
@@ -1000,13 +997,12 @@ class Converter
                 $parent['num']++;
                 $this->out(str_repeat(' ', 3 - strlen($parent['num'])) . $parent['num'] . '. ', true);
             }
-            $this->indent('    ', false);
         } else {
             if ($this->parser->isStartTag) {
                 $this->out('  * ', true);
             }
-            $this->indent('    ', false);
         }
+        $this->indent('    ', false);
         if (!$this->parser->isStartTag) {
             $this->setLineBreaks(1);
         }
