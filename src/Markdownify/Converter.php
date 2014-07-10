@@ -571,6 +571,10 @@ class Converter
      */
     protected function handleText()
     {
+        // If there no block parent, we simulate a paragraph tag
+        if ($this->hasNoBlockParent()) {
+            $this->setLineBreaks(2);
+        }
         if ($this->hasParent('pre') && strpos($this->parser->node, "\n") !== false) {
             $this->parser->node = str_replace("\n", "\n" . $this->indent, $this->parser->node);
         }
@@ -1291,6 +1295,21 @@ class Converter
         }
 
         return $return . ltrim($str);
+    }
+
+    /**
+     * check if current node has no block parent
+     *
+     * @return bool
+     */
+    protected function hasNoBlockParent()
+    {
+        foreach ($this->parser->openTags as $tag) {
+            if ($this->parser->blockElements[$tag]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

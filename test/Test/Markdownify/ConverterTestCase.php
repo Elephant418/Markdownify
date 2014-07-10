@@ -132,24 +132,38 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
     {
         $data = array();
         $data['ordered']['html'] = '<ol><li>Bird</li><li>McHale</li><li>Parish</li></ol>';
-        $data['ordered']['md'] = '  1. Bird
+        $data['ordered']['md'] = 
+'  1. Bird
   2. McHale
   3. Parish';
         $data['unordered']['html'] = '<ul><li>Red</li><li>Green</li><li>Blue</li></ul>';
-        $data['unordered']['md'] = '  * Red
+        $data['unordered']['md'] = 
+'  * Red
   * Green
   * Blue';
         $data['paragraph']['html'] = '<ul><li><p>Bird</p></li><li><p>Magic</p></li></ul>';
-        $data['paragraph']['md'] = '  * Bird
+        $data['paragraph']['md'] =
+'  * Bird
 
   * Magic';
+        $data['next-to-text']['html'] = 'McHale<ol><li>Bird</li><li>Magic</li></ol>';
+        $data['next-to-text']['md'] = 'McHale
+
+  1. Bird
+  2. Magic';
+        $data['next-to-bold']['html'] = '<b>McHale</b><ol><li>Bird</li><li>Magic</li></ol>';
+        $data['next-to-bold']['md'] = '**McHale**
+
+  1. Bird
+  2. Magic';
         $data['next-to-paragraph']['html'] = '<p>McHale</p><ol><li>Bird</li><li>Magic</li></ol>';
         $data['next-to-paragraph']['md'] = 'McHale
 
   1. Bird
   2. Magic';
         $data['nested-ordered']['html'] = '<ol><li>Bird</li><li>Colors<ol><li>Red</li><li>Green<ol><li>Light</li><li>Dark</li></ol></li><li>Blue</li></ol></li></ol>';
-        $data['nested-ordered']['md'] = '  1. Bird
+        $data['nested-ordered']['md'] = 
+'  1. Bird
   2. Colors
       1. Red
       2. Green
@@ -157,7 +171,8 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
           2. Dark
       3. Blue';
         $data['nested-unordered']['html'] = '<ul><li>Bird</li><li>Colors<ul><li>Red</li><li>Green<ul><li>Light</li><li>Dark</li></ul></li><li>Blue</li></ul></li></ul>';
-        $data['nested-unordered']['md'] = '  * Bird
+        $data['nested-unordered']['md'] = 
+'  * Bird
   * Colors
       * Red
       * Green
