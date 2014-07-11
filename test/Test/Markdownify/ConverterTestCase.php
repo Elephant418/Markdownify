@@ -151,6 +151,11 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
 
   1. Bird
   2. Magic';
+        $data['next-to-text-in-block-context']['html'] = '<blockquote>McHale<ol><li>Bird</li><li>Magic</li></ol></blockquote>';
+        $data['next-to-text-in-block-context']['md'] = '> McHale
+> 
+>   1. Bird
+>   2. Magic';
         $data['next-to-bold']['html'] = '<b>McHale</b><ol><li>Bird</li><li>Magic</li></ol>';
         $data['next-to-bold']['md'] = '**McHale**
 
