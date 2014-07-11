@@ -107,11 +107,25 @@ class Parser
     public $tagAttributes = null;
 
     /**
-     * wether the current tag is a block element
+     * whether or not the actual context is a inline context
+     *
+     * @var bool | null
+     */
+    public $isInlineContext = null;
+
+    /**
+     * whether the current tag is a block element
      *
      * @var bool | null
      */
     public $isBlockElement = null;
+
+    /**
+     * whether the previous tag (browser) is a block element
+     *
+     * @var bool | null
+     */
+    public $isNextToInlineContext = null;
 
     /**
      * keep whitespace
@@ -323,6 +337,7 @@ class Parser
         if (static::$skipWhitespace && $this->node == ' ') {
             return $this->nextNode();
         }
+        $this->isInlineContext = true;
         static::$skipWhitespace = false;
 
         return true;
@@ -454,7 +469,8 @@ class Parser
         }
         $this->nodeType = 'tag';
         $this->isBlockElement = $this->blockElements[$tagName];
-
+        $this->isNextToInlineContext = $isStartTag && $this->isInlineContext;
+        $this->isInlineContext = !$isStartTag && !$this->isBlockElement;
         return true;
     }
 

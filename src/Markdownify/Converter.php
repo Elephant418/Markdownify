@@ -154,6 +154,15 @@ class Converter
     );
 
     /**
+     * html block tags that allow inline & block children
+     *
+     * @var array<string>
+     */
+    protected $allowMixedChildren = array(
+        'li'
+    );
+
+    /**
      * Markdown indents which could be wrapped
      * @note: use strings in regex format
      *
@@ -324,6 +333,10 @@ class Converter
                 case 'tag':
                     if (in_array($this->parser->tagName, $this->ignore)) {
                         break;
+                    }
+                    // If the previous tag was not a block element, we simulate a paragraph tag
+                    if ($this->parser->isBlockElement && $this->parser->isNextToInlineContext && !in_array($this->parent(), $this->allowMixedChildren)) {
+                        $this->setLineBreaks(2);
                     }
                     if ($this->parser->isStartTag) {
                         $this->flushLinebreaks();
@@ -504,12 +517,18 @@ class Converter
 
             if ($this->parser->isBlockElement) {
                 if ($this->parser->isStartTag) {
+                    // looks like ins or del are block elements now
                     if (in_array($this->parent(), array('ins', 'del'))) {
-                        // looks like ins or del are block elements now
                         $this->out("\n", true);
                         $this->indent('  ');
                     }
-                    if ($this->parser->tagName != 'pre') {
+                    // don't indent inside <pre> tags
+                    if ($this->parser->tagName == 'pre') {
+                        $this->out($this->parser->node);
+                        static $indent;
+                        $indent = $this->indent;
+                        $this->indent = '';
+                    } else {
                         $this->out($this->parser->node . "\n" . $this->indent);
                         if (!$this->parser->isEmptyTag) {
                             $this->indent('  ');
@@ -517,12 +536,6 @@ class Converter
                             $this->setLineBreaks(1);
                         }
                         $this->parser->html = ltrim($this->parser->html);
-                    } else {
-                        // don't indent inside <pre> tags
-                        $this->out($this->parser->node);
-                        static $indent;
-                        $indent = $this->indent;
-                        $this->indent = '';
                     }
                 } else {
                     if (!$this->parser->keepWhitespace) {
@@ -571,10 +584,6 @@ class Converter
      */
     protected function handleText()
     {
-        // If there no block parent, we simulate a paragraph tag
-        if ($this->hasNoBlockParent()) {
-            $this->setLineBreaks(2);
-        }
         if ($this->hasParent('pre') && strpos($this->parser->node, "\n") !== false) {
             $this->parser->node = str_replace("\n", "\n" . $this->indent, $this->parser->node);
         }
@@ -1295,21 +1304,6 @@ class Converter
         }
 
         return $return . ltrim($str);
-    }
-
-    /**
-     * check if current node has no block parent
-     *
-     * @return bool
-     */
-    protected function hasNoBlockParent()
-    {
-        foreach ($this->parser->openTags as $tag) {
-            if ($this->parser->blockElements[$tag]) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
