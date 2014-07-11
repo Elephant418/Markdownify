@@ -224,9 +224,9 @@ class Converter
      * constructor, set options, setup parser
      *
      * @param int $linkPosition define the position of links
-     * @param int $bodyWidth wether or not to wrap the output to the given width
+     * @param int $bodyWidth whether or not to wrap the output to the given width
      *             defaults to false
-     * @param bool $keepHTML wether to keep non markdownable HTML or to discard it
+     * @param bool $keepHTML whether to keep non markdownable HTML or to discard it
      *             defaults to true (HTML will be kept)
      * @return void
      */
