@@ -470,7 +470,7 @@ class Parser
         $this->nodeType = 'tag';
         $this->isBlockElement = $this->blockElements[$tagName];
         $this->isNextToInlineContext = $isStartTag && $this->isInlineContext;
-        $this->isInlineContext = !$isStartTag && !$this->isBlockElement;
+        $this->isInlineContext = !$this->isBlockElement;
         return true;
     }
 
