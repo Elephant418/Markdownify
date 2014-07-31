@@ -7,15 +7,10 @@
     "homepage": "https://github.com/pixel418/Markdownify",
     "authors": [
         {
-            "name": "Milian Wolff",
-            "email": "mail@milianw.de",
-            "homepage": "http://milianw.de"
+            "name": "Thomas Zilliox",
+            "email": "hello@tzi.fr",
+            "homepage": "http://tzi.fr"
 
-        },
-        {
-            "name": "Peter Kruithof",
-            "email": "pkruithof@gmail.com",
-            "homepage": "http://pkruithof.tumblr.com/"
         }
     ],
     "require": {
