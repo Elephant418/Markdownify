@@ -12,7 +12,6 @@ class InlineNodeConverter extends \Markdownify\NodeConverter
     protected $prefix = '';
     protected $suffix = '';
     protected $lineBreaks = 1;
-    protected $escapingRegexList = array();
 
 
     /* PUBLIC METHODS
@@ -23,15 +22,6 @@ class InlineNodeConverter extends \Markdownify\NodeConverter
         $export = $this->prefix.$this->getEscapedText($nodeConverterClassList).$this->suffix;
         $export .= str_repeat("\n", $this->lineBreaks);
         return $export;
-    }
-    
-    public function escapeText($text) {
-        foreach ($this->escapingRegexList as $escapingRegex) {
-            if (isset($escapingRegex[0]) && isset($escapingRegex[1])) {
-                $text = preg_replace($escapingRegex[0], $escapingRegex[1], $text);
-            }
-        }
-        return $text;
     }
 
 

@@ -11,9 +11,10 @@ abstract class NodeConverter implements NodeConverterInterface
      *************************************************************************/
     protected $tagList;
     protected $node;
+    protected $escapingRegexList = array();
 
 
-    /* PUBLIC METHODS
+    /* CONSTRUCTOR METHODS
      *************************************************************************/
     public function __construct()
     {
@@ -42,6 +43,11 @@ abstract class NodeConverter implements NodeConverterInterface
     }
 
     public function escapeText($text) {
+        foreach ($this->escapingRegexList as $escapingRegex) {
+            if (isset($escapingRegex[0]) && isset($escapingRegex[1])) {
+                $text = preg_replace($escapingRegex[0], $escapingRegex[1], $text);
+            }
+        }
         return $text;
     }
 
