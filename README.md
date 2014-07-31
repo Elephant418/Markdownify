@@ -13,14 +13,10 @@ WARNING: This version is not ready yet.
 Quick start
 --------
 
-### Markdown
-
 ```php
-$converter = new Markdownify\Converter;
+$converter = new \Markdownify\Converter;
 $converter->load('<h1>Heading</h1>');
-echo $converter->save();
-
-// Display: # Heading
+echo $converter->save(); // # Heading
 ```
 
 [&uarr; top](#readme)
