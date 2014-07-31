@@ -4,12 +4,15 @@
 
 namespace Markdownify\NodeConverter;
 
-class HeaderNodeConverter extends TextNodeConverter
+class HeaderNodeConverter extends InlineNodeConverter
 {
 
     /* ATTRIBUTES
      *************************************************************************/
     protected $tagList = array('h1', 'h2', 'h3', 'h4', 'h5', 'h6');
+    protected $escapingRegexList = array(
+        array('@^#(#{0,5}) @U', '\#$1 ')
+    );
 
 
     /* PROTECTED METHODS
@@ -25,5 +28,4 @@ class HeaderNodeConverter extends TextNodeConverter
     {
         return array_search($this->getTagName(), $this->tagList) + 1;
     }
-
 }

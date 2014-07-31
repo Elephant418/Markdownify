@@ -24,7 +24,10 @@ abstract class NodeConverter implements NodeConverterInterface
      *************************************************************************/
     public function canHandleNode(\DOMNode $node)
     {
-        return in_array($node->nodeName, $this->tagList);
+        if ($node->nodeType === XML_ELEMENT_NODE) {
+            return in_array($node->nodeName, $this->tagList);
+        }
+        return false;
     }
 
     public function load(\DOMNode $node)
@@ -33,9 +36,13 @@ abstract class NodeConverter implements NodeConverterInterface
         return $this;
     }
 
-    public function save($nodeConverterFactory)
+    public function save($nodeConverterClassList)
     {
-        return $this->saveInnerHTML($nodeConverterFactory);
+        return $this->saveInnerHTML($nodeConverterClassList);
+    }
+
+    public function escapeText($text) {
+        return $text;
     }
 
 
@@ -61,13 +68,14 @@ abstract class NodeConverter implements NodeConverterInterface
         return $html;
     }
 
-    protected function saveRecursive($nodeConverterFactory)
+    protected function saveRecursive($nodeConverterClassList)
     {
         $export = '';
         foreach ($this->node->childNodes as $childNode) {
-            $childNodeConverter = $nodeConverterFactory->instanceNodeConverter($childNode);
+            $childNodeConverterFactory = new NodeConverterFactory($nodeConverterClassList);
+            $childNodeConverter = $childNodeConverterFactory->instanceNodeConverter($childNode);
             if ($childNodeConverter) {
-                $export .= $childNodeConverter->save($nodeConverterFactory);
+                $export .= $childNodeConverter->save($nodeConverterClassList);
             }
         }
         return $export;

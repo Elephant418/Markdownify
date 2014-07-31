@@ -17,9 +17,22 @@ class HeaderNodeConverterTest extends \PHPUnit_Framework_TestCase
     public function testSimpleTag($level)
     {
         $innerHTML = 'Heading '.$level;
-        $expected = str_pad('', $level, '#').' '.$innerHTML.PHP_EOL.PHP_EOL;
         $html = '<h'.$level.'>'.$innerHTML.'</h'.$level.'>';
+        $expected = str_pad('', $level, '#').' '.$innerHTML.PHP_EOL.PHP_EOL;
         
+        $actual = (new Converter)->load($html)->save();
+        $this->assertEquals($actual, $expected);
+    }
+
+    /**
+     * @dataProvider providerEveryTagLevel
+     */
+    public function testHeadingConversionEscape($level)
+    {
+        $innerHTML = 'Heading '.$level;
+        $html = str_pad('', $level, '#').' '.$innerHTML;
+        $expected = '\\'.$html.PHP_EOL.PHP_EOL;
+
         $actual = (new Converter)->load($html)->save();
         $this->assertEquals($actual, $expected);
     }

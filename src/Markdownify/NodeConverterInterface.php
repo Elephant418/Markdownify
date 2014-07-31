@@ -9,7 +9,11 @@ interface NodeConverterInterface
 
     public function __construct();
 
+    public function canHandleNode(\DOMNode $node);
+
     public function load(\DOMNode $node);
 
-    public function save($nodeConverterFactory);
+    public function save($nodeConverterClassList);
+    
+    public function escapeText($text);
 }

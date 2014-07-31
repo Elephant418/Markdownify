@@ -4,19 +4,18 @@
 
 namespace Markdownify\NodeConverter;
 
-class TransparentNodeConverter extends \Markdownify\NodeConverter
+class ParagraphNodeConverter extends InlineNodeConverter
 {
 
     /* ATTRIBUTES
      *************************************************************************/
-    protected $tagList = array('div', 'span');
+    protected $tagList = array('p');
 
 
-    /* PUBLIC METHODS
+    /* PROTECTED METHODS
      *************************************************************************/
-    public function save($nodeConverterClassList)
+    protected function initialization()
     {
-        return $this->saveRecursive($nodeConverterClassList);
+        $this->setLineBreaks(2);
     }
-
 }

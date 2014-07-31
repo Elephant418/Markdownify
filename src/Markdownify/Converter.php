@@ -41,15 +41,19 @@ class Converter
 
     public function save()
     {
-        return $this->rootNode->save($this->getNodeConverterFactory());
+        return $this->rootNode->save($this->getNodeConverterClassList());
     }
 
 
     /* PUBLIC METHODS
      *************************************************************************/
-    public function getNodeConverterFactory()
+    public function getNodeConverterClassList()
     {
-        $nodeConverterClassList = array('HeaderNodeConverter', 'TransparentNodeConverter');
-        return new NodeConverterFactory($nodeConverterClassList);
+        return array(
+            'ParagraphNodeConverter',
+            'TextNodeConverter',
+            'HeaderNodeConverter',
+            'TransparentNodeConverter'
+        );
     }
 }

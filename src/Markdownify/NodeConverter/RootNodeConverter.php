@@ -14,6 +14,14 @@ class RootNodeConverter extends TransparentNodeConverter
 
     /* PUBLIC METHODS
      *************************************************************************/
+    public function canHandleNode(\DOMNode $node)
+    {
+        if ($node->nodeType === XML_DOCUMENT_NODE) {
+            return true;
+        }
+        return parent::canHandleNode($node);
+    }
+    
     public function loadDocument(\DOMDocument $document)
     {
         $bodyNode = $this->getBodyNodeFromDocument($document);

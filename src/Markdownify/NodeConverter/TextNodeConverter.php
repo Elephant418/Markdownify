@@ -4,56 +4,17 @@
 
 namespace Markdownify\NodeConverter;
 
-abstract class TextNodeConverter extends \Markdownify\NodeConverter
+class TextNodeConverter extends InlineNodeConverter
 {
-
-    /* ATTRIBUTES
-     *************************************************************************/
-    protected $prefix = '';
-    protected $suffix = '';
-    protected $lineBreaks = 1;
 
 
     /* PUBLIC METHODS
      *************************************************************************/
-    public function save($nodeConverterFactory)
+    public function canHandleNode(\DOMNode $node)
     {
-        $this->initialization();
-        $export = $this->prefix.$this->node->textContent.$this->suffix;
-        $export .= str_repeat("\n", $this->lineBreaks);
-        return $export;
+        if ($node->nodeType === XML_TEXT_NODE) {
+            return true;
+        }
+        return false;
     }
-
-
-    /* PROTECTED METHODS
-     *************************************************************************/
-    protected function initialization()
-    {
-    }
-    
-    protected function setLineBreaks($number)
-    {
-        $this->lineBreaks = $number;
-        return $this;
-    }
-    
-    protected function setPrefix($prefix)
-    {
-        $this->prefix = $prefix;
-        return $this;
-    }
-
-    protected function setSuffix($suffix)
-    {
-        $this->suffix = $suffix;
-        return $this;
-    }
-
-    protected function setWrapper($wrapper)
-    {
-        $this->prefix = $wrapper;
-        $this->suffix = $wrapper;
-        return $this;
-    }
-
 }
