@@ -4,7 +4,7 @@
 
 namespace Markdownify;
 
-use \Markdownify\NodeConverter\RootNodeConverter;
+use \Markdownify\Converter\Document;
 
 class Converter
 {
@@ -30,7 +30,7 @@ class Converter
     {
         $document = new \DOMDocument();
         $document->loadHTML($html);
-        $this->rootNode = (new RootNodeConverter($this))->loadDocument($document);
+        $this->rootNode = (new Document)->loadDocument($document);
         return $this;
     }
 
@@ -41,19 +41,19 @@ class Converter
 
     public function save()
     {
+        
         return $this->rootNode->save($this->getNodeConverterClassList());
     }
 
-
-    /* PUBLIC METHODS
-     *************************************************************************/
     public function getNodeConverterClassList()
     {
-        return array(
-            'ParagraphNodeConverter',
-            'TextNodeConverter',
-            'HeaderNodeConverter',
-            'TransparentNodeConverter'
+        $nodeConverterList = array(
+            'Converter\\RootNode',
+            'Converter\\TextNode'
         );
+        array_walk($nodeConverterList, function(&$item){
+            $item = str_replace('Converter\\', 'Markdownify\\Converter\\Node\\', $item);
+        });
+        return $nodeConverterList;
     }
 }

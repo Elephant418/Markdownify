@@ -2,21 +2,21 @@
 
 /* This file is part of the Markdownify 3 project, which is under MIT license */
 
-namespace Markdownify\NodeConverter;
+namespace Markdownify\Converter;
 
-class TransparentNodeConverter extends \Markdownify\NodeConverter
+class Document extends Node
 {
 
     /* ATTRIBUTES
      *************************************************************************/
-    protected $tagList = array('div', 'span');
+    protected $tagList = array();
 
 
     /* PUBLIC METHODS
      *************************************************************************/
-    public function save($nodeConverterClassList)
+    public function loadDocument(\DOMDocument $document)
     {
-        return $this->saveRecursive($nodeConverterClassList);
+        return $this->load($document->documentElement);
     }
 
 }

@@ -2,9 +2,11 @@
 
 /* This file is part of the Markdownify 3 project, which is under MIT license */
 
-namespace Markdownify\NodeConverter;
+namespace Markdownify\Markdown\Node;
 
-class ParagraphNodeConverter extends InlineNodeConverter
+use \Markdownify\Converter\Node;
+
+class ParagraphMarkdownNode extends Node
 {
 
     /* ATTRIBUTES

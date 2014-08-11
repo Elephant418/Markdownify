@@ -2,12 +2,19 @@
 
 /* This file is part of the Markdownify 3 project, which is under MIT license */
 
-namespace Markdownify\NodeConverter;
+namespace Markdownify\Converter\Node;
 
-class TextNodeConverter extends InlineNodeConverter
+use \Markdownify\Converter\Node;
+
+class TextNode extends Node
 {
 
+    
+    /* ATTRIBUTES
+     *************************************************************************/
+    protected $conversionType = self::NO_NESTED_CONVERSION;
 
+    
     /* PUBLIC METHODS
      *************************************************************************/
     public function canHandleNode(\DOMNode $node)

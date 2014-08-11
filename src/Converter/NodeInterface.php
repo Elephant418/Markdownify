@@ -2,9 +2,9 @@
 
 /* This file is part of the Markdownify 3 project, which is under MIT license */
 
-namespace Markdownify;
+namespace Markdownify\Converter;
 
-interface NodeConverterInterface
+interface NodeInterface
 {
 
     public function __construct();

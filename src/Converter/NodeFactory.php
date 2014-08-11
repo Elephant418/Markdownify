@@ -2,9 +2,9 @@
 
 /* This file is part of the Markdownify 3 project, which is under MIT license */
 
-namespace Markdownify;
+namespace Markdownify\Converter;
 
-class NodeConverterFactory
+class NodeFactory
 {
 
     /* ATTRIBUTES
@@ -25,7 +25,6 @@ class NodeConverterFactory
     public function instanceNodeConverter(\DOMNode $node)
     {
         foreach ($this->nodeConverterClassList as $nodeConverterClass) {
-            $nodeConverterClass = 'Markdownify\\NodeConverter\\' . $nodeConverterClass;
             $nodeConverter = new $nodeConverterClass;
             if ($nodeConverter->canHandleNode($node)) {
                 return $nodeConverter->load($node);
