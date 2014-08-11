@@ -2,15 +2,15 @@
 
 /* This file is part of the Markdownify 3 project, which is under MIT license */
 
-namespace Markdownify\Markdown\Node;
+namespace Markdownify\Converter\NodeConverter;
 
-use \Markdownify\Converter\Node;
+use \Markdownify\Converter\NodeConverter;
 
-class TransparentMarkdownNode extends Node
+class RootNodeConverter extends NodeConverter
 {
 
     /* ATTRIBUTES
      *************************************************************************/
-    protected $tagList = array('div', 'span');
+    protected $tagList = array('html', 'body');
 
 }

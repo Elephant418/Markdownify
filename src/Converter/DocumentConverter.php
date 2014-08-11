@@ -4,7 +4,7 @@
 
 namespace Markdownify\Converter;
 
-class Document extends Node
+class DocumentConverter extends NodeConverter
 {
 
     /* ATTRIBUTES

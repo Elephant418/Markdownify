@@ -14,13 +14,14 @@ class MarkdownConverter extends Converter
         $nodeConverterList = array(
             'Converter\\RootNode',
             'Converter\\TextNode',
-            'Markdown\\TransparentMarkdownNode',
-            'Markdown\\HeaderMarkdownNode',
-            'Markdown\\ParagraphMarkdownNode'
+            'Markdown\\TransparentMarkdown',
+            'Markdown\\HeaderMarkdown',
+            'Markdown\\ParagraphMarkdown'
         );
         array_walk($nodeConverterList, function(&$item){
-            $item = str_replace('Converter\\', 'Markdownify\\Converter\\Node\\', $item);
-            $item = str_replace('Markdown\\', 'Markdownify\\Markdown\\Node\\', $item);
+            $item = str_replace('Converter\\', 'Markdownify\\Converter\\NodeConverter\\', $item);
+            $item = str_replace('Markdown\\', 'Markdownify\\MarkdownConverter\\', $item);
+            $item .= 'Converter';
         });
         return $nodeConverterList;
     }

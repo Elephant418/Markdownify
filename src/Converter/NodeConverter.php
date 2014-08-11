@@ -4,7 +4,7 @@
 
 namespace Markdownify\Converter;
 
-abstract class Node implements NodeInterface
+abstract class NodeConverter implements NodeConverterInterface
 {
 
     /* const
@@ -113,9 +113,9 @@ abstract class Node implements NodeInterface
     protected function saveNested($nodeConverterClassList)
     {
         $export = '';
+        $nodeConverterFactory = new NodeConverterFactory($nodeConverterClassList);
         foreach ($this->node->childNodes as $childNode) {
-            $childNodeFactory = new NodeFactory($nodeConverterClassList);
-            $childNodeConverter = $childNodeFactory->instanceNodeConverter($childNode);
+            $childNodeConverter = $nodeConverterFactory->instanceNodeConverter($childNode);
             if ($childNodeConverter) {
                 $export .= $childNodeConverter->save($nodeConverterClassList);
             } else {

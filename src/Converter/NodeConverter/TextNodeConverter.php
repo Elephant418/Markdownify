@@ -2,11 +2,11 @@
 
 /* This file is part of the Markdownify 3 project, which is under MIT license */
 
-namespace Markdownify\Converter\Node;
+namespace Markdownify\Converter\NodeConverter;
 
-use \Markdownify\Converter\Node;
+use \Markdownify\Converter\NodeConverter;
 
-class TextNode extends Node
+class TextNodeConverter extends NodeConverter
 {
 
     

@@ -4,7 +4,7 @@
 
 namespace Markdownify\Converter;
 
-class NodeFactory
+class NodeConverterFactory
 {
 
     /* ATTRIBUTES

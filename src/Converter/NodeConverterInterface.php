@@ -4,7 +4,7 @@
 
 namespace Markdownify\Converter;
 
-interface NodeInterface
+interface NodeConverterInterface
 {
 
     public function __construct();

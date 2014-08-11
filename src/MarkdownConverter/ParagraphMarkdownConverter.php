@@ -2,11 +2,11 @@
 
 /* This file is part of the Markdownify 3 project, which is under MIT license */
 
-namespace Markdownify\Markdown\Node;
+namespace Markdownify\MarkdownConverter;
 
-use \Markdownify\Converter\Node;
+use \Markdownify\Converter\NodeConverter;
 
-class ParagraphMarkdownNode extends Node
+class ParagraphMarkdownConverter extends NodeConverter
 {
 
     /* ATTRIBUTES
