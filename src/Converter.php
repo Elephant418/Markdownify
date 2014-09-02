@@ -30,7 +30,8 @@ class Converter
     {
         $document = new \DOMDocument();
         $document->loadHTML($html);
-        $this->rootNode = (new DocumentConverter)->loadDocument($document);
+        $rootNode = new DocumentConverter();
+        $this->rootNode = $rootNode->loadDocument($document);
         return $this;
     }
 
@@ -53,7 +54,6 @@ class Converter
         );
         array_walk($nodeConverterList, function(&$item){
             $item = str_replace('Converter\\', 'Markdownify\\Converter\\NodeConverter\\', $item);
-            $item .= 'Converter';
         });
         return $nodeConverterList;
     }
