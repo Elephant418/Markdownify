@@ -13,8 +13,9 @@ class HeaderMarkdownConverter extends NodeConverter
      *************************************************************************/
     protected $tagList = array('h1', 'h2', 'h3', 'h4', 'h5', 'h6');
     protected $escapingRegexList = array(
-        array('@^#(#{0,5} )@U', '\#$1'),
-        array('@^===@U', '\=$1')
+        array('@^#(?#{0,5} )@', '\#$1'),
+        array('@^===@m', '\==='),
+        array('@^---@m', '\---')
     );
 
 
