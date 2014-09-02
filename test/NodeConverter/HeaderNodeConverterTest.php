@@ -18,7 +18,7 @@ class HeaderNodeConverterTest extends \PHPUnit_Framework_TestCase
     {
         $label = 'Heading '.$level;
         $html = '<h'.$level.'>'.$label.'</h'.$level.'>';
-        $expected = str_pad('', $level, '#').' '.$label.PHP_EOL.PHP_EOL;
+        $expected = str_pad('', $level, '#').' '.$label;
         
         $converter = new Converter();
         $actual = $converter->load($html)->save();
@@ -32,7 +32,7 @@ class HeaderNodeConverterTest extends \PHPUnit_Framework_TestCase
     {
         $label = 'Heading '.$level;
         $html = str_pad('', $level, '#').' '.$label;
-        $expected = '\\'.$html.PHP_EOL.PHP_EOL;
+        $expected = '\\'.$html;
 
         $converter = new Converter();
         $actual = $converter->load($html)->save();
@@ -65,7 +65,7 @@ class HeaderNodeConverterTest extends \PHPUnit_Framework_TestCase
         }
 
         $converter = new Converter();
-        $actual = $converter->load('<div>'.$html.'</div>')->save();
+        $actual = $converter->load($html)->save();
         $this->assertEquals($expected, $actual);
     }
 
