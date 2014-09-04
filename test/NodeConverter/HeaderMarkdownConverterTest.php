@@ -8,7 +8,7 @@ require_once(__DIR__ . '/../../vendor/autoload.php');
 
 use Markdownify\MarkdownConverter as Converter;
 
-class HeaderNodeConverterTest extends \PHPUnit_Framework_TestCase
+class HeaderMarkdownConverterTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -18,11 +18,9 @@ class HeaderNodeConverterTest extends \PHPUnit_Framework_TestCase
     {
         $label = 'Heading '.$level;
         $html = '<h'.$level.'>'.$label.'</h'.$level.'>';
-        $expected = str_pad('', $level, '#').' '.$label.PHP_EOL.PHP_EOL;
-        
-        $converter = new Converter();
-        $actual = $converter->load($html)->save();
-        $this->assertEquals($expected, $actual);
+        $markdown = str_pad('', $level, '#').' '.$label;
+
+        $this->assertMarkdown($markdown, $html);
     }
 
     /**
@@ -32,11 +30,9 @@ class HeaderNodeConverterTest extends \PHPUnit_Framework_TestCase
     {
         $label = 'Heading '.$level;
         $html = str_pad('', $level, '#').' '.$label;
-        $expected = '\\'.$html.PHP_EOL.PHP_EOL;
+        $markdown = '\\'.$html;
 
-        $converter = new Converter();
-        $actual = $converter->load($html)->save();
-        $this->assertEquals($expected, $actual);
+        $this->assertMarkdown($markdown, $html);
     }
 
     public function providerEveryTagLevel()
@@ -58,15 +54,13 @@ class HeaderNodeConverterTest extends \PHPUnit_Framework_TestCase
         $html = $label.PHP_EOL
             .$dash.PHP_EOL;
         if ($shouldBeEscaped) {
-            $expected = $label.PHP_EOL
+            $markdown = $label.PHP_EOL
                 .'\\'.$dash.PHP_EOL;
         } else {
-            $expected = $html;
+            $markdown = $html;
         }
-
-        $converter = new Converter();
-        $actual = $converter->load('<div>'.$html.'</div>')->save();
-        $this->assertEquals($expected, $actual);
+        
+        $this->assertMarkdown($markdown, $html);
     }
 
     public function providerDash()
@@ -78,6 +72,14 @@ class HeaderNodeConverterTest extends \PHPUnit_Framework_TestCase
             }
         }
         return $data;
+    }
+
+    protected function assertMarkdown($markdown, $html)
+    {
+        $markdown .= PHP_EOL.PHP_EOL;
+        $converter = new Converter();
+        $actual = $converter->load($html)->save();
+        $this->assertEquals($markdown, $actual);
     }
 
 }
