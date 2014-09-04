@@ -13,7 +13,6 @@ class HeaderNodeConverterTest extends \PHPUnit_Framework_TestCase
 
     /* TEST CASES
      *************************************************************************/
-    
     public function testSimpleTag()
     {
         $label = 'Paragraph';
@@ -22,14 +21,27 @@ class HeaderNodeConverterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertMarkdown($markdown, $html);
     }
-    
-    public function testLineBreaksEscaping()
+
+
+    /**
+     * @dataProvider providerLineBreaks
+     */
+    public function testLineBreaksEscaping($lineBreaks)
     {
         $label = 'HTML text with line breaks';
-        $html = '<p>'.$label.PHP_EOL.PHP_EOL.$label.'</p>';
+        $html = '<p>'.$label.$lineBreaks.$label.'</p>';
         $markdown = $label.PHP_EOL.$label;
 
         $this->assertMarkdown($markdown, $html);
+    }
+
+    public function providerLineBreaks()
+    {
+        $data = array();
+        for ($lineBreaksCount=1; $lineBreaksCount<=6; $lineBreaksCount++) {
+            $data[] = array(str_repeat(PHP_EOL, $lineBreaksCount));
+        }
+        return $data;
     }
 
 
