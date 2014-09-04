@@ -11,6 +11,9 @@ use Markdownify\MarkdownConverter as Converter;
 class HeaderMarkdownConverterTest extends \PHPUnit_Framework_TestCase
 {
 
+    /* TEST CASES
+     *************************************************************************/
+    
     /**
      * @dataProvider providerEveryTagLevel
      */
@@ -74,6 +77,9 @@ class HeaderMarkdownConverterTest extends \PHPUnit_Framework_TestCase
         return $data;
     }
 
+    
+    /* PROTECTED METHODS
+     *************************************************************************/
     protected function assertMarkdown($markdown, $html)
     {
         $markdown .= PHP_EOL.PHP_EOL;
