@@ -16,6 +16,13 @@ class ParagraphMarkdownConverter extends NodeConverter
 
     /* PROTECTED METHODS
      *************************************************************************/
+    public function __construct()
+    {
+        $this->escapingRegexList = array(
+            array('@'.PHP_EOL.PHP_EOL.'+@m', PHP_EOL)
+        );
+    }
+    
     protected function initialization()
     {
         $this->setLineBreaks(2);
