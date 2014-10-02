@@ -75,4 +75,36 @@ class ConverterExtraTest extends ConverterTestCase
 
         return $data;
     }
+
+
+    /* TABLE TEST METHODS
+     *************************************************************************/
+    public function testTableConversion()
+    {
+        $html = '<table>
+<thead>
+<tr>
+  <th>First Header</th>
+  <th>Second Header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Content Cell</td>
+  <td>Content Cell</td>
+</tr>
+<tr>
+  <td> </td>
+  <td>Content Cell</td>
+</tr>
+</tbody>
+</table>
+';
+        $md = '| First Header | Second Header |
+| ------------ | ------------- |
+| Content Cell | Content Cell  |
+|              | Content Cell  |';
+        $this->converter->setKeepHTML(false);
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
 }

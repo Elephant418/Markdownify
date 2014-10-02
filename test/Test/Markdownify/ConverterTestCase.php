@@ -432,5 +432,4 @@ This is [another example](http://example2.com/ "Title") inline link.';
 
         return $data;
     }
-
 }
