@@ -609,7 +609,7 @@ class Converter
      */
     protected function handleTag_em()
     {
-        $this->out('*', true);
+        $this->out('_', true);
     }
 
     protected function handleTag_i()
