@@ -399,7 +399,7 @@ This is [another example](http://example2.com/ "Title") inline link.';
         $data['strong-escape2']['html'] = '__double asterisks__';
         $data['strong-escape2']['md'] = '\_\_double asterisks\_\_';
         $data['em']['html'] = '<em>single asterisks</em>';
-        $data['em']['md'] = '*single asterisks*';
+        $data['em']['md'] = '_single asterisks_';
         $data['em-escape']['html'] = '*single asterisks*';
         $data['em-escape']['md'] = '\*single asterisks\*';
         $data['em-escape2']['html'] = '_single asterisks_';
