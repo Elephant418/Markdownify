@@ -274,6 +274,8 @@ class Converter
      */
     public function parseString($html)
     {
+        $html = $this->prepareHtml($html);
+
         $this->parser->html = $html;
         $this->parse();
 
@@ -1327,4 +1329,154 @@ class Converter
     {
         return end($this->parser->openTags);
     }
+
+    /**
+     * Helper method to prepare html for correct markdown parsing. This will correct BR tags inside other
+     * tags like EM or STRONG.
+     *
+     * For example:
+     *   <strong>Hello,<br>How are you doing?</strong>
+     * Will be corrected to
+     *   <strong>Hello,</strong><br><strong>How are you doing?</strong>
+     *
+     * @param \DOMDocument $dom
+     */
+    protected function fixBreaks(\DOMDocument $dom)
+    {
+        /** @var \DOMNode[] $brs */
+        $brs = $dom->getElementsByTagName('br');
+        $stopTags = array('body', 'p');
+
+        foreach ($brs as $br) {
+            if ($br->parentNode && !in_array($br->parentNode->tagName, $stopTags)) {
+                $parent = $br->parentNode;
+
+                /** @var \DOMNode[] $childNodes */
+                $childNodes   = $parent->childNodes;
+                $mainFragment = $dom->createDocumentFragment();
+                $fragment     = $dom->createDocumentFragment();
+
+                foreach ($childNodes as $childChild) {
+                    if ($childChild->nodeName !== 'br') {
+                        $fragment->appendChild($childChild->cloneNode(true));
+                    } else {
+                        if ($fragment->hasChildNodes()) {
+                            $newNode = $dom->createElement($parent->nodeName);
+                            $newNode->appendChild($fragment);
+
+                            $mainFragment->appendChild($newNode);
+
+                            // reset fragment
+                            $fragment = $dom->createDocumentFragment();
+                        }
+
+                        $mainFragment->appendChild($childChild->cloneNode(true));
+                    }
+                }
+
+                if ($fragment->hasChildNodes()) {
+                    $newNode = $dom->createElement($parent->nodeName);
+                    $newNode->appendChild($fragment);
+
+                    $mainFragment->appendChild($newNode);
+                }
+
+                $parent->parentNode->replaceChild($mainFragment, $parent);
+
+                $this->fixBreaks($dom);
+
+                break;
+            }
+        }
+    }
+
+    /**
+     * Helper method to prepare html for correct markdown parsing. This will correct spaces around tags.
+     * It will correct spaces at begin tag and end tag.
+     *
+     * For example:
+     *   <p>This is<strong> strong</strong> text</p>
+     * Will be corrected to
+     *   <p>This is <strong>strong</strong> text</p>
+     *
+     *
+     * @param \DOMDocument $dom
+     * @param string       $tagName
+     */
+    protected function fixTagSpaces(\DOMDocument $dom, $tagName)
+    {
+        $elements = $dom->getElementsByTagName($tagName);
+
+        /** @var \DOMNode $element */
+        foreach ($elements as $element) {
+            if ($element->firstChild && $element->firstChild instanceof \DOMText && $element->firstChild->wholeText[0] === ' ') {
+                $element->replaceChild(new \DOMText(ltrim($element->firstChild->wholeText, ' ')), $element->firstChild);
+                $element->parentNode->insertBefore($dom->createTextNode(' '), $element);
+            }
+
+            if ($element->lastChild && $element->lastChild instanceof \DOMText && substr($element->lastChild->wholeText, -1) === ' ') {
+                $element->replaceChild(new \DOMText(rtrim($element->lastChild->wholeText, ' ')), $element->lastChild);
+                if ($element->nextSibling) {
+                    $element->nextSibling->parentNode->insertBefore($dom->createTextNode(' '), $element->nextSibling);
+                } else {
+                    $element->parentNode->appendChild($dom->createTextNode(' '));
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns inner html from a dom document node
+     *
+     * @param \DOMDocument $dom
+     * @param \DOMNode     $node
+     *
+     * @return string
+     */
+    protected function getInnerHtml(\DOMDocument $dom, \DOMNode $node)
+    {
+        $innerHtml = '';
+
+        foreach ($node->childNodes as $child) {
+            $innerHtml .= $dom->saveXML($child);
+        }
+
+        return $innerHtml;
+    }
+
+    /**
+     * Applies some fixes so we can better parse the html
+     *
+     * @param string $html
+     *
+     * @return string
+     */
+    protected function prepareHtml($html)
+    {
+        $dom = new \DOMDocument();
+        $dom->substituteEntities = false;
+
+        // extra mb_convert_encoding pass http://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly?answertab=active#tab-top
+        // in some environments the meta charset is not enough
+        $dom->loadHTML(
+            mb_convert_encoding(
+                '<html><head><meta charset="utf-8"></head><body>' . $html . '</body></html>',
+                'HTML-ENTITIES',
+                'UTF-8'
+            )
+        );
+
+        $this->fixBreaks($dom);
+        $this->fixTagSpaces($dom, 'em');
+        $this->fixTagSpaces($dom, 'strong');
+        $this->fixTagSpaces($dom, 'b');
+        $this->fixTagSpaces($dom, 'i');
+
+        $body = $dom->getElementsByTagName('body');
+        $preparedHtml = $this->getInnerHtml($dom, $body->item(0));
+
+        return $preparedHtml;
+    }
+
+
 }

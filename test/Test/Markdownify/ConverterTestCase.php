@@ -84,7 +84,7 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
         return array(
             array('AT&amp;T', 'AT&T'),
             array('4 &lt; 5', '4 < 5'),
-            array('&copy;', '&copy;')
+            array('&copy;', '©')
         );
     }
 
@@ -429,6 +429,55 @@ This is [another example](http://example2.com/ "Title") inline link.';
         $data['escape-']['md'] = '\---\---\---\---\---\---\---\---\---\---\-----';
         $data['escape-']['html'] = '*****************';
         $data['escape-']['md'] = '\***\***\***\***\*****';
+
+        return $data;
+    }
+
+
+    /* FIX BREAKS TESTS
+     *************************************************************************/
+
+    /**
+     * @dataProvider providerFixBreaks
+     */
+    public function testFixBreaks($html, $md)
+    {
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+
+    public function providerFixBreaks()
+    {
+        $data = array();
+        $data['break1']['html'] = "<strong>Hello,<br>How are you doing?</strong>";
+        $data['break1']['md'] = "**Hello,**  \n**How are you doing?**";
+
+        return $data;
+    }
+
+    /* FIX TAG SPACES TESTS
+     *************************************************************************/
+
+    /**
+     * @dataProvider providerFixTagSpaces
+     */
+    public function testFixTagSpaces($html, $md)
+    {
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+
+    public function providerFixTagSpaces()
+    {
+        $data = array();
+        $data['strong']['html'] = "<p>This is<strong> strong</strong> text</p>";
+        $data['strong']['md'] = "This is **strong** text";
+        $data['em']['html'] = "<p>This is<em> italic </em> text</p>";
+        $data['em']['md'] = "This is _italic_ text";
+        $data['b']['html'] = "<p>Not bold, <b> bold</b></p>";
+        $data['b']['md'] = "Not bold, **bold**";
+        $data['i']['html'] = "<p>Not italic, <i>italic </i></p>";
+        $data['i']['md'] = "Not italic, _italic_";
 
         return $data;
     }
