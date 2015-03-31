@@ -84,7 +84,7 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
         return array(
             array('AT&amp;T', 'AT&T'),
             array('4 &lt; 5', '4 < 5'),
-            array('&copy;', '©')
+            array('&copy;', '&copy;')
         );
     }
 
@@ -450,7 +450,9 @@ This is [another example](http://example2.com/ "Title") inline link.';
     {
         $data = array();
         $data['break1']['html'] = "<strong>Hello,<br>How are you doing?</strong>";
-        $data['break1']['md'] = "**Hello,**  \n**How are you doing?**";
+        $data['break1']['md'] = "**Hello,  \nHow are you doing?**";
+        $data['break2']['html'] = "<b>Hey,<br> How you're doing?</b><br><br><b>Sorry<br><br> You can't get through</b>";
+        $data['break2']['md'] = "**Hey,   \nHow you're doing?**  \n  \n**Sorry  \n   \nYou can't get through**";
 
         return $data;
     }
@@ -472,10 +474,10 @@ This is [another example](http://example2.com/ "Title") inline link.';
         $data = array();
         $data['strong']['html'] = "<p>This is<strong> strong</strong> text</p>";
         $data['strong']['md'] = "This is **strong** text";
-        $data['em']['html'] = "<p>This is<em> italic </em> text</p>";
+        $data['em']['html'] = "<p>This is<em> italic </em>text</p>";
         $data['em']['md'] = "This is _italic_ text";
-        $data['b']['html'] = "<p>Not bold, <b> bold</b></p>";
-        $data['b']['md'] = "Not bold, **bold**";
+        $data['b']['html'] = "<p>Not bold,<b> bolder    </b>boldst</p>";
+        $data['b']['md'] = "Not bold, **bolder** boldst";
         $data['i']['html'] = "<p>Not italic, <i>italic </i></p>";
         $data['i']['md'] = "Not italic, _italic_";
 
