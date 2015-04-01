@@ -68,7 +68,7 @@ class Converter
 
     /**
      * position where the link reference will be displayed
-     * 
+     *
      *
      * @var int
      */
@@ -274,8 +274,6 @@ class Converter
      */
     public function parseString($html)
     {
-        $html = $this->prepareHtml($html);
-
         $this->parser->html = $html;
         $this->parse();
 
@@ -284,7 +282,7 @@ class Converter
 
     /**
      * set the position where the link reference will be displayed
-     * 
+     *
      * @param int $linkPosition
      * @return void
      */
@@ -348,9 +346,17 @@ class Converter
                         $this->handleTagToText();
                         continue;
                     }
-                    if (!$this->parser->keepWhitespace && $this->parser->isBlockElement && $this->parser->isStartTag) {
-                        $this->parser->html = ltrim($this->parser->html);
+
+                    // block elements
+                    if (!$this->parser->keepWhitespace && $this->parser->isBlockElement) {
+                        $this->fixBlockElementSpacing();
                     }
+
+                    // inline elements
+                    if (!$this->parser->keepWhitespace && $this->parser->isInlineContext) {
+                        $this->fixInlineElementSpacing();
+                    }
+
                     if ($this->isMarkdownable()) {
                         if ($this->parser->isBlockElement && $this->parser->isStartTag && !$this->lastWasBlockTag && !empty($this->output)) {
                             if (!empty($this->buffer)) {
@@ -795,7 +801,7 @@ class Converter
             //  [1]: mailto:mail@example.com Title
             $tag['href'] = 'mailto:' . $bufferDecoded;
         }
-        
+
         if ($this->linkPosition == self::LINK_IN_PARAGRAPH) {
             return '[' . $buffer . '](' . $this->getLinkReference($tag) . ')';
         }
@@ -861,7 +867,7 @@ class Converter
             $this->out($out, true);
             return ;
         }
-        
+
         // ![This image][id]
         $link_id = false;
         if (!empty($this->footnotes)) {
@@ -884,7 +890,7 @@ class Converter
             array_push($this->footnotes, $tag);
         }
         $out .= '[' . $link_id . ']';
-        
+
         $this->out($out, true);
     }
 
@@ -1133,7 +1139,7 @@ class Converter
      * buffers
      *
      * @param string $put
-     * @param boolean $nowrap 
+     * @param boolean $nowrap
      * @return void
      */
     protected function out($put, $nowrap = false)
@@ -1331,152 +1337,45 @@ class Converter
     }
 
     /**
-     * Helper method to prepare html for correct markdown parsing. This will correct BR tags inside other
-     * tags like EM or STRONG.
-     *
-     * For example:
-     *   <strong>Hello,<br>How are you doing?</strong>
-     * Will be corrected to
-     *   <strong>Hello,</strong><br><strong>How are you doing?</strong>
-     *
-     * @param \DOMDocument $dom
+     * Trims whitespace in block-level elements, on the left side.
      */
-    protected function fixBreaks(\DOMDocument $dom)
+    protected function fixBlockElementSpacing()
     {
-        /** @var \DOMNode[] $brs */
-        $brs = $dom->getElementsByTagName('br');
-        $stopTags = array('body', 'p');
-
-        foreach ($brs as $br) {
-            if ($br->parentNode && !in_array($br->parentNode->tagName, $stopTags)) {
-                $parent = $br->parentNode;
-
-                /** @var \DOMNode[] $childNodes */
-                $childNodes   = $parent->childNodes;
-                $mainFragment = $dom->createDocumentFragment();
-                $fragment     = $dom->createDocumentFragment();
-
-                foreach ($childNodes as $childChild) {
-                    if ($childChild->nodeName !== 'br') {
-                        $fragment->appendChild($childChild->cloneNode(true));
-                    } else {
-                        if ($fragment->hasChildNodes()) {
-                            $newNode = $dom->createElement($parent->nodeName);
-                            $newNode->appendChild($fragment);
-
-                            $mainFragment->appendChild($newNode);
-
-                            // reset fragment
-                            $fragment = $dom->createDocumentFragment();
-                        }
-
-                        $mainFragment->appendChild($childChild->cloneNode(true));
-                    }
-                }
-
-                if ($fragment->hasChildNodes()) {
-                    $newNode = $dom->createElement($parent->nodeName);
-                    $newNode->appendChild($fragment);
-
-                    $mainFragment->appendChild($newNode);
-                }
-
-                $parent->parentNode->replaceChild($mainFragment, $parent);
-
-                $this->fixBreaks($dom);
-
-                break;
-            }
+        if ($this->parser->isStartTag) {
+            $this->parser->html = ltrim($this->parser->html);
         }
     }
 
     /**
-     * Helper method to prepare html for correct markdown parsing. This will correct spaces around tags.
-     * It will correct spaces at begin tag and end tag.
+     * Moves leading/trailing whitespace from inline elements outside of the
+     * element. This is to fix cases like `<strong> Text</strong>`, which if
+     * converted to `** strong**` would be incorrect Markdown.
      *
-     * For example:
-     *   <p>This is<strong> strong</strong> text</p>
-     * Will be corrected to
-     *   <p>This is <strong>strong</strong> text</p>
+     * Examples:
      *
-     *
-     * @param \DOMDocument $dom
-     * @param string       $tagName
+     *   * leading: `<strong> Text</strong>` becomes ` <strong>Text</strong>`
+     *   * trailing: `<strong>Text </strong>` becomes `<strong>Text</strong> `
      */
-    protected function fixTagSpaces(\DOMDocument $dom, $tagName)
+    protected function fixInlineElementSpacing()
     {
-        $elements = $dom->getElementsByTagName($tagName);
-
-        /** @var \DOMNode $element */
-        foreach ($elements as $element) {
-            if ($element->firstChild && $element->firstChild instanceof \DOMText && $element->firstChild->wholeText[0] === ' ') {
-                $element->replaceChild(new \DOMText(ltrim($element->firstChild->wholeText, ' ')), $element->firstChild);
-                $element->parentNode->insertBefore($dom->createTextNode(' '), $element);
+        if ($this->parser->isStartTag) {
+            // move spaces after the start element to before the element
+            if (preg_match('~^(\s+)~', $this->parser->html, $matches)) {
+                $this->out($matches[1]);
+                $this->parser->html = ltrim($this->parser->html, " \t\0\x0B");
+            }
+        } else {
+            if (!empty($this->buffer)) {
+                $str =& $this->buffer[count($this->buffer) - 1];
+            } else {
+                $str =& $this->output;
             }
 
-            if ($element->lastChild && $element->lastChild instanceof \DOMText && substr($element->lastChild->wholeText, -1) === ' ') {
-                $element->replaceChild(new \DOMText(rtrim($element->lastChild->wholeText, ' ')), $element->lastChild);
-                if ($element->nextSibling) {
-                    $element->nextSibling->parentNode->insertBefore($dom->createTextNode(' '), $element->nextSibling);
-                } else {
-                    $element->parentNode->appendChild($dom->createTextNode(' '));
-                }
+            // move spaces before the end element to after the element
+            if (preg_match('~(\s+)$~', $str, $matches)) {
+                $str = rtrim($this->output, " \t\0\x0B");
+                $this->parser->html = $matches[1] . $this->parser->html;
             }
         }
     }
-
-    /**
-     * Returns inner html from a dom document node
-     *
-     * @param \DOMDocument $dom
-     * @param \DOMNode     $node
-     *
-     * @return string
-     */
-    protected function getInnerHtml(\DOMDocument $dom, \DOMNode $node)
-    {
-        $innerHtml = '';
-
-        foreach ($node->childNodes as $child) {
-            $innerHtml .= $dom->saveXML($child);
-        }
-
-        return $innerHtml;
-    }
-
-    /**
-     * Applies some fixes so we can better parse the html
-     *
-     * @param string $html
-     *
-     * @return string
-     */
-    protected function prepareHtml($html)
-    {
-        $dom = new \DOMDocument();
-        $dom->substituteEntities = false;
-
-        // extra mb_convert_encoding pass http://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly?answertab=active#tab-top
-        // in some environments the meta charset is not enough
-        $dom->loadHTML(
-            mb_convert_encoding(
-                '<html><head><meta charset="utf-8"></head><body>' . $html . '</body></html>',
-                'HTML-ENTITIES',
-                'UTF-8'
-            )
-        );
-
-        $this->fixBreaks($dom);
-        $this->fixTagSpaces($dom, 'em');
-        $this->fixTagSpaces($dom, 'strong');
-        $this->fixTagSpaces($dom, 'b');
-        $this->fixTagSpaces($dom, 'i');
-
-        $body = $dom->getElementsByTagName('body');
-        $preparedHtml = $this->getInnerHtml($dom, $body->item(0));
-
-        return $preparedHtml;
-    }
-
-
 }
