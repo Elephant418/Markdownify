@@ -348,32 +348,15 @@ class Converter
                     }
 
                     // block elements
-                    if (!$this->parser->keepWhitespace && $this->parser->isBlockElement && $this->parser->isStartTag) {
-                        $this->parser->html = ltrim($this->parser->html);
+                    if (!$this->parser->keepWhitespace && $this->parser->isBlockElement) {
+                        $this->fixBlockElementSpacing();
                     }
 
                     // inline elements
                     if (!$this->parser->keepWhitespace && $this->parser->isInlineContext) {
-                        if ($this->parser->isStartTag) {
-                            // move spaces after the start element to before the element
-                            if (preg_match('~^(\s+)~', $this->parser->html, $matches)) {
-                                $this->out($matches[1]);
-                                $this->parser->html = ltrim($this->parser->html, " \t\0\x0B");
-                            }
-                        } else {
-                            if (!empty($this->buffer)) {
-                                $str =& $this->buffer[count($this->buffer) - 1];
-                            } else {
-                                $str =& $this->output;
-                            }
-
-                            // move spaces before the end element to after the element
-                            if (preg_match('~(\s+)$~', $str, $matches)) {
-                                $str = rtrim($this->output, " \t\0\x0B");
-                                $this->parser->html = $matches[1] . $this->parser->html;
-                            }
-                        }
+                        $this->fixInlineElementSpacing();
                     }
+
                     if ($this->isMarkdownable()) {
                         if ($this->parser->isBlockElement && $this->parser->isStartTag && !$this->lastWasBlockTag && !empty($this->output)) {
                             if (!empty($this->buffer)) {
@@ -1351,5 +1334,48 @@ class Converter
     protected function parent()
     {
         return end($this->parser->openTags);
+    }
+
+    /**
+     * Trims whitespace in block-level elements, on the left side.
+     */
+    protected function fixBlockElementSpacing()
+    {
+        if ($this->parser->isStartTag) {
+            $this->parser->html = ltrim($this->parser->html);
+        }
+    }
+
+    /**
+     * Moves leading/trailing whitespace from inline elements outside of the
+     * element. This is to fix cases like `<strong> Text</strong>`, which if
+     * converted to `** strong**` would be incorrect Markdown.
+     *
+     * Examples:
+     *
+     *   * leading: `<strong> Text</strong>` becomes ` <strong>Text</strong>`
+     *   * trailing: `<strong>Text </strong>` becomes `<strong>Text</strong> `
+     */
+    protected function fixInlineElementSpacing()
+    {
+        if ($this->parser->isStartTag) {
+            // move spaces after the start element to before the element
+            if (preg_match('~^(\s+)~', $this->parser->html, $matches)) {
+                $this->out($matches[1]);
+                $this->parser->html = ltrim($this->parser->html, " \t\0\x0B");
+            }
+        } else {
+            if (!empty($this->buffer)) {
+                $str =& $this->buffer[count($this->buffer) - 1];
+            } else {
+                $str =& $this->output;
+            }
+
+            // move spaces before the end element to after the element
+            if (preg_match('~(\s+)$~', $str, $matches)) {
+                $str = rtrim($this->output, " \t\0\x0B");
+                $this->parser->html = $matches[1] . $this->parser->html;
+            }
+        }
     }
 }
