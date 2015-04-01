@@ -2,6 +2,12 @@ CHANGELOG
 ==============
 
 
+01/04/2015 v2.1.9
+--------------
+
+ * Fix: Handle HTML breaks & spaces in a less destructive way.
+
+
 26/03/2015 v2.1.8
 --------------
 
