@@ -865,7 +865,7 @@ class Converter
             }
             $out .= ')';
             $this->out($out, true);
-            return ;
+            return;
         }
 
         // ![This image][id]

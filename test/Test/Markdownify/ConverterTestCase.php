@@ -15,7 +15,7 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
     /* ATTRIBUTES
      *************************************************************************/
     protected $converter;
-   
+
 
     /* HEADING TEST METHODS
      *************************************************************************/
@@ -24,15 +24,15 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
      */
     public function testHeadingConversion_withAttribute($level, $attributesHTML, $attributesMD = null)
     {
-        $innerHTML = 'Heading '.$level;
+        $innerHTML = 'Heading ' . $level;
         if (empty($attributesHTML)) {
-            $md = str_pad('', $level, '#').' '.$innerHTML;
+            $md = str_pad('', $level, '#') . ' ' . $innerHTML;
         } else {
-            $md = '<h'.$level.$attributesHTML.'>'."\n"
-                .'  '.$innerHTML."\n"
-                .'</h'.$level.'>';
+            $md = '<h' . $level . $attributesHTML . '>' . "\n"
+                . '  ' . $innerHTML . "\n"
+                . '</h' . $level . '>';
         }
-        $html = '<h'.$level.$attributesHTML.'>'.$innerHTML.'</h'.$level.'>';
+        $html = '<h' . $level . $attributesHTML . '>' . $innerHTML . '</h' . $level . '>';
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
@@ -40,12 +40,12 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
     {
         $attributes = array(' id="idAttribute"', ' class=" class1  class2 "');
         $data = array();
-        for ($i=1; $i<=6; $i++) {
+        for ($i = 1; $i <= 6; $i++) {
             $data[] = array($i, '');
             $data[] = array($i, $attributes[0]);
             $data[] = array($i, $attributes[1]);
-            $data[] = array($i, $attributes[0].$attributes[1]);
-        } 
+            $data[] = array($i, $attributes[0] . $attributes[1]);
+        }
         return $data;
     }
 
@@ -106,8 +106,8 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
         $data['simple']['html'] = '<blockquote>blockquoted text goes here</blockquote>';
         $data['simple']['md'] = '> blockquoted text goes here';
         $data['paragraphs']['html'] = '<blockquote><p>paragraph1</p><p>paragraph2</p></blockquote>';
-        $data['paragraphs']['md'] = '> paragraph1'.PHP_EOL
-            . '> '.PHP_EOL
+        $data['paragraphs']['md'] = '> paragraph1' . PHP_EOL
+            . '> ' . PHP_EOL
             . '> paragraph2';
         $data['cascade']['html'] = '<blockquote><blockquote>cascading blockquote</blockquote></blockquote>';
         $data['cascade']['md'] = '> > cascading blockquote';
@@ -132,58 +132,58 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
     {
         $data = array();
         $data['ordered']['html'] = '<ol><li>Bird</li><li>McHale</li><li>Parish</li></ol>';
-        $data['ordered']['md'] = '  1. Bird'.PHP_EOL
-            . '  2. McHale'.PHP_EOL
+        $data['ordered']['md'] = '  1. Bird' . PHP_EOL
+            . '  2. McHale' . PHP_EOL
             . '  3. Parish';
         $data['unordered']['html'] = '<ul><li>Red</li><li>Green</li><li>Blue</li></ul>';
-        $data['unordered']['md'] = '  * Red'.PHP_EOL
-            . '  * Green'.PHP_EOL
+        $data['unordered']['md'] = '  * Red' . PHP_EOL
+            . '  * Green' . PHP_EOL
             . '  * Blue';
         $data['paragraph']['html'] = '<ul><li><p>Bird</p></li><li><p>Magic</p></li></ul>';
-        $data['paragraph']['md'] = '  * Bird'.PHP_EOL
+        $data['paragraph']['md'] = '  * Bird' . PHP_EOL
             . PHP_EOL
             . '  * Magic';
         $data['next-to-text']['html'] = 'McHale<ol><li>Bird</li><li>Magic</li></ol>';
-        $data['next-to-text']['md'] = 'McHale'.PHP_EOL
-            . ''.PHP_EOL
-            . '  1. Bird'.PHP_EOL
+        $data['next-to-text']['md'] = 'McHale' . PHP_EOL
+            . '' . PHP_EOL
+            . '  1. Bird' . PHP_EOL
             . '  2. Magic';
         $data['next-to-text-in-block-context']['html'] = '<blockquote>McHale<ol><li>Bird</li><li>Magic</li></ol></blockquote>';
-        $data['next-to-text-in-block-context']['md'] = '> McHale'.PHP_EOL
-            . '> '.PHP_EOL
-            . '>   1. Bird'.PHP_EOL
+        $data['next-to-text-in-block-context']['md'] = '> McHale' . PHP_EOL
+            . '> ' . PHP_EOL
+            . '>   1. Bird' . PHP_EOL
             . '>   2. Magic';
         $data['next-to-bold']['html'] = '<b>McHale</b><ol><li>Bird</li><li>Magic</li></ol>';
-        $data['next-to-bold']['md'] = '**McHale**'.PHP_EOL
+        $data['next-to-bold']['md'] = '**McHale**' . PHP_EOL
             . PHP_EOL
-            . '  1. Bird'.PHP_EOL
+            . '  1. Bird' . PHP_EOL
             . '  2. Magic';
         $data['next-to-bold-and-br']['html'] = '<b>McHale</b><br><ol><li>Bird</li><li>Magic</li></ol>';
-        $data['next-to-bold-and-br']['md'] = '**McHale**  '.PHP_EOL
+        $data['next-to-bold-and-br']['md'] = '**McHale**  ' . PHP_EOL
             . PHP_EOL
             . PHP_EOL
-            . '  1. Bird'.PHP_EOL
+            . '  1. Bird' . PHP_EOL
             . '  2. Magic';
         $data['next-to-paragraph']['html'] = '<p>McHale</p><ol><li>Bird</li><li>Magic</li></ol>';
-        $data['next-to-paragraph']['md'] = 'McHale'.PHP_EOL
+        $data['next-to-paragraph']['md'] = 'McHale' . PHP_EOL
             . PHP_EOL
-            . '  1. Bird'.PHP_EOL
+            . '  1. Bird' . PHP_EOL
             . '  2. Magic';
         $data['nested-ordered']['html'] = '<ol><li>Bird</li><li>Colors<ol><li>Red</li><li>Green<ol><li>Light</li><li>Dark</li></ol></li><li>Blue</li></ol></li></ol>';
-        $data['nested-ordered']['md'] = '  1. Bird'.PHP_EOL
-            . '  2. Colors'.PHP_EOL
-            . '      1. Red'.PHP_EOL
-            . '      2. Green'.PHP_EOL
-            . '          1. Light'.PHP_EOL
-            . '          2. Dark'.PHP_EOL
+        $data['nested-ordered']['md'] = '  1. Bird' . PHP_EOL
+            . '  2. Colors' . PHP_EOL
+            . '      1. Red' . PHP_EOL
+            . '      2. Green' . PHP_EOL
+            . '          1. Light' . PHP_EOL
+            . '          2. Dark' . PHP_EOL
             . '      3. Blue';
         $data['nested-unordered']['html'] = '<ul><li>Bird</li><li>Colors<ul><li>Red</li><li>Green<ul><li>Light</li><li>Dark</li></ul></li><li>Blue</li></ul></li></ul>';
-        $data['nested-unordered']['md'] = '  * Bird'.PHP_EOL
-            . '  * Colors'.PHP_EOL
-            . '      * Red'.PHP_EOL
-            . '      * Green'.PHP_EOL
-            . '          * Light'.PHP_EOL
-            . '          * Dark'.PHP_EOL
+        $data['nested-unordered']['md'] = '  * Bird' . PHP_EOL
+            . '  * Colors' . PHP_EOL
+            . '      * Red' . PHP_EOL
+            . '      * Green' . PHP_EOL
+            . '          * Light' . PHP_EOL
+            . '          * Dark' . PHP_EOL
             . '      * Blue';
 
         return $data;
@@ -220,17 +220,17 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
         $data['inline-html']['html'] = '<p>Please don\'t use any <code>&lt;blink&gt;</code> tags.</p>';
         $data['inline-html']['md'] = 'Please don\'t use any `<blink>` tags.';
         $data['pre']['html'] = '<p>This is a normal paragraph:</p><pre><code>This is a code block.</code></pre>';
-        $data['pre']['md'] = 'This is a normal paragraph:'.PHP_EOL
+        $data['pre']['md'] = 'This is a normal paragraph:' . PHP_EOL
             . PHP_EOL
             . '    This is a code block.';
         $data['pre-indentation']['html'] = '<p>Here is an example of AppleScript:</p><pre><code>tell application "Foo"
     beep
 end tell
 </code></pre>';
-        $data['pre-indentation']['md'] = 'Here is an example of AppleScript:'.PHP_EOL
+        $data['pre-indentation']['md'] = 'Here is an example of AppleScript:' . PHP_EOL
             . PHP_EOL
-            . '    tell application "Foo"'.PHP_EOL
-            . '        beep'.PHP_EOL
+            . '    tell application "Foo"' . PHP_EOL
+            . '        beep' . PHP_EOL
             . '    end tell';
         $data['pre-html']['html'] = '<pre><code>&lt;div class="footer"&gt;
     &amp;copy; 2004 Foo Corporation
@@ -261,10 +261,10 @@ end tell
     public function providerLinkConversion()
     {
         $data = array();
-        
+
         // Link with href attribute
         $data['url']['html'] = '<p><a href="http://example.net/">This link</a> has no title attribute.</p>';
-        $data['url']['md'] = '[This link][1] has no title attribute.'.PHP_EOL
+        $data['url']['md'] = '[This link][1] has no title attribute.' . PHP_EOL
             . PHP_EOL
             . ' [1]: http://example.net/';
 
@@ -273,14 +273,14 @@ end tell
         $data['url-empty']['md'] = '[This link]().';
 
         // Multiple paragraph link
-        $data['url-multiple-1']['html'] = 
+        $data['url-multiple-1']['html'] =
             '<p>This is <a href="http://example1.com/" title="Title">an example</a> inline link.</p>
             <p>This is <a href="http://example2.com/" title="Title">another example</a> inline link.</p>';
-        $data['url-multiple-1']['md'] = 'This is [an example][1] inline link.'.PHP_EOL
+        $data['url-multiple-1']['md'] = 'This is [an example][1] inline link.' . PHP_EOL
             . PHP_EOL
-            . 'This is [another example][2] inline link.'.PHP_EOL
+            . 'This is [another example][2] inline link.' . PHP_EOL
             . PHP_EOL
-            . ' [1]: http://example1.com/ "Title"'.PHP_EOL
+            . ' [1]: http://example1.com/ "Title"' . PHP_EOL
             . ' [2]: http://example2.com/ "Title"';
         $data['url-multiple-1']['linkPosition'] = Converter::LINK_AFTER_CONTENT;
 
@@ -288,11 +288,11 @@ end tell
         $data['url-multiple-2']['html'] =
             '<p>This is <a href="http://example1.com/" title="Title">an example</a> inline link.</p>
             <p>This is <a href="http://example2.com/" title="Title">another example</a> inline link.</p>';
-        $data['url-multiple-2']['md'] = 'This is [an example][1] inline link.'.PHP_EOL
+        $data['url-multiple-2']['md'] = 'This is [an example][1] inline link.' . PHP_EOL
             . PHP_EOL
-            . ' [1]: http://example1.com/ "Title"'.PHP_EOL
+            . ' [1]: http://example1.com/ "Title"' . PHP_EOL
             . PHP_EOL
-            . 'This is [another example][2] inline link.'.PHP_EOL
+            . 'This is [another example][2] inline link.' . PHP_EOL
             . PHP_EOL
             . ' [2]: http://example2.com/ "Title"';
         $data['url-multiple-2']['linkPosition'] = Converter::LINK_AFTER_PARAGRAPH;
@@ -301,7 +301,7 @@ end tell
         $data['url-multiple-2']['html'] =
             '<p>This is <a href="http://example1.com/" title="Title">an example</a> inline link.</p>
             <p>This is <a href="http://example2.com/" title="Title">another example</a> inline link.</p>';
-        $data['url-multiple-2']['md'] = 'This is [an example](http://example1.com/ "Title") inline link.'.PHP_EOL
+        $data['url-multiple-2']['md'] = 'This is [an example](http://example1.com/ "Title") inline link.' . PHP_EOL
             . PHP_EOL
             . 'This is [another example](http://example2.com/ "Title") inline link.';
         $data['url-multiple-2']['linkPosition'] = Converter::LINK_IN_PARAGRAPH;
@@ -309,10 +309,10 @@ end tell
         // Direct link
         $data['url-direct']['html'] = '<p><a href="http://example.com">http://example.com</a>.</p>';
         $data['url-direct']['md'] = '<http://example.com>.';
-        
+
         // Link with href + title attributes
         $data['url-title']['html'] = '<p>This is <a href="http://example.com/" title="Title">an example</a> inline link.</p>';
-        $data['url-title']['md'] = 'This is [an example][1] inline link.'.PHP_EOL
+        $data['url-title']['md'] = 'This is [an example][1] inline link.' . PHP_EOL
             . PHP_EOL
             . ' [1]: http://example.com/ "Title"';
 
@@ -331,14 +331,14 @@ end tell
         // Link with href + title + multiple classes + id attributes
         $data['url-title-multiple-class-id']['html'] = '<p>This is <a href="http://example.com/" title="Title" class=" class1  class2 " id="myLink">an example</a> inline link.</p>';
         $data['url-title-multiple-class-id']['md'] = 'This is <a href="http://example.com/" title="Title" class=" class1  class2 " id="myLink">an example</a> inline link.';
-        
+
         // Escaped link 
         $data['url-escape']['html'] = '[This link](/path)';
         $data['url-escape']['md'] = '\[This link\](/path)';
-        
+
         // Image with src + alt attributes
         $data['image']['html'] = '<img src="/path/to/img.jpg" alt="Alt text" />';
-        $data['image']['md'] = '![Alt text][1]'.PHP_EOL
+        $data['image']['md'] = '![Alt text][1]' . PHP_EOL
             . PHP_EOL
             . ' [1]: /path/to/img.jpg';
 
@@ -346,10 +346,10 @@ end tell
         $data['image--in']['html'] = '<img src="/path/to/img.jpg" alt="Alt text" />';
         $data['image--in']['md'] = '![Alt text](/path/to/img.jpg)';
         $data['image--in']['linkPosition'] = Converter::LINK_IN_PARAGRAPH;
-        
+
         // Image with src + alt + title attributes
         $data['image-title']['html'] = '<img src="/path/to/img.jpg" alt="Alt text" title="Optional title attribute" />';
-        $data['image-title']['md'] = '![Alt text][1]'.PHP_EOL
+        $data['image-title']['md'] = '![Alt text][1]' . PHP_EOL
             . PHP_EOL
             . ' [1]: /path/to/img.jpg "Optional title attribute"';
 
@@ -357,16 +357,16 @@ end tell
         $data['image-title--in']['html'] = '<img src="/path/to/img.jpg" alt="Alt text" title="Optional title attribute" />';
         $data['image-title--in']['md'] = '![Alt text](/path/to/img.jpg "Optional title attribute")';
         $data['image-title--in']['linkPosition'] = Converter::LINK_IN_PARAGRAPH;
-        
+
         // Escaped image
         $data['image-escape']['html'] = '![This link](/path)';
         $data['image-escape']['md'] = '!\[This link\](/path)';
 
         // Image & Link
         $data['image-url']['html'] = '<p><a href="http://google.com"><img src="http://www.fillmurray.com/g/200/300"></a></p>';
-        $data['image-url']['md'] = '[![][1]][2]'.PHP_EOL
+        $data['image-url']['md'] = '[![][1]][2]' . PHP_EOL
             . PHP_EOL
-            . ' [1]: http://www.fillmurray.com/g/200/300'.PHP_EOL
+            . ' [1]: http://www.fillmurray.com/g/200/300' . PHP_EOL
             . ' [2]: http://google.com';
 
         return $data;
