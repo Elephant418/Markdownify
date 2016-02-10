@@ -269,6 +269,9 @@ class ConverterExtra extends Converter
         } else {
             // finally build the table in Markdown Extra syntax
             $separator = array();
+            if (!isset($this->table['aligns'])) {
+                $this->table['aligns'] = array();
+            }
             // seperator with correct align identifikators
             foreach ($this->table['aligns'] as $col => $align) {
                 if (!$this->keepHTML && !isset($this->table['col_widths'][$col])) {
@@ -367,6 +370,9 @@ class ConverterExtra extends Converter
             $this->buffer();
         } else {
             $buffer = trim($this->unbuffer());
+            if (!isset($this->table['col_widths'][$this->col])) {
+                $this->table['col_widths'][$this->col] = 0;
+            }
             $this->table['col_widths'][$this->col] = max($this->table['col_widths'][$this->col], $this->strlen($buffer));
             $this->table['rows'][$this->row][$this->col] = $buffer;
         }
