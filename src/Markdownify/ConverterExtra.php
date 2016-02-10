@@ -270,7 +270,7 @@ class ConverterExtra extends Converter
             // finally build the table in Markdown Extra syntax
             $separator = array();
             if (!isset($this->table['aligns'])) {
-                $this->table['aligns'] = [];
+                $this->table['aligns'] = array();
             }
             // seperator with correct align identifikators
             foreach ($this->table['aligns'] as $col => $align) {
