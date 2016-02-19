@@ -85,7 +85,7 @@ class ConverterExtra extends Converter
         );
         // build RegEx lookahead to decide wether table can pe parsed or not
         $inlineTags = array_keys($this->parser->blockElements, false);
-        $colContents = '(?:[^<]|<(?:' . implode('|', $inlineTags) . '|[^a-z]))+';
+        $colContents = '(?:[^<]|<(?:' . implode('|', $inlineTags) . '|[^a-z]))*';
         $this->tableLookaheadHeader = '{
     ^\s*(?:<thead\s*>)?\s*                                  # open optional thead
       <tr\s*>\s*(?:                                         # start required row with headers
@@ -272,7 +272,7 @@ class ConverterExtra extends Converter
             if (!isset($this->table['aligns'])) {
                 $this->table['aligns'] = array();
             }
-            // seperator with correct align identifikators
+            // seperator with correct align identifiers
             foreach ($this->table['aligns'] as $col => $align) {
                 if (!$this->keepHTML && !isset($this->table['col_widths'][$col])) {
                     break;
