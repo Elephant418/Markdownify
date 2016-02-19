@@ -81,7 +81,8 @@ class ConverterExtraTest extends ConverterTestCase
      *************************************************************************/
     public function testTableConversion()
     {
-        $html = '<table>
+        $html = <<<EOF
+<table>
 <thead>
 <tr>
   <th>First Header</th>
@@ -99,12 +100,44 @@ class ConverterExtraTest extends ConverterTestCase
 </tr>
 </tbody>
 </table>
-';
-        $md = '| First Header | Second Header |
+EOF;
+        $md = <<<EOF
+| First Header | Second Header |
 | ------------ | ------------- |
 | Content Cell | Content Cell  |
-|              | Content Cell  |';
-        $this->converter->setKeepHTML(false);
+|              | Content Cell  |
+EOF;
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function testTableConversionWithEmptyCell()
+    {
+        $html = <<<EOF
+<table>
+<thead>
+<tr>
+  <th>First Header</th>
+  <th>Second Header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Content Cell</td>
+  <td>Content Cell</td>
+</tr>
+<tr>
+  <td></td>
+  <td>Content Cell</td>
+</tr>
+</tbody>
+</table>
+EOF;
+        $md = <<<EOF
+| First Header | Second Header |
+| ------------ | ------------- |
+| Content Cell | Content Cell  |
+|              | Content Cell  |
+EOF;
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 }
