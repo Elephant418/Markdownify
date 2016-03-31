@@ -76,6 +76,7 @@ class Converter
     const LINK_AFTER_CONTENT = 0;
     const LINK_AFTER_PARAGRAPH = 1;
     const LINK_IN_PARAGRAPH = 2;
+    const LINK_IN_LINE = 3;
 
     /**
      * stores current buffers
@@ -806,16 +807,21 @@ class Converter
             return '[' . $buffer . '](' . $this->getLinkReference($tag) . ')';
         }
 
-        // [This link][id]
-        foreach ($this->footnotes as $tag2) {
-            if ($tag2['href'] == $tag['href'] && $tag2['title'] === $tag['title']) {
-                $tag['linkID'] = $tag2['linkID'];
-                break;
+        if ($this->$linkPosition == self::LINK_IN_LINE){
+            // [Anchor text](href "title")
+            return '['.$buffer.']('.$tag['href'].' "'.$tag['title'].'")';
+        } else {
+            // [This link][id]
+            foreach ($this->footnotes as $tag2) {
+                if ($tag2['href'] == $tag['href'] && $tag2['title'] === $tag['title']) {
+                    $tag['linkID'] = $tag2['linkID'];
+                    break;
+                }
             }
-        }
-        if (!isset($tag['linkID'])) {
-            $tag['linkID'] = count($this->footnotes) + 1;
-            array_push($this->footnotes, $tag);
+            if (!isset($tag['linkID'])) {
+                $tag['linkID'] = count($this->footnotes) + 1;
+                array_push($this->footnotes, $tag);
+            }
         }
 
         return '[' . $buffer . '][' . $tag['linkID'] . ']';
