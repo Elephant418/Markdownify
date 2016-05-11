@@ -787,15 +787,17 @@ class Converter
 
         if ($buffer == $tag['href'] && empty($tag['title'])) {
             // <http://example.com>
-            return '<' . $buffer . '>';
+            //return '<' . $buffer . '>';
+            return '[' . $buffer . '](' . $buffer . ')';
         }
 
         $bufferDecoded = $this->decode(trim($buffer));
         if (substr($tag['href'], 0, 7) == 'mailto:' && 'mailto:' . $bufferDecoded == $tag['href']) {
-            if (is_null($tag['title'])) {
-                // <mail@example.com>
-                return '<' . $bufferDecoded . '>';
-            }
+            // if (is_null($tag['title'])) {
+            //     // <mail@example.com>
+            //     return '<' . $bufferDecoded . '>';
+            // }
+            
             // [mail@example.com][1]
             // ...
             //  [1]: mailto:mail@example.com Title
