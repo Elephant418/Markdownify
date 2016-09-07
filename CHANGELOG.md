@@ -2,6 +2,12 @@ CHANGELOG
 ==============
 
 
+07/09/2016 v2.2.0
+--------------
+
+ * Fix: Reset state between each parsing
+
+
 19/02/2016 v2.1.11
 --------------
 
