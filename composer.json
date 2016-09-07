@@ -3,7 +3,7 @@
     "type": "lib",
     "description": "The HTML to Markdown converter for PHP ",
     "keywords": ["markdown", "markdownify"],
-    "license": "MIT",
+    "license": "LGPL",
     "homepage": "https://github.com/elephant418/Markdownify",
     "authors": [
         {
