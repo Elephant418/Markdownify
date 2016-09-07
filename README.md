@@ -1,7 +1,7 @@
 Markdownify [![Build Status](https://travis-ci.org/Elephant418/Markdownify.png?branch=master)](https://travis-ci.org/Pixel418/Markdownify?branch=master)
 ===================
 
-The HTML to Markdown converter for PHP. [See the official website](http://milianw.de/projects/markdownify/)
+The HTML to Markdown converter for PHP.
 
 1. [Code example](#code-example)
 2. [How to Install](#how-to-install)
