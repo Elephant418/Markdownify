@@ -497,10 +497,9 @@ class ConverterExtra extends Converter
      * parse a HTML string, clean up footnotes prior
      *
      * @param string $HTML input
-     * @param bool $resetState set to true to reset buffers and indents
      * @return string Markdown formatted output
      */
-    public function parseString($html, $resetState = false)
+    public function parseString($html)
     {
         /** TODO: custom markdown-extra options, e.g. titles & classes **/
         // <sup id="fnref:..."><a href"#fn..." rel="footnote">...</a></sup>
@@ -522,7 +521,7 @@ class ConverterExtra extends Converter
         // </footnotes>
         $html = preg_replace_callback('#<div class="footnotes">\s*<hr />\s*<ol>\s*(.+)\s*</ol>\s*</div>#Us', array(&$this, '_makeFootnotes'), $html);
 
-        return parent::parseString($html, $resetState);
+        return parent::parseString($html);
     }
 
     /**

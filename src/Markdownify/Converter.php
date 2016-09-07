@@ -270,14 +270,11 @@ class Converter
      * parse a HTML string
      *
      * @param string $html
-     * @param bool $resetState set to true to reset buffers and indents
      * @return string markdown formatted
      */
-    public function parseString($html, $resetState = false)
+    public function parseString($html)
     {
-        if ($resetState) {
-            $this->resetState();
-        }
+        $this->resetState();
 
         $this->parser->html = $html;
         $this->parse();
