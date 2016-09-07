@@ -1,5 +1,8 @@
 # Markdownify
+
 [![Build Status](https://travis-ci.org/Elephant418/Markdownify.png?branch=master)](https://travis-ci.org/Pixel418/Markdownify?branch=master)
+[![Total Downloads](https://poser.pugx.org/pixel418/markdownify/downloads)](https://packagist.org/packages/pixel418/markdownify)
+[![License LGPL](https://poser.pugx.org/pixel418/markdownify/license)](https://opensource.org/licenses/lgpl-2.1.php)
 
 The HTML to Markdown converter for PHP
 
