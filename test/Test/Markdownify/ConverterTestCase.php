@@ -478,4 +478,23 @@ end tell
 
         return $data;
     }
+
+    /* FIX STATE RESET
+     *************************************************************************/
+
+    public function testResetState()
+    {
+        // Broken (unclosed) tags cause properties (such as indents) to run onto subsequent strings,
+        $blockquote = 'Test blockquote <blockquote>Here it is';
+        $linebreaks = 'Test<br /><br />Linebreaks';
+
+        $converter = new Converter();
+        $bqOutput = $converter->parseString($blockquote);
+
+        $this->assertContains('>', $bqOutput);
+
+        $lbOutput = $converter->parseString($linebreaks);
+
+        $this->assertNotContains('>', $lbOutput);
+    }
 }

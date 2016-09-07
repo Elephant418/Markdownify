@@ -274,6 +274,8 @@ class Converter
      */
     public function parseString($html)
     {
+        $this->resetState();
+
         $this->parser->html = $html;
         $this->parse();
 
@@ -1377,5 +1379,22 @@ class Converter
                 $this->parser->html = $matches[1] . $this->parser->html;
             }
         }
+    }
+
+    /**
+     * Resetting the state forces the instance to behave as a fresh instance.
+     * Ideal for running within a loop where you want to maintain a single instance.
+     */
+    protected function resetState()
+    {
+        $this->notConverted = array();
+        $this->skipConversion = false;
+        $this->buffer = array();
+        $this->indent = '';
+        $this->stack = array();
+        $this->lineBreaks = 0;
+        $this->lastClosedTag = '';
+        $this->lastWasBlockTag = false;
+        $this->footnotes = array();
     }
 }
