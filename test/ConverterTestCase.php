@@ -6,7 +6,7 @@ namespace Test\Markdownify;
 
 use Markdownify\Converter;
 
-require_once(__DIR__ . '/../../../vendor/autoload.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
 
 class ConverterTestCase extends \PHPUnit_Framework_TestCase
 {

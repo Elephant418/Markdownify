@@ -30,9 +30,9 @@
         "phpunit/phpunit": "^4.8"
     },
     "autoload": {
-        "psr-0": {
-            "Markdownify": "src",
-            "Test\\Markdownify": "test"
+        "psr-4": {
+            "Markdownify\\": "src",
+            "Test\\Markdownify\\": "test"
         }
     }
 }

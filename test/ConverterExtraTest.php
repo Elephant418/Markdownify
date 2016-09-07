@@ -6,7 +6,7 @@ namespace Test\Markdownify;
 
 use Markdownify\ConverterExtra;
 
-require_once(__DIR__ . '/../../../vendor/autoload.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
 
 class ConverterExtraTest extends ConverterTestCase
 {
