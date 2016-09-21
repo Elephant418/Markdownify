@@ -475,6 +475,10 @@ end tell
         $data['b']['md'] = "Not bold, **bolder** boldst";
         $data['i']['html'] = "<p>Not italic, <i>italic </i></p>";
         $data['i']['md'] = "Not italic, _italic_";
+        $data['a']['html'] = "<p>This is a paragraph of text with <a href='http://example.com'>a link </a>to something awesome.</p>";
+        $data['a']['md'] = "This is a paragraph of text with [a link][1] to something awesome.
+
+ [1]: http://example.com";
 
         return $data;
     }
