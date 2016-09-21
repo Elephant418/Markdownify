@@ -1375,7 +1375,7 @@ class Converter
 
             // move spaces before the end element to after the element
             if (preg_match('~(\s+)$~', $str, $matches)) {
-                $str = rtrim($this->output, " \t\0\x0B");
+                $str = rtrim($str, " \t\0\x0B");
                 $this->parser->html = $matches[1] . $this->parser->html;
             }
         }
