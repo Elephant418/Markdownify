@@ -511,7 +511,7 @@ class Converter
                 $this->setLineBreaks(2);
             }
         } else {
-            // dont convert to markdown inside this tag
+            // don't convert to markdown inside this tag
             /** TODO: markdown extra **/
             if (!$this->parser->isEmptyTag) {
                 if ($this->parser->isStartTag) {
@@ -987,14 +987,14 @@ class Converter
         } else {
             $this->unstack();
             if ($this->parent() != 'li' || preg_match('#^\s*(</li\s*>\s*<li\s*>\s*)?<(p|blockquote)\s*>#sU', $this->parser->html)) {
-                // dont make Markdown add unneeded paragraphs
+                // don't make Markdown add unneeded paragraphs
                 $this->setLineBreaks(2);
             }
         }
     }
 
     /**
-     * handle <ul> tags
+     * handle <ol> tags
      *
      * @param void
      * @return void
