@@ -34,7 +34,7 @@ $converter->parseString('<h1 id="md">Heading</h1>');
 How to Install
 --------
 
-This library package requires `PHP 5.3` or later.<br>
+This library package requires `PHP 5.4` or later.<br>
 Install [Composer](http://getcomposer.org/doc/01-basic-usage.md#installation) and run the following command to get the latest version:
 
 ```sh
