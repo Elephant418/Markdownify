@@ -89,6 +89,45 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
     }
 
 
+    /* STRIP TAGS OPTION
+     *************************************************************************/
+
+    /**
+     * @dataProvider providerKeepHTMLOption
+     */
+    public function testKeepHTMLOption($html, $mdWithTag, $mdWithoutTag)
+    {
+        $this->converter->setKeepHTML(false);
+        $this->assertEquals($mdWithoutTag, $this->converter->parseString($html));
+        $this->converter->setKeepHTML(true);
+        $this->assertEquals($mdWithTag, $this->converter->parseString($html));
+    }
+
+    public function providerKeepHTMLOption()
+    {
+        $data = array();
+
+        // Issue #16
+        $data['image']['html'] = '<img title="a012.gif" src="http://images/problems/a012.gif" alt="a012.gif" width="374" height="204" />';
+        $data['image']['mdWithTag'] = '<img title="a012.gif" src="http://images/problems/a012.gif" alt="a012.gif" width="374" height="204" />';
+        $data['image']['mdWithoutTag'] = '![a012.gif][1]
+
+ [1]: http://images/problems/a012.gif "a012.gif"';
+
+        // Issue #23
+        $data['target']['html'] = '<p>See <a href="https://github.com/quilljs/quill/issues/81" target="_blank">https://github.com/quilljs/quill/issues/81</a></p>';
+        $data['target']['mdWithTag'] = 'See <a href="https://github.com/quilljs/quill/issues/81" target="_blank">https://github.com/quilljs/quill/issues/81</a>';
+        $data['target']['mdWithoutTag'] = 'See <https://github.com/quilljs/quill/issues/81>';
+
+        // Issue #25
+        $data['u']['html'] = '<span><u>Some text</u></span>';
+        $data['u']['mdWithTag'] = '<span><u>Some text</u></span>';
+        $data['u']['mdWithoutTag'] = 'Some text';
+
+        return $data;
+    }
+
+
     /* BLOCKQUOTE TEST METHODS
      *************************************************************************/
 
@@ -332,7 +371,7 @@ end tell
         $data['url-title-multiple-class-id']['html'] = '<p>This is <a href="http://example.com/" title="Title" class=" class1  class2 " id="myLink">an example</a> inline link.</p>';
         $data['url-title-multiple-class-id']['md'] = 'This is <a href="http://example.com/" title="Title" class=" class1  class2 " id="myLink">an example</a> inline link.';
 
-        // Escaped link 
+        // Escaped link
         $data['url-escape']['html'] = '[This link](/path)';
         $data['url-escape']['md'] = '\[This link\](/path)';
 

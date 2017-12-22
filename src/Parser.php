@@ -236,6 +236,7 @@ class Parser
         'sup' => false,
         'textarea' => false,
         'tt' => false,
+        'u' => false,
         'var' => false,
     );
 
