@@ -38,13 +38,13 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
 
     public function providerHeadingConversion()
     {
-        $attributes = array(' id="idAttribute"', ' class=" class1  class2 "');
-        $data = array();
+        $attributes = [' id="idAttribute"', ' class=" class1  class2 "'];
+        $data = [];
         for ($i = 1; $i <= 6; $i++) {
-            $data[] = array($i, '');
-            $data[] = array($i, $attributes[0]);
-            $data[] = array($i, $attributes[1]);
-            $data[] = array($i, $attributes[0] . $attributes[1]);
+            $data[] = [$i, ''];
+            $data[] = [$i, $attributes[0]];
+            $data[] = [$i, $attributes[1]];
+            $data[] = [$i, $attributes[0] . $attributes[1]];
         }
         return $data;
     }
@@ -59,7 +59,7 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
 
     public function providerHeadingConversionEscape()
     {
-        $data = array();
+        $data = [];
         $data['level1']['html'] = '# Heading 1';
         $data['level1']['md'] = '\# Heading 1';
         $data['level2']['html'] = '## Heading 2';
@@ -81,11 +81,11 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
 
     public function providerAutoescapeConversion()
     {
-        return array(
-            array('AT&amp;T', 'AT&T'),
-            array('4 &lt; 5', '4 < 5'),
-            array('&copy;', '&copy;')
-        );
+        return [
+            ['AT&amp;T', 'AT&T'],
+            ['4 &lt; 5', '4 < 5'],
+            ['&copy;', '&copy;']
+        ];
     }
 
 
@@ -105,7 +105,7 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
 
     public function providerKeepHTMLOption()
     {
-        $data = array();
+        $data = [];
 
         // Issue #16
         $data['image']['html'] = '<img title="a012.gif" src="http://images/problems/a012.gif" alt="a012.gif" width="374" height="204" />';
@@ -141,7 +141,7 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
 
     public function providerBlockquoteConversion()
     {
-        $data = array();
+        $data = [];
         $data['simple']['html'] = '<blockquote>blockquoted text goes here</blockquote>';
         $data['simple']['md'] = '> blockquoted text goes here';
         $data['paragraphs']['html'] = '<blockquote><p>paragraph1</p><p>paragraph2</p></blockquote>';
@@ -169,7 +169,7 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
 
     public function providerListConversion()
     {
-        $data = array();
+        $data = [];
         $data['ordered']['html'] = '<ol><li>Bird</li><li>McHale</li><li>Parish</li></ol>';
         $data['ordered']['md'] = '  1. Bird' . PHP_EOL
             . '  2. McHale' . PHP_EOL
@@ -242,7 +242,7 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
 
     public function providerCodeConversion()
     {
-        $data = array();
+        $data = [];
         $data['inline']['html'] = '<p>Use the <code>printf()</code> function.</p>';
         $data['inline']['md'] = 'Use the `printf()` function.';
         $data['inline-backtick']['html'] = '<p>A single backtick in a code span: <code>`</code></p>';
@@ -299,7 +299,7 @@ end tell
 
     public function providerLinkConversion()
     {
-        $data = array();
+        $data = [];
 
         // Link with href attribute
         $data['url']['html'] = '<p><a href="http://example.net/">This link</a> has no title attribute.</p>';
@@ -425,7 +425,7 @@ end tell
 
     public function providerEmphasisConversion()
     {
-        $data = array();
+        $data = [];
         $data['strong']['html'] = '<strong>double asterisks</strong>';
         $data['strong']['md'] = '**double asterisks**';
         $data['strong-escape']['html'] = '**double asterisks**';
@@ -456,7 +456,7 @@ end tell
 
     public function providerRulesConversion()
     {
-        $data = array();
+        $data = [];
         $data['hr']['html'] = '<hr>';
         $data['hr']['md'] = '* * *';
         $data['escape-']['html'] = '-----------------------------------';
@@ -482,7 +482,7 @@ end tell
 
     public function providerFixBreaks()
     {
-        $data = array();
+        $data = [];
         $data['break1']['html'] = "<strong>Hello,<br>How are you doing?</strong>";
         $data['break1']['md'] = "**Hello,  \nHow are you doing?**";
         $data['break2']['html'] = "<b>Hey,<br> How you're doing?</b><br><br><b>Sorry<br><br> You can't get through</b>";
@@ -505,7 +505,7 @@ end tell
 
     public function providerFixTagSpaces()
     {
-        $data = array();
+        $data = [];
         $data['strong']['html'] = "<p>This is<strong> strong</strong> text</p>";
         $data['strong']['md'] = "This is **strong** text";
         $data['em']['html'] = "<p>This is<em> italic </em>text</p>";
