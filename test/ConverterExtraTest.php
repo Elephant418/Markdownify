@@ -35,13 +35,13 @@ class ConverterExtraTest extends ConverterTestCase
 
     public function providerHeadingConversion()
     {
-        $attributes = array(' id="idAttribute"', ' class=" class1  class2 "');
-        $data = array();
+        $attributes = [' id="idAttribute"', ' class=" class1  class2 "'];
+        $data = [];
         for ($i = 1; $i <= 6; $i++) {
-            $data[] = array($i, '', '');
-            $data[] = array($i, $attributes[0], ' {#idAttribute}');
-            $data[] = array($i, $attributes[1], ' {.class1.class2}');
-            $data[] = array($i, $attributes[0] . $attributes[1], ' {#idAttribute.class1.class2}');
+            $data[] = [$i, '', ''];
+            $data[] = [$i, $attributes[0], ' {#idAttribute}'];
+            $data[] = [$i, $attributes[1], ' {.class1.class2}'];
+            $data[] = [$i, $attributes[0] . $attributes[1], ' {#idAttribute.class1.class2}'];
         }
         return $data;
     }
