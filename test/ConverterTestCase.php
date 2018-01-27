@@ -117,7 +117,7 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
         // Issue #23
         $data['target']['html'] = '<p>See <a href="https://github.com/quilljs/quill/issues/81" target="_blank">https://github.com/quilljs/quill/issues/81</a></p>';
         $data['target']['mdWithTag'] = 'See <a href="https://github.com/quilljs/quill/issues/81" target="_blank">https://github.com/quilljs/quill/issues/81</a>';
-        $data['target']['mdWithoutTag'] = 'See <https://github.com/quilljs/quill/issues/81>';
+        $data['target']['mdWithoutTag'] = 'See [https://github.com/quilljs/quill/issues/81]';
 
         // Issue #25
         $data['u']['html'] = '<span><u>Some text</u></span>';
@@ -347,7 +347,7 @@ end tell
 
         // Direct link
         $data['url-direct']['html'] = '<p><a href="http://example.com">http://example.com</a>.</p>';
-        $data['url-direct']['md'] = '<http://example.com>.';
+        $data['url-direct']['md'] = '[http://example.com].';
 
         // Link with href + title attributes
         $data['url-title']['html'] = '<p>This is <a href="http://example.com/" title="Title">an example</a> inline link.</p>';
