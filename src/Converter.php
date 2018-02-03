@@ -1360,7 +1360,7 @@ class Converter
      */
     protected function fixInlineElementSpacing()
     {
-        if ($this->parser->isStartTag) {
+        if ($this->parser->isStartTag && !$this->parser->isEmptyTag) {
             // move spaces after the start element to before the element
             if (preg_match('~^(\s+)~', $this->parser->html, $matches)) {
                 $this->out($matches[1]);
