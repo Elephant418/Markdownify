@@ -29,6 +29,13 @@ class ConverterExtra extends Converter
     protected $row = 0;
 
     /**
+     * Add CSS class after the tag
+     *
+     * @var bool
+     */
+    protected $addCssClass = true;
+
+    /**
      * constructor, see Markdownify::Markdownify() for more information
      */
     public function __construct($linksAfterEachParagraph = self::LINK_AFTER_CONTENT, $bodyWidth = MDFY_BODYWIDTH, $keepHTML = MDFY_KEEPHTML)
@@ -120,7 +127,7 @@ class ConverterExtra extends Converter
             $this->stack();
         } else {
             $tag = $this->unstack();
-            if (!empty($tag['cssSelector'])) {
+            if (!empty($tag['cssSelector']) && $this->addCssClass) {
                 // {#id.class}
                 $this->out(' {' . $tag['cssSelector'] . '}');
             }
@@ -150,7 +157,7 @@ class ConverterExtra extends Converter
     protected function handleTag_a_converter($tag, $buffer)
     {
         $output = parent::handleTag_a_converter($tag, $buffer);
-        if (!empty($tag['cssSelector'])) {
+        if (!empty($tag['cssSelector']) && $this->addCssClass) {
             // [This link][id]{#id.class}
             $output .= '{' . $tag['cssSelector'] . '}';
         }
@@ -569,5 +576,16 @@ class ConverterExtra extends Converter
             $cssSelector .= '.' . join('.', $classes);
         }
         return $cssSelector;
+    }
+
+    /**
+     * set add CSS class after the tag
+     *
+     * @param bool $addCssClass
+     * @return void
+     */
+    public function setAddCssClass($addCssClass)
+    {
+        $this->addCssClass = $addCssClass;
     }
 }
