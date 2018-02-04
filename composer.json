@@ -3,7 +3,7 @@
     "type": "lib",
     "description": "The HTML to Markdown converter for PHP ",
     "keywords": ["markdown", "html", "converter", "markdownify"],
-    "license": "LGPL-2.1",
+    "license": "MIT",
     "homepage": "https://github.com/elephant418/Markdownify",
     "authors": [
         {
@@ -13,14 +13,9 @@
 
         },
         {
-            "name": "Peter Kruithof",
-            "email": "pkruithof@gmail.com",
-            "homepage": "http://pkruithof.tumblr.com/"
-        },
-        {
             "name": "Thomas Zilliox",
             "email": "hello@tzi.fr",
-            "homepage": "http://tzi.fr"
+            "homepage": "https://tzi.fr"
         }
     ],
     "require": {
