@@ -2,8 +2,8 @@
     "name": "pixel418/markdownify",
     "type": "lib",
     "description": "The HTML to Markdown converter for PHP ",
-    "keywords": ["markdown", "markdownify"],
-    "license": "LGPL",
+    "keywords": ["markdown", "html", "converter", "markdownify"],
+    "license": "LGPL-2.1",
     "homepage": "https://github.com/elephant418/Markdownify",
     "authors": [
         {
