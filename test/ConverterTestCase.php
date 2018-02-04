@@ -486,7 +486,7 @@ end tell
         $data['break1']['html'] = "<strong>Hello,<br>How are you doing?</strong>";
         $data['break1']['md'] = "**Hello,  \nHow are you doing?**";
         $data['break2']['html'] = "<b>Hey,<br> How you're doing?</b><br><br><b>Sorry<br><br> You can't get through</b>";
-        $data['break2']['md'] = "**Hey,   \nHow you're doing?**  \n  \n**Sorry  \n   \nYou can't get through**";
+        $data['break2']['md'] = "**Hey,  \nHow you're doing?**  \n  \n**Sorry  \n  \nYou can't get through**";
 
         return $data;
     }
