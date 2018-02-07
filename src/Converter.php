@@ -787,7 +787,7 @@ class Converter
             return '[' . $buffer . ']()';
         }
 
-        if ($buffer == $tag['href'] && empty($tag['title'])) {
+        if (rtrim($buffer, '/') == rtrim($tag['href'], '/') && empty($tag['title'])) {
             // <http://example.com>
             return '<' . $buffer . '>';
         }
