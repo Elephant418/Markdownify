@@ -185,10 +185,8 @@ class Converter
      * TODO: what's with block chars / sequences at the beginning of a block?
      */
     protected $escapeInText = [
-        '\*\*([^*]+)\*\*' => '\*\*$1\*\*', // strong
-        '\*([^*]+)\*' => '\*$1\*', // em
-        '__(?! |_)(.+)(?!<_| )__' => '\_\_$1\_\_', // strong
-        '_(?! |_)(.+)(?!<_| )_' => '\_$1\_', // em
+        '\*' => '\*',
+        '\_' => '\_',
         '([-*_])([ ]{0,2}\1){2,}' => '\\\\$0', // hr
         '`' => '\`', // code
         '\[(.+)\](\s*\()' => '\[$1\]$2', // links: [text] (url) => [text\] (url)
