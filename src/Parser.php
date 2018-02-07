@@ -417,7 +417,7 @@ class Parser
             } elseif (in_array($this->html[$pos], [' ', "\t", "\n"])) {
                 // drop whitespace
             } elseif (in_array($this->html[$pos] . $this->html[$pos + 1], ['="', "='"])) {
-                // get string attribute value
+                // get quoted attribute value
                 $pos++;
                 $await = $this->html[$pos]; // single or double quote
                 $pos++;
@@ -428,11 +428,11 @@ class Parser
                 }
                 $attributes[$currAttrib] = $value;
                 $currAttrib = '';
-            } elseif ($this->html[$pos] === '=' && is_numeric($this->html[$pos + 1]) && in_array((int)$this->html[$pos + 1], range(0, 9), true)) {
-                // get integer attribute value
+            } elseif ($this->html[$pos] === '=') {
+                // get unquoted attribute value
                 $pos++;
                 $value = '';
-                while (isset($this->html[$pos]) && is_numeric($this->html[$pos]) && in_array((int)$this->html[$pos], range(0, 9), true)) {
+                while (isset($this->html[$pos]) && !in_array($this->html[$pos], array(' ', '/', '>'), true)) {
                     $value .= $this->html[$pos];
                     $pos++;
                 }
