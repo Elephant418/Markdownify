@@ -394,7 +394,8 @@ class Converter
             }
         }
         // cleanup
-        $this->output = rtrim(str_replace('&amp;', '&', str_replace('&lt;', '<', str_replace('&gt;', '>', $this->output))));
+        $this->output = implode("\n", array_map('rtrim', explode("\n", $this->output)));
+        $this->output = str_replace('&amp;', '&', str_replace('&lt;', '<', str_replace('&gt;', '>', $this->output)));
         // end parsing, flush stacked tags
         $this->flushFootnotes();
         $this->stack = [];
