@@ -146,7 +146,7 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
         $data['simple']['md'] = '> blockquoted text goes here';
         $data['paragraphs']['html'] = '<blockquote><p>paragraph1</p><p>paragraph2</p></blockquote>';
         $data['paragraphs']['md'] = '> paragraph1' . PHP_EOL
-            . '> ' . PHP_EOL
+            . '>' . PHP_EOL
             . '> paragraph2';
         $data['cascade']['html'] = '<blockquote><blockquote>cascading blockquote</blockquote></blockquote>';
         $data['cascade']['md'] = '> > cascading blockquote';
@@ -189,7 +189,7 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
             . '  2. Magic';
         $data['next-to-text-in-block-context']['html'] = '<blockquote>McHale<ol><li>Bird</li><li>Magic</li></ol></blockquote>';
         $data['next-to-text-in-block-context']['md'] = '> McHale' . PHP_EOL
-            . '> ' . PHP_EOL
+            . '>' . PHP_EOL
             . '>   1. Bird' . PHP_EOL
             . '>   2. Magic';
         $data['next-to-bold']['html'] = '<b>McHale</b><ol><li>Bird</li><li>Magic</li></ol>';
@@ -198,7 +198,7 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
             . '  1. Bird' . PHP_EOL
             . '  2. Magic';
         $data['next-to-bold-and-br']['html'] = '<b>McHale</b><br><ol><li>Bird</li><li>Magic</li></ol>';
-        $data['next-to-bold-and-br']['md'] = '**McHale**  ' . PHP_EOL
+        $data['next-to-bold-and-br']['md'] = '**McHale**' . PHP_EOL
             . PHP_EOL
             . PHP_EOL
             . '  1. Bird' . PHP_EOL
@@ -484,9 +484,9 @@ end tell
     {
         $data = [];
         $data['break1']['html'] = "<strong>Hello,<br>How are you doing?</strong>";
-        $data['break1']['md'] = "**Hello,  \nHow are you doing?**";
+        $data['break1']['md'] = "**Hello,\nHow are you doing?**";
         $data['break2']['html'] = "<b>Hey,<br> How you're doing?</b><br><br><b>Sorry<br><br> You can't get through</b>";
-        $data['break2']['md'] = "**Hey,  \nHow you're doing?**  \n  \n**Sorry  \n  \nYou can't get through**";
+        $data['break2']['md'] = "**Hey,\nHow you're doing?**\n\n**Sorry\n\nYou can't get through**";
 
         return $data;
     }
