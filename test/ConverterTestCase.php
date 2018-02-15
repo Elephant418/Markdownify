@@ -1,7 +1,5 @@
 <?php
 
-/* This file is part of the Markdownify project, which is under LGPL license */
-
 namespace Test\Markdownify;
 
 use Markdownify\Converter;

@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/Elephant418/Markdownify.png?branch=master)](https://travis-ci.org/Elephant418/Markdownify?branch=master)
 [![Total Downloads](https://poser.pugx.org/pixel418/markdownify/downloads)](https://packagist.org/packages/pixel418/markdownify)
-[![License LGPL](https://poser.pugx.org/pixel418/markdownify/license)](https://opensource.org/licenses/lgpl-2.1.php)
+[![MIT](https://poser.pugx.org/pixel418/markdownify/license)](https://opensource.org/licenses/MIT)
 
 The HTML to Markdown converter for PHP
 
@@ -57,7 +57,7 @@ If you don't know much about pull request, you can read [the Github article](htt
 Author & Community
 --------
 
-Markdownify is under [LGPL License](http://opensource.org/licenses/LGPL-2.1)<br>
+Markdownify is under [MIT License](https://opensource.org/licenses/MIT)<br>
 It was created by [Milian Wolff](http://milianw.de)<br>
 It was converted to a Symfony Bundle by [Peter Kruithof](https://github.com/pkruithof)<br>
-It is maintained by [Thomas ZILLIOX](http://tzi.fr)
+It is maintained by [Thomas ZILLIOX](https://tzi.fr)
