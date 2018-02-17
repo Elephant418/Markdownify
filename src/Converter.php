@@ -507,7 +507,7 @@ class Converter
     {
         if (!$this->keepHTML) {
             if (!$this->parser->isStartTag && $this->parser->isBlockElement) {
-                $this->setLineBreaks(2);
+                $this->setLineBreaks(1);
             }
         } else {
             // don't convert to markdown inside this tag
