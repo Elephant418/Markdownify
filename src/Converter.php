@@ -733,6 +733,7 @@ class Converter
     {
         if (!$this->parser->isStartTag) {
             $this->setLineBreaks(2);
+            $this->parser->html = ltrim($this->parser->html);
         }
     }
 
