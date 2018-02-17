@@ -272,6 +272,7 @@ class Converter
     {
         $this->resetState();
 
+        $html = str_replace(array("\r\n", "\r"), "\n", $html);
         $this->parser->html = $html;
         $this->parse();
 
