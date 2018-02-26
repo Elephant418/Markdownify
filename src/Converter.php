@@ -133,6 +133,7 @@ class Converter
     protected $ignore = [
         'html',
         'body',
+        'o:p',
     ];
 
     /**

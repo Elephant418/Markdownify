@@ -171,6 +171,7 @@ class Parser
         'noframes' => true,
         'noscript' => true,
         'ol' => true,
+        'o:p' => true,
         'p' => true,
         'pre' => true,
         'table' => true,
@@ -369,7 +370,7 @@ class Parser
         // get tagName
         while (isset($this->html[$pos])) {
             $pos_ord = ord(strtolower($this->html[$pos]));
-            if (($pos_ord >= static::$a_ord && $pos_ord <= static::$z_ord) || (!empty($tagName) && is_numeric($this->html[$pos]))) {
+            if (($pos_ord >= static::$a_ord && $pos_ord <= static::$z_ord) || (!empty($tagName) && is_numeric($this->html[$pos])) || in_array($pos_ord, static::$special_ords)) {
                 $tagName .= $this->html[$pos];
                 $pos++;
             } else {
