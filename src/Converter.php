@@ -303,6 +303,16 @@ class Converter
     }
 
     /**
+     * return escapeInText
+     *
+     * @return array escapeInText
+     */
+    public function getescapeInText()
+    {
+        return $this->escapeInText;
+    }
+
+    /**
      * iterate through the nodes and decide what we
      * shall do with the current node
      *
