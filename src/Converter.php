@@ -254,7 +254,7 @@ class Converter
         $search = [];
         $replace = [];
         foreach ($this->escapeInText as $s => $r) {
-            array_push($search, '@(?<!\\\)' . $s . '@U');
+            array_push($search, '@(?<!\\\)' . $s . '@mU');
             array_push($replace, $r);
         }
         $this->escapeInText = [
