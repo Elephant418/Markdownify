@@ -435,6 +435,7 @@ class Parser
                     $value .= $this->html[$pos];
                     $pos++;
                 }
+                $pos--;
                 $attributes[$currAttrib] = $value;
                 $currAttrib = '';
             } else {
