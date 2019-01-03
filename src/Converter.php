@@ -344,7 +344,7 @@ class Converter
                     if ($this->skipConversion) {
                         $this->isMarkdownable(); // update notConverted
                         $this->handleTagToText();
-                        continue;
+                        break;
                     }
 
                     // block elements
