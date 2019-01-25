@@ -273,7 +273,8 @@ class Converter
     public function parseString($html)
     {
         $this->resetState();
-
+		
+		$this->parser->isUnicode = mb_check_encoding($html, 'UTF-8');
         $this->parser->html = $html;
         $this->parse();
 
