@@ -126,6 +126,13 @@ class Parser
     public $isNextToInlineContext = null;
 
     /**
+     * unicode support: preg_* functions with 'u' modifier 
+     *
+     * @var bool
+     */
+    public $isUnicode = false;
+
+    /**
      * keep whitespace
      *
      * @var int
@@ -465,7 +472,7 @@ class Parser
         $this->isEmptyTag = $isEmptyTag || in_array($tagName, $this->emptyTags);
         if ($this->isEmptyTag) {
             // might be not well formed
-            $this->node = preg_replace('# */? *>$#', ' />', $this->node);
+            $this->node = preg_replace('# */? *>$#'.($this->isUnicode?'u':''), ' />', $this->node);
         }
         $this->nodeType = 'tag';
         $this->isBlockElement = $this->blockElements[$tagName];
@@ -535,7 +542,7 @@ class Parser
             return;
         }
         // truncate multiple whitespaces to a single one
-        $this->node = preg_replace('#\s+#s', ' ', $this->node);
+        $this->node = preg_replace('#\s+#s'.($this->isUnicode?'u':''), ' ', $this->node);
     }
 
     /**
