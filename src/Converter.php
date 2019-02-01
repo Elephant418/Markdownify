@@ -324,7 +324,8 @@ class Converter
     protected function parse()
     {
         $this->output = '';
-        // drop tags
+
+        // Drop tags
         $this->parser->html = preg_replace('#<(' . implode('|', $this->drop) . ')[^>]*>.*</\\1>#sU', '', $this->parser->html);
         while ($this->parser->nextNode()) {
             switch ($this->parser->nodeType) {
@@ -357,7 +358,7 @@ class Converter
                     if ($this->skipConversion) {
                         $this->isMarkdownable(); // update notConverted
                         $this->handleTagToText();
-                        continue;
+                        break;
                     }
 
                     // block elements

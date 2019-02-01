@@ -3,6 +3,8 @@ before_script:
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install
 php:
+  - 7.3
+  - 7.2
   - 7.1
   - 7.0
   - 5.6

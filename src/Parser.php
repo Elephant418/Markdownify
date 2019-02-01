@@ -150,6 +150,7 @@ class Parser
         // tag name => <bool> is block
         // block elements
         'address' => true,
+        'aside' => true,
         'blockquote' => true,
         'center' => true,
         'del' => true,

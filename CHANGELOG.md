@@ -2,6 +2,22 @@ CHANGELOG
 ==============
 
 
+22/01/2019 v2.3.1
+--------------
+
+ * Fix: PHP 7.3 support (#36)
+
+
+27/03/2018 v2.3.0
+--------------
+
+ * Support: Remove PHP5.3 & hhvm support
+ * Fix: inline spacing and empty tag (#33)
+ * Fix: aside element conversion (#33) 
+ * License: use the MIT license for now 
+ * Refactor: use brackets notation for array (#28) 
+
+
 22/12/2017 v2.2.2
 --------------
 

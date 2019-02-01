@@ -15,8 +15,30 @@ class ConverterTestCase extends \PHPUnit_Framework_TestCase
     protected $converter;
 
 
+    /* UNICODE TEST METHODS
+     *************************************************************************/
+
+    /**
+     * @dataProvider providerUnicodeConversion
+     */
+    public function testUnicodeConversion($md)
+    {
+        $html = '<p>' . $md . '</p>';
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function providerUnicodeConversion()
+    {
+        return [
+            ['regular ascii'],
+            ['مرحبا بك'],
+        ];
+    }
+
+
     /* HEADING TEST METHODS
      *************************************************************************/
+
     /**
      * @dataProvider providerHeadingConversion
      */
