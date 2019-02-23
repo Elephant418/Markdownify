@@ -1233,54 +1233,9 @@ class Converter
      * @author derernst@gmx.ch <http://www.php.net/manual/en/function.html-entity-decode.php#68536>
      * @author Milian Wolff <http://milianw.de>
      */
-    protected function decode($text, $quote_style = ENT_QUOTES)
+    protected function decode($text)
     {
-        return htmlspecialchars_decode($text, $quote_style);
-    }
-
-    /**
-     * callback for decode() which converts a hexadecimal entity to UTF-8
-     *
-     * @param array $matches
-     * @return string UTF-8 encoded
-     */
-    protected function _decode_hex($matches)
-    {
-        return $this->unichr(hexdec($matches[1]));
-    }
-
-    /**
-     * callback for decode() which converts a numerical entity to UTF-8
-     *
-     * @param array $matches
-     * @return string UTF-8 encoded
-     */
-    protected function _decode_numeric($matches)
-    {
-        return $this->unichr($matches[1]);
-    }
-
-    /**
-     * UTF-8 chr() which supports numeric entities
-     *
-     * @author grey - greywyvern - com <http://www.php.net/manual/en/function.chr.php#55978>
-     * @param array $matches
-     * @return string UTF-8 encoded
-     */
-    protected function unichr($dec)
-    {
-        if ($dec < 128) {
-            $utf = chr($dec);
-        } elseif ($dec < 2048) {
-            $utf = chr(192 + (($dec - ($dec % 64)) / 64));
-            $utf .= chr(128 + ($dec % 64));
-        } else {
-            $utf = chr(224 + (($dec - ($dec % 4096)) / 4096));
-            $utf .= chr(128 + ((($dec % 4096) - ($dec % 64)) / 64));
-            $utf .= chr(128 + ($dec % 64));
-        }
-
-        return $utf;
+        return htmlspecialchars_decode($text, ENT_QUOTES);
     }
 
     /**
