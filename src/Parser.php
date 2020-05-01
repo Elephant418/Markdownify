@@ -7,6 +7,8 @@ class Parser
     public static $skipWhitespace = true;
     public static $a_ord;
     public static $z_ord;
+    public static $n0_ord;
+    public static $n9_ord;
     public static $special_ords;
 
     /**
@@ -172,6 +174,7 @@ class Parser
         'noframes' => true,
         'noscript' => true,
         'ol' => true,
+        'o:p' => true,
         'p' => true,
         'pre' => true,
         'table' => true,
@@ -354,6 +357,8 @@ class Parser
         if (!isset(static::$a_ord)) {
             static::$a_ord = ord('a');
             static::$z_ord = ord('z');
+            static::$n0_ord = ord('0');
+            static::$n9_ord = ord('9');
             static::$special_ords = [
                 ord(':'), // for xml:lang
                 ord('-'), // for http-equiv
@@ -370,7 +375,7 @@ class Parser
         // get tagName
         while (isset($this->html[$pos])) {
             $pos_ord = ord(strtolower($this->html[$pos]));
-            if (($pos_ord >= static::$a_ord && $pos_ord <= static::$z_ord) || (!empty($tagName) && is_numeric($this->html[$pos]))) {
+            if (($pos_ord >= static::$a_ord && $pos_ord <= static::$z_ord) || (!empty($tagName) && is_numeric($this->html[$pos])) || in_array($pos_ord, static::$special_ords)) {
                 $tagName .= $this->html[$pos];
                 $pos++;
             } else {
@@ -410,13 +415,13 @@ class Parser
             }
 
             $pos_ord = ord(strtolower($this->html[$pos]));
-            if (($pos_ord >= static::$a_ord && $pos_ord <= static::$z_ord) || in_array($pos_ord, static::$special_ords)) {
+            if (($pos_ord >= static::$a_ord && $pos_ord <= static::$z_ord) || in_array($pos_ord, static::$special_ords) || (substr($currAttrib, 0, 5) === 'xmlns' && $pos_ord >= static::$n0_ord && $pos_ord <= static::$n9_ord)) {
                 // attribute name
                 $currAttrib .= $this->html[$pos];
             } elseif (in_array($this->html[$pos], [' ', "\t", "\n"])) {
                 // drop whitespace
             } elseif (in_array($this->html[$pos] . $this->html[$pos + 1], ['="', "='"])) {
-                // get attribute value
+                // get quoted attribute value
                 $pos++;
                 $await = $this->html[$pos]; // single or double quote
                 $pos++;
@@ -425,6 +430,17 @@ class Parser
                     $value .= $this->html[$pos];
                     $pos++;
                 }
+                $attributes[$currAttrib] = $value;
+                $currAttrib = '';
+            } elseif ($this->html[$pos] === '=') {
+                // get unquoted attribute value
+                $pos++;
+                $value = '';
+                while (isset($this->html[$pos]) && !in_array($this->html[$pos], array(' ', '/', '>'), true)) {
+                    $value .= $this->html[$pos];
+                    $pos++;
+                }
+                $pos--;
                 $attributes[$currAttrib] = $value;
                 $currAttrib = '';
             } else {

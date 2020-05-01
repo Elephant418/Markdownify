@@ -133,6 +133,7 @@ class Converter
     protected $ignore = [
         'html',
         'body',
+        'o:p',
     ];
 
     /**
@@ -183,15 +184,15 @@ class Converter
      * TODO: what's with block chars / sequences at the beginning of a block?
      */
     protected $escapeInText = [
-        '\*\*([^*]+)\*\*' => '\*\*$1\*\*', // strong
-        '\*([^*]+)\*' => '\*$1\*', // em
-        '__(?! |_)(.+)(?!<_| )__' => '\_\_$1\_\_', // strong
-        '_(?! |_)(.+)(?!<_| )_' => '\_$1\_', // em
+        '\*' => '\\\\*', // *
+        '_' => '\\\\_', // _
+        '\|' => '\\\\|', // |
         '([-*_])([ ]{0,2}\1){2,}' => '\\\\$0', // hr
-        '`' => '\`', // code
-        '\[(.+)\](\s*\()' => '\[$1\]$2', // links: [text] (url) => [text\] (url)
-        '\[(.+)\](\s*)\[(.*)\]' => '\[$1\]$2\[$3\]', // links: [text][id] => [text\][id\]
-        '^#(#{0,5}) ' => '\#$1 ', // header
+        '`' => '\\\\`', // code
+        '\[(.+)\](\s*\()' => '\\\\[$1\\\\]$2', // links: [text] (url) => [text\] (url)
+        '\[(.+)\](\s*)\[(.*)\]' => '\\\\[$1\\\\]$2\\\\[$3\\\\]', // links: [text][id] => [text\][id\]
+        '^#(#{0,5}) ' => '\\\\#$1 ', // header #
+        '^=(=*\h*)$' => '\\\\=$1', // header =
     ];
 
     /**
@@ -255,7 +256,7 @@ class Converter
         $search = [];
         $replace = [];
         foreach ($this->escapeInText as $s => $r) {
-            array_push($search, '@(?<!\\\)' . $s . '@U');
+            array_push($search, '@(?<!\\\)' . $s . '@mU');
             array_push($replace, $r);
         }
         $this->escapeInText = [
@@ -274,6 +275,7 @@ class Converter
     {
         $this->resetState();
 
+        $html = str_replace(array("\r\n", "\r"), "\n", $html);
         $this->parser->html = $html;
         $this->parse();
 
@@ -303,6 +305,16 @@ class Converter
     }
 
     /**
+     * return escapeInText
+     *
+     * @return array escapeInText
+     */
+    public function getescapeInText()
+    {
+        return $this->escapeInText;
+    }
+
+    /**
      * iterate through the nodes and decide what we
      * shall do with the current node
      *
@@ -329,6 +341,7 @@ class Converter
                     // else drop
                     break;
                 case 'text':
+                    $this->flushLinebreaks();
                     $this->handleText();
                     break;
                 case 'tag':
@@ -395,7 +408,8 @@ class Converter
             }
         }
         // cleanup
-        $this->output = rtrim(str_replace('&amp;', '&', str_replace('&lt;', '<', str_replace('&gt;', '>', $this->output))));
+        $this->output = implode("\n", array_map('rtrim', explode("\n", $this->output)));
+        $this->output = rtrim(str_replace(['&amp;', '&lt;', '&gt;', '&nbsp;'], ['&', '<', '>', ' '], $this->output));
         // end parsing, flush stacked tags
         $this->flushFootnotes();
         $this->stack = [];
@@ -507,7 +521,7 @@ class Converter
     {
         if (!$this->keepHTML) {
             if (!$this->parser->isStartTag && $this->parser->isBlockElement) {
-                $this->setLineBreaks(2);
+                $this->setLineBreaks(1);
             }
         } else {
             // don't convert to markdown inside this tag
@@ -579,7 +593,7 @@ class Converter
                     $this->buffer();
                 } else {
                     // add stuff so cleanup just reverses this
-                    $this->out(str_replace('&lt;', '&amp;lt;', str_replace('&gt;', '&amp;gt;', $this->unbuffer())));
+                    $this->out(str_replace(['&lt;', '&gt;'], ['&amp;lt;', '&amp;gt;'], $this->unbuffer()));
                 }
             }
         }
@@ -733,6 +747,7 @@ class Converter
     {
         if (!$this->parser->isStartTag) {
             $this->setLineBreaks(2);
+            $this->parser->html = ltrim($this->parser->html);
         }
     }
 
@@ -786,7 +801,7 @@ class Converter
             return '[' . $buffer . ']()';
         }
 
-        if ($buffer == $tag['href'] && empty($tag['title'])) {
+        if (rtrim($buffer, '/') == rtrim($tag['href'], '/') && empty($tag['title'])) {
             // <http://example.com>
             return '<' . $buffer . '>';
         }

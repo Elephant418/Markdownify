@@ -27,6 +27,13 @@ class ConverterExtra extends Converter
     protected $row = 0;
 
     /**
+     * Add CSS class after the tag
+     *
+     * @var bool
+     */
+    protected $addCssClass = true;
+
+    /**
      * constructor, see Markdownify::Markdownify() for more information
      */
     public function __construct($linksAfterEachParagraph = self::LINK_AFTER_CONTENT, $bodyWidth = MDFY_BODYWIDTH, $keepHTML = MDFY_KEEPHTML)
@@ -118,7 +125,7 @@ class ConverterExtra extends Converter
             $this->stack();
         } else {
             $tag = $this->unstack();
-            if (!empty($tag['cssSelector'])) {
+            if (!empty($tag['cssSelector']) && $this->addCssClass) {
                 // {#id.class}
                 $this->out(' {' . $tag['cssSelector'] . '}');
             }
@@ -148,7 +155,7 @@ class ConverterExtra extends Converter
     protected function handleTag_a_converter($tag, $buffer)
     {
         $output = parent::handleTag_a_converter($tag, $buffer);
-        if (!empty($tag['cssSelector'])) {
+        if (!empty($tag['cssSelector']) && $this->addCssClass) {
             // [This link][id]{#id.class}
             $output .= '{' . $tag['cssSelector'] . '}';
         }
@@ -295,13 +302,15 @@ class ConverterExtra extends Converter
             $rows = [];
             // add padding
             array_walk_recursive($this->table['rows'], [&$this, 'alignTdContent']);
-            $header = array_shift($this->table['rows']);
-            array_push($rows, '| ' . implode(' | ', $header) . ' |');
-            array_push($rows, $separator);
-            foreach ($this->table['rows'] as $row) {
-                array_push($rows, '| ' . implode(' | ', $row) . ' |');
+            if (!empty( $this->table['rows'])) {
+                $header = array_shift($this->table['rows']);
+                array_push($rows, '| ' . implode(' | ', $header) . ' |');
+                array_push($rows, $separator);
+                foreach ($this->table['rows'] as $row) {
+                    array_push($rows, '| ' . implode(' | ', $row) . ' |');
+                }
+                $this->out(implode("\n" . $this->indent, $rows));
             }
-            $this->out(implode("\n" . $this->indent, $rows));
             $this->table = [];
             $this->setLineBreaks(2);
         }
@@ -567,5 +576,16 @@ class ConverterExtra extends Converter
             $cssSelector .= '.' . join('.', $classes);
         }
         return $cssSelector;
+    }
+
+    /**
+     * set add CSS class after the tag
+     *
+     * @param bool $addCssClass
+     * @return void
+     */
+    public function setAddCssClass($addCssClass)
+    {
+        $this->addCssClass = $addCssClass;
     }
 }
