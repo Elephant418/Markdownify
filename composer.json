@@ -19,10 +19,10 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=7.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8"
+        "phpunit/phpunit": "^9.5"
     },
     "autoload": {
         "psr-4": {
