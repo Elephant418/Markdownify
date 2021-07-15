@@ -3,15 +3,19 @@
 namespace Test\Markdownify;
 
 use Markdownify\Converter;
+use PHPUnit\Framework\TestCase;
 
 require_once(__DIR__ . '/../vendor/autoload.php');
 
-class ConverterTestCase extends \PHPUnit_Framework_TestCase
+class ConverterTestCase extends TestCase
 {
 
 
     /* ATTRIBUTES
      *************************************************************************/
+    /**
+     * @var Converter
+     */
     protected $converter;
 
 
@@ -554,10 +558,10 @@ end tell
         $converter = new Converter();
         $bqOutput = $converter->parseString($blockquote);
 
-        $this->assertContains('>', $bqOutput);
+        $this->assertStringContainsString('>', $bqOutput);
 
         $lbOutput = $converter->parseString($linebreaks);
 
-        $this->assertNotContains('>', $lbOutput);
+        $this->assertStringNotContainsString('>', $lbOutput);
     }
 }
