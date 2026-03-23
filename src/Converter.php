@@ -336,6 +336,7 @@ class Converter
                     // else drop
                     break;
                 case 'text':
+                    $this->flushLinebreaks();
                     $this->handleText();
                     break;
                 case 'tag':

@@ -216,6 +216,27 @@ class ConverterTestCase extends TestCase
             . PHP_EOL
             . '  1. Bird' . PHP_EOL
             . '  2. Magic';
+        $data['followed-by-text']['html'] = '<ol><li>Bird</li><li>Magic</li></ol>McHale';
+        $data['followed-by-text']['md'] = '  1. Bird' . PHP_EOL
+            . '  2. Magic' . PHP_EOL
+            . PHP_EOL
+            . 'McHale';
+        $data['unordered-followed-by-text']['html'] = '<ul><li>Bird</li><li>Magic</li></ul>McHale';
+        $data['unordered-followed-by-text']['md'] = '  * Bird' . PHP_EOL
+            . '  * Magic' . PHP_EOL
+            . PHP_EOL
+            . 'McHale';
+        $data['followed-by-text-with-link']['html'] = 'This is plain text<br /><ol><li>Plain a list item</li><li><strong>Bold list item</strong></li><li><em>Italic list item</em></li></ol>Here we have a <a href="https://www.helloworld.com">link</a> as well!';
+        $data['followed-by-text-with-link']['md'] = 'This is plain text  ' . PHP_EOL
+            . PHP_EOL
+            . PHP_EOL
+            . '  1. Plain a list item' . PHP_EOL
+            . '  2. **Bold list item**' . PHP_EOL
+            . '  3. _Italic list item_' . PHP_EOL
+            . PHP_EOL
+            . 'Here we have a [link][1] as well!' . PHP_EOL
+            . PHP_EOL
+            . ' [1]: https://www.helloworld.com';
         $data['nested-ordered']['html'] = '<ol><li>Bird</li><li>Colors<ol><li>Red</li><li>Green<ol><li>Light</li><li>Dark</li></ol></li><li>Blue</li></ol></li></ol>';
         $data['nested-ordered']['md'] = '  1. Bird' . PHP_EOL
             . '  2. Colors' . PHP_EOL
