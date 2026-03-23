@@ -3,6 +3,7 @@
 namespace Test\Markdownify;
 
 use Markdownify\ConverterExtra;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 require_once(__DIR__ . '/../vendor/autoload.php');
 
@@ -20,9 +21,7 @@ class ConverterExtraTest extends ConverterTestCase
 
     /* HEADING TEST METHODS
      *************************************************************************/
-    /**
-     * @dataProvider providerHeadingConversion
-     */
+    #[DataProvider('providerHeadingConversion')]
     public function testHeadingConversion_withAttribute($level, $attributesHTML, $attributesMD = null)
     {
         $innerHTML = 'Heading ' . $level;

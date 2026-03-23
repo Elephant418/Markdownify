@@ -260,7 +260,7 @@ class ConverterExtra extends Converter
                         $regEx .= $td . $this->tdSubstitute;
                     }
                     $regEx = sprintf($this->tableLookaheadBody, $regEx);
-                    if (preg_match($regEx, $this->parser->html, $matches, null, strlen($matches[0]))) {
+                    if (preg_match($regEx, $this->parser->html, $matches, 0, strlen($matches[0]))) {
                         // this is a markdownable table tag!
                         $this->table = [
                             'rows' => [],

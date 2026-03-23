@@ -3,6 +3,7 @@
 namespace Test\Markdownify;
 
 use Markdownify\Converter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 require_once(__DIR__ . '/../vendor/autoload.php');
@@ -19,9 +20,7 @@ class ConverterTestCase extends TestCase
     /* UNICODE TEST METHODS
      *************************************************************************/
 
-    /**
-     * @dataProvider providerUnicodeConversion
-     */
+    #[DataProvider('providerUnicodeConversion')]
     public function testUnicodeConversion($md)
     {
         $html = '<p>' . $md . '</p>';
@@ -40,9 +39,7 @@ class ConverterTestCase extends TestCase
     /* HEADING TEST METHODS
      *************************************************************************/
 
-    /**
-     * @dataProvider providerHeadingConversion
-     */
+    #[DataProvider('providerHeadingConversion')]
     public function testHeadingConversion_withAttribute($level, $attributesHTML, $attributesMD = null)
     {
         $innerHTML = 'Heading ' . $level;
@@ -70,9 +67,7 @@ class ConverterTestCase extends TestCase
         return $data;
     }
 
-    /**
-     * @dataProvider providerHeadingConversionEscape
-     */
+    #[DataProvider('providerHeadingConversionEscape')]
     public function testHeadingConversionEscape($html, $md)
     {
         $this->assertEquals($md, $this->converter->parseString($html));
@@ -92,9 +87,7 @@ class ConverterTestCase extends TestCase
     /* ESCAPE TEST METHODS
      *************************************************************************/
 
-    /**
-     * @dataProvider providerAutoescapeConversion
-     */
+    #[DataProvider('providerAutoescapeConversion')]
     public function testAutoescapeConversion($html, $md)
     {
         $this->assertEquals($md, $this->converter->parseString($html));
@@ -113,9 +106,7 @@ class ConverterTestCase extends TestCase
     /* STRIP TAGS OPTION
      *************************************************************************/
 
-    /**
-     * @dataProvider providerKeepHTMLOption
-     */
+    #[DataProvider('providerKeepHTMLOption')]
     public function testKeepHTMLOption($html, $mdWithTag, $mdWithoutTag)
     {
         $this->converter->setKeepHTML(false);
@@ -152,9 +143,7 @@ class ConverterTestCase extends TestCase
     /* BLOCKQUOTE TEST METHODS
      *************************************************************************/
 
-    /**
-     * @dataProvider providerBlockquoteConversion
-     */
+    #[DataProvider('providerBlockquoteConversion')]
     public function testBlockquoteConversion($html, $md)
     {
         $this->assertEquals($md, $this->converter->parseString($html));
@@ -180,9 +169,7 @@ class ConverterTestCase extends TestCase
     /* LISTS TEST METHODS
      *************************************************************************/
 
-    /**
-     * @dataProvider providerListConversion
-     */
+    #[DataProvider('providerListConversion')]
     public function testListConversion($html, $md)
     {
         $this->assertEquals($md, $this->converter->parseString($html));
@@ -253,9 +240,7 @@ class ConverterTestCase extends TestCase
     /* CODE TEST METHODS
      *************************************************************************/
 
-    /**
-     * @dataProvider providerCodeConversion
-     */
+    #[DataProvider('providerCodeConversion')]
     public function testCodeConversion($html, $md)
     {
         $this->assertEquals($md, $this->converter->parseString($html));
@@ -307,9 +292,7 @@ end tell
     /* LINK TEST METHODS
      *************************************************************************/
 
-    /**
-     * @dataProvider providerLinkConversion
-     */
+    #[DataProvider('providerLinkConversion')]
     public function testLinkConversion($html, $md, $linkPosition = null)
     {
         if ($linkPosition !== null) {
@@ -436,9 +419,7 @@ end tell
     /* EMPHASIS TEST METHODS
      *************************************************************************/
 
-    /**
-     * @dataProvider providerEmphasisConversion
-     */
+    #[DataProvider('providerEmphasisConversion')]
     public function testEmphasisConversion($html, $md)
     {
         $this->assertEquals($md, $this->converter->parseString($html));
@@ -467,9 +448,7 @@ end tell
     /* RULES TEST METHODS
      *************************************************************************/
 
-    /**
-     * @dataProvider providerRulesConversion
-     */
+    #[DataProvider('providerRulesConversion')]
     public function testRulesConversion($html, $md)
     {
         $this->assertEquals($md, $this->converter->parseString($html));
@@ -492,9 +471,7 @@ end tell
     /* FIX BREAKS TESTS
      *************************************************************************/
 
-    /**
-     * @dataProvider providerFixBreaks
-     */
+    #[DataProvider('providerFixBreaks')]
     public function testFixBreaks($html, $md)
     {
         $this->assertEquals($md, $this->converter->parseString($html));
@@ -515,9 +492,7 @@ end tell
     /* FIX TAG SPACES TESTS
      *************************************************************************/
 
-    /**
-     * @dataProvider providerFixTagSpaces
-     */
+    #[DataProvider('providerFixTagSpaces')]
     public function testFixTagSpaces($html, $md)
     {
         $this->assertEquals($md, $this->converter->parseString($html));
