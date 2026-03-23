@@ -103,6 +103,26 @@ class ConverterTestCase extends TestCase
     }
 
 
+    /* O:P TAG TEST METHODS
+     *************************************************************************/
+
+    /**
+     * @dataProvider providerOfficeTagConversion
+     */
+    public function testOfficeTagConversion($html, $md)
+    {
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public static function providerOfficeTagConversion()
+    {
+        return [
+            ['<p>Hello<o:p></o:p></p>', 'Hello'],
+            ['<p>Hello<o:p> World</o:p></p>', 'Hello World'],
+        ];
+    }
+
+
     /* STRIP TAGS OPTION
      *************************************************************************/
 
