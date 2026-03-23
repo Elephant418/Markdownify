@@ -1,6 +1,6 @@
 # Markdownify
 
-[![Build Status](https://travis-ci.org/Elephant418/Markdownify.png?branch=master)](https://travis-ci.org/Elephant418/Markdownify?branch=master)
+[![Tests](https://github.com/Elephant418/Markdownify/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Elephant418/Markdownify/actions/workflows/tests.yml)
 [![Total Downloads](https://poser.pugx.org/pixel418/markdownify/downloads)](https://packagist.org/packages/pixel418/markdownify)
 [![MIT](https://poser.pugx.org/pixel418/markdownify/license)](https://opensource.org/licenses/MIT)
 
