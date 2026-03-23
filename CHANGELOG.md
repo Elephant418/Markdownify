@@ -2,6 +2,14 @@ CHANGELOG
 ==============
 
 
+23/03/2026 v2.3.2
+--------------
+
+ * Support: PHP 8.5
+ * Fix: remove dynamic properties deprecated on modern PHP versions
+ * Test: update PHPUnit configuration for current PHP releases
+
+
 22/01/2019 v2.3.1
 --------------
 

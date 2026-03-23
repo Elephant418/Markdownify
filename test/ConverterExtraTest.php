@@ -12,7 +12,7 @@ class ConverterExtraTest extends ConverterTestCase
 
     /* UTILS
      *************************************************************************/
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converter = new ConverterExtra;
     }

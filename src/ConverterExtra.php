@@ -4,6 +4,26 @@ namespace Markdownify;
 
 class ConverterExtra extends Converter
 {
+    /**
+     * Table header lookahead pattern.
+     *
+     * @var string
+     */
+    protected $tableLookaheadHeader = '';
+
+    /**
+     * Table body lookahead pattern.
+     *
+     * @var string
+     */
+    protected $tableLookaheadBody = '';
+
+    /**
+     * Table cell fragment used to assemble lookahead patterns.
+     *
+     * @var string
+     */
+    protected $tdSubstitute = '';
 
     /**
      * table data, including rows with content and the maximum width of each col

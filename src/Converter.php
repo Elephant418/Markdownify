@@ -228,6 +228,13 @@ class Converter
     protected $indent = '';
 
     /**
+     * Saved indentation while preserving raw HTML inside <pre> blocks.
+     *
+     * @var string
+     */
+    protected $preIndent = '';
+
+    /**
      * constructor, set options, setup parser
      *
      * @param int $linkPosition define the position of links
@@ -534,8 +541,7 @@ class Converter
                     // don't indent inside <pre> tags
                     if ($this->parser->tagName == 'pre') {
                         $this->out($this->parser->node);
-                        static $indent;
-                        $indent = $this->indent;
+                        $this->preIndent = $this->indent;
                         $this->indent = '';
                     } else {
                         $this->out($this->parser->node . "\n" . $this->indent);
@@ -556,8 +562,7 @@ class Converter
                     } else {
                         // reset indentation
                         $this->out($this->parser->node);
-                        static $indent;
-                        $this->indent = $indent;
+                        $this->indent = $this->preIndent;
                     }
 
                     if (in_array($this->parent(), ['ins', 'del'])) {
