@@ -401,6 +401,10 @@ end tell
         $data['url-title']['md'] = 'This is [an example][1] inline link.' . PHP_EOL
             . PHP_EOL
             . ' [1]: http://example.com/ "Title"';
+        $data['url-unquoted-attributes']['html'] = '<p>This is <a href=http://example.com/ title=Title>an example</a> inline link.</p>';
+        $data['url-unquoted-attributes']['md'] = 'This is [an example][1] inline link.' . PHP_EOL
+            . PHP_EOL
+            . ' [1]: http://example.com/ "Title"';
 
         // Link with href + title + id attributes
         $data['url-title-id']['html'] = '<p>This is <a href="http://example.com/" title="Title" id="myLink">an example</a> inline link.</p>';
@@ -438,6 +442,10 @@ end tell
         $data['image-title']['md'] = '![Alt text][1]' . PHP_EOL
             . PHP_EOL
             . ' [1]: /path/to/img.jpg "Optional title attribute"';
+        $data['image-unquoted-attributes']['html'] = '<img src=/path/to/img.jpg alt="Alt text" title=Optional />';
+        $data['image-unquoted-attributes']['md'] = '![Alt text][1]' . PHP_EOL
+            . PHP_EOL
+            . ' [1]: /path/to/img.jpg "Optional"';
 
         // Image with src + alt + title attributes in content
         $data['image-title--in']['html'] = '<img src="/path/to/img.jpg" alt="Alt text" title="Optional title attribute" />';

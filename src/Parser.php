@@ -394,7 +394,6 @@ class Parser
         }
 
         // get tag attributes
-        /** TODO: in html 4 attributes do not need to be quoted **/
         $isEmptyTag = false;
         $attributes = [];
         $currAttrib = '';
@@ -425,6 +424,23 @@ class Parser
                     $value .= $this->html[$pos];
                     $pos++;
                 }
+                $attributes[$currAttrib] = $value;
+                $currAttrib = '';
+            } elseif ($this->html[$pos] == '=') {
+                // get unquoted attribute value
+                $pos++;
+                $value = '';
+                while (isset($this->html[$pos])) {
+                    if (in_array($this->html[$pos], [' ', "\t", "\n", '>'], true)) {
+                        break;
+                    }
+                    if ($this->html[$pos] == '/' && isset($this->html[$pos + 1]) && $this->html[$pos + 1] == '>') {
+                        break;
+                    }
+                    $value .= $this->html[$pos];
+                    $pos++;
+                }
+                $pos--;
                 $attributes[$currAttrib] = $value;
                 $currAttrib = '';
             } else {
