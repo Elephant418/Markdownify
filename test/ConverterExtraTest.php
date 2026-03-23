@@ -137,4 +137,176 @@ EOF;
 EOF;
         $this->assertEquals($md, $this->converter->parseString($html));
     }
+
+    public function testTableConversionWithoutHeaderCells()
+    {
+        $this->converter->setKeepHTML(false);
+        $html = <<<EOF
+<table>
+<tr>
+  <td>January</td>
+  <td>42</td>
+</tr>
+<tr>
+  <td>February</td>
+  <td>51</td>
+</tr>
+<tr>
+  <td>March</td>
+  <td>39</td>
+</tr>
+</table>
+EOF;
+        $md = <<<EOF
+|          |    |
+| -------- | -- |
+| January  | 42 |
+| February | 51 |
+| March    | 39 |
+EOF;
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function testTableConversionWithoutHeaderCellsKeepingHtml()
+    {
+        $this->converter->setKeepHTML(true);
+        $html = <<<EOF
+<table>
+<tr>
+  <td>January</td>
+  <td>42</td>
+</tr>
+<tr>
+  <td>February</td>
+  <td>51</td>
+</tr>
+<tr>
+  <td>March</td>
+  <td>39</td>
+</tr>
+</table>
+EOF;
+        $md = <<<EOF
+<table>
+  <tr>
+    <td>
+      January
+    </td>
+    
+    <td>
+      42
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      February
+    </td>
+    
+    <td>
+      51
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      March
+    </td>
+    
+    <td>
+      39
+    </td>
+  </tr>
+</table>
+EOF;
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function testTableConversionWithoutHeaderCellsWithThreeColumns()
+    {
+        $this->converter->setKeepHTML(false);
+        $html = <<<EOF
+<table>
+<tr>
+  <td>One</td>
+  <td>Two</td>
+  <td>Three</td>
+</tr>
+<tr>
+  <td>Alpha</td>
+  <td>Beta</td>
+  <td>Gamma</td>
+</tr>
+</table>
+EOF;
+        $md = <<<EOF
+|       |      |       |
+| ----- | ---- | ----- |
+| One   | Two  | Three |
+| Alpha | Beta | Gamma |
+EOF;
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function testTableConversionWithRowHeadersButWithoutTopHeaderRow()
+    {
+        $this->converter->setKeepHTML(false);
+        $html = <<<EOF
+<table>
+<tr>
+  <th>January</th>
+  <td>42</td>
+</tr>
+<tr>
+  <th>February</th>
+  <td>51</td>
+</tr>
+<tr>
+  <th>March</th>
+  <td>39</td>
+</tr>
+</table>
+EOF;
+        $md = <<<EOF
+|          |    |
+| -------- | -- |
+| January  | 42 |
+| February | 51 |
+| March    | 39 |
+EOF;
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
+
+    public function testTableConversionWithRowHeadersAndTopHeaderRow()
+    {
+        $this->converter->setKeepHTML(false);
+        $html = <<<EOF
+<table>
+<tr>
+  <th></th>
+  <th>Sales</th>
+</tr>
+<tr>
+  <th>January</th>
+  <td>42</td>
+</tr>
+<tr>
+  <th>February</th>
+  <td>51</td>
+</tr>
+<tr>
+  <th>March</th>
+  <td>39</td>
+</tr>
+</table>
+EOF;
+        $md = <<<EOF
+|          | Sales |
+| -------- | ----- |
+| January  | 42    |
+| February | 51    |
+| March    | 39    |
+EOF;
+        $this->assertEquals($md, $this->converter->parseString($html));
+    }
 }
