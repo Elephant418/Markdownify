@@ -284,6 +284,28 @@ end tell
         $data['pre-html']['md'] = '    <div class="footer">
         &copy; 2004 Foo Corporation
     </div>';
+        $data['inline-multiline']['html'] = "<code>Foo<br/>\nBar</code>";
+        $data['inline-multiline']['md'] = '```' . PHP_EOL
+            . 'Foo' . PHP_EOL
+            . 'Bar' . PHP_EOL
+            . '```';
+        $data['inline-multiline-newline']['html'] = "<code>Foo\nBar</code>";
+        $data['inline-multiline-newline']['md'] = '```' . PHP_EOL
+            . 'Foo' . PHP_EOL
+            . 'Bar' . PHP_EOL
+            . '```';
+        $data['inline-multiline-br']['html'] = '<code>Foo<br>Bar</code>';
+        $data['inline-multiline-br']['md'] = '```' . PHP_EOL
+            . 'Foo' . PHP_EOL
+            . 'Bar' . PHP_EOL
+            . '```';
+        $data['inline-multiline-backticks']['html'] = "<code>Foo `bar` Baz<br/>Qux</code>";
+        $data['inline-multiline-backticks']['md'] = '```' . PHP_EOL
+            . 'Foo `bar` Baz' . PHP_EOL
+            . 'Qux' . PHP_EOL
+            . '```';
+        $data['inline-single-line-only']['html'] = '<code>single line only</code>';
+        $data['inline-single-line-only']['md'] = '`single line only`';
 
         return $data;
     }

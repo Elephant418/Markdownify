@@ -917,6 +917,16 @@ class Converter
             $this->buffer();
         } else {
             $buffer = $this->unbuffer();
+            $buffer = str_replace("\r\n", "\n", $buffer);
+            $buffer = str_replace("\r", "\n", $buffer);
+            if (preg_match('#(?:<br\s*/?>|&lt;br\s*/?>)#i', $buffer) || strpos($buffer, "\n") !== false) {
+                $buffer = preg_replace('#(?:<br\s*/?>|&lt;br\s*/?>)\n?#i', "\n", $buffer);
+                $buffer = trim($buffer, "\r\n");
+                $this->out("```\n" . $buffer . "\n```", true);
+                $this->setLineBreaks(2);
+
+                return;
+            }
             // use as many backticks as needed
             preg_match_all('#`+#', $buffer, $matches);
             if (!empty($matches[0])) {
