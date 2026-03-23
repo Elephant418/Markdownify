@@ -4,6 +4,12 @@
 # Dependencies
 vendor
 composer.lock
+.composer/
+composer-setup.php
+composer.phar
+
+# PHPUnit cache
+.phpunit.cache/
 
 # Local test files
 test.html
