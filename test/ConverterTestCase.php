@@ -28,7 +28,7 @@ class ConverterTestCase extends TestCase
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
-    public function providerUnicodeConversion()
+    public static function providerUnicodeConversion()
     {
         return [
             ['regular ascii'],
@@ -57,7 +57,7 @@ class ConverterTestCase extends TestCase
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
-    public function providerHeadingConversion()
+    public static function providerHeadingConversion()
     {
         $attributes = [' id="idAttribute"', ' class=" class1  class2 "'];
         $data = [];
@@ -78,7 +78,7 @@ class ConverterTestCase extends TestCase
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
-    public function providerHeadingConversionEscape()
+    public static function providerHeadingConversionEscape()
     {
         $data = [];
         $data['level1']['html'] = '# Heading 1';
@@ -100,7 +100,7 @@ class ConverterTestCase extends TestCase
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
-    public function providerAutoescapeConversion()
+    public static function providerAutoescapeConversion()
     {
         return [
             ['AT&amp;T', 'AT&T'],
@@ -124,7 +124,7 @@ class ConverterTestCase extends TestCase
         $this->assertEquals($mdWithTag, $this->converter->parseString($html));
     }
 
-    public function providerKeepHTMLOption()
+    public static function providerKeepHTMLOption()
     {
         $data = [];
 
@@ -160,7 +160,7 @@ class ConverterTestCase extends TestCase
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
-    public function providerBlockquoteConversion()
+    public static function providerBlockquoteConversion()
     {
         $data = [];
         $data['simple']['html'] = '<blockquote>blockquoted text goes here</blockquote>';
@@ -188,7 +188,7 @@ class ConverterTestCase extends TestCase
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
-    public function providerListConversion()
+    public static function providerListConversion()
     {
         $data = [];
         $data['ordered']['html'] = '<ol><li>Bird</li><li>McHale</li><li>Parish</li></ol>';
@@ -261,7 +261,7 @@ class ConverterTestCase extends TestCase
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
-    public function providerCodeConversion()
+    public static function providerCodeConversion()
     {
         $data = [];
         $data['inline']['html'] = '<p>Use the <code>printf()</code> function.</p>';
@@ -318,7 +318,7 @@ end tell
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
-    public function providerLinkConversion()
+    public static function providerLinkConversion()
     {
         $data = [];
 
@@ -444,7 +444,7 @@ end tell
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
-    public function providerEmphasisConversion()
+    public static function providerEmphasisConversion()
     {
         $data = [];
         $data['strong']['html'] = '<strong>double asterisks</strong>';
@@ -475,7 +475,7 @@ end tell
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
-    public function providerRulesConversion()
+    public static function providerRulesConversion()
     {
         $data = [];
         $data['hr']['html'] = '<hr>';
@@ -501,7 +501,7 @@ end tell
     }
 
 
-    public function providerFixBreaks()
+    public static function providerFixBreaks()
     {
         $data = [];
         $data['break1']['html'] = "<strong>Hello,<br>How are you doing?</strong>";
@@ -524,7 +524,7 @@ end tell
     }
 
 
-    public function providerFixTagSpaces()
+    public static function providerFixTagSpaces()
     {
         $data = [];
         $data['strong']['html'] = "<p>This is<strong> strong</strong> text</p>";

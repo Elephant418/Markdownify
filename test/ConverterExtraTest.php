@@ -31,7 +31,7 @@ class ConverterExtraTest extends ConverterTestCase
         $this->assertEquals($md, $this->converter->parseString($html));
     }
 
-    public function providerHeadingConversion()
+    public static function providerHeadingConversion()
     {
         $attributes = [' id="idAttribute"', ' class=" class1  class2 "'];
         $data = [];
@@ -47,7 +47,7 @@ class ConverterExtraTest extends ConverterTestCase
 
     /* LINK TEST METHODS
      *************************************************************************/
-    public function providerLinkConversion()
+    public static function providerLinkConversion()
     {
         $data = parent::providerLinkConversion();
 
