@@ -68,6 +68,13 @@ class ConverterExtra extends Converter
     protected $tableCurrentRowDataCells = 0;
 
     /**
+     * Whether Markdown Extra CSS selectors should be emitted.
+     *
+     * @var bool
+     */
+    protected $addCssClass = true;
+
+    /**
      * constructor, see Markdownify::Markdownify() for more information
      */
     public function __construct($linksAfterEachParagraph = self::LINK_AFTER_CONTENT, $bodyWidth = MDFY_BODYWIDTH, $keepHTML = MDFY_KEEPHTML)
@@ -159,7 +166,7 @@ class ConverterExtra extends Converter
             $this->stack();
         } else {
             $tag = $this->unstack();
-            if (!empty($tag['cssSelector'])) {
+            if (!empty($tag['cssSelector']) && $this->addCssClass) {
                 // {#id.class}
                 $this->out(' {' . $tag['cssSelector'] . '}');
             }
@@ -189,7 +196,7 @@ class ConverterExtra extends Converter
     protected function handleTag_a_converter($tag, $buffer)
     {
         $output = parent::handleTag_a_converter($tag, $buffer);
-        if (!empty($tag['cssSelector'])) {
+        if (!empty($tag['cssSelector']) && $this->addCssClass) {
             // [This link][id]{#id.class}
             $output .= '{' . $tag['cssSelector'] . '}';
         }
@@ -640,5 +647,16 @@ class ConverterExtra extends Converter
             $cssSelector .= '.' . join('.', $classes);
         }
         return $cssSelector;
+    }
+
+    /**
+     * Enable or disable Markdown Extra CSS selector output.
+     *
+     * @param bool $addCssClass
+     * @return void
+     */
+    public function setAddCssClass($addCssClass)
+    {
+        $this->addCssClass = $addCssClass;
     }
 }

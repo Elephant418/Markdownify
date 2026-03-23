@@ -43,6 +43,13 @@ class ConverterExtraTest extends ConverterTestCase
         return $data;
     }
 
+    public function testHeadingConversionWithoutCssClassOutput()
+    {
+        $this->converter->setAddCssClass(false);
+        $html = '<h1 id="idAttribute" class=" class1  class2 ">Heading 1</h1>';
+        $this->assertEquals('# Heading 1', $this->converter->parseString($html));
+    }
+
 
     /* LINK TEST METHODS
      *************************************************************************/
@@ -71,6 +78,16 @@ class ConverterExtraTest extends ConverterTestCase
  [1]: http://example.com/ "Title"';
 
         return $data;
+    }
+
+    public function testLinkConversionWithoutCssClassOutput()
+    {
+        $this->converter->setAddCssClass(false);
+        $html = '<p>This is <a href="http://example.com/" title="Title" class=" class1  class2 " id="myLink">an example</a> inline link.</p>';
+        $md = 'This is [an example][1] inline link.' . PHP_EOL
+            . PHP_EOL
+            . ' [1]: http://example.com/ "Title"';
+        $this->assertEquals($md, $this->converter->parseString($html));
     }
 
 
